@@ -1,10 +1,11 @@
-import mongoose from 'mongoose';
 import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
 
-const options = { discriminatorKey: 'type' };
+const options = {
+  discriminatorKey: 'type'
+};
 
-const DocumentSchema = new mongoose.Schema({
+const fields = {
   title: { type: 'String', required: true },
   description: { type: 'String' },
   subjects: [{ type: 'String' }],
@@ -20,11 +21,12 @@ const DocumentSchema = new mongoose.Schema({
   creator: { type: 'String' },
   contributors: [{ type: 'String' }],
   verion: { type: 'String' }
-}, options);
+};
 
-DocumentSchema.plugin(timestamps);
-DocumentSchema.plugin(plugins.softDelete);
-
-const DocumentModel = mongoose.model('document', DocumentSchema);
-
-export default DocumentModel;
+export default function(app, name) {
+  const mongoose = app.get('mongoose');
+  const schema = new mongoose.Schema(fields, options);
+  schema.plugin(timestamps);
+  schema.plugin(plugins.softDelete);
+  return mongoose.model(name, schema);
+}

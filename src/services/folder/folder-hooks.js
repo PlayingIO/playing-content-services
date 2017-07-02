@@ -1,11 +1,11 @@
 import assert from 'assert';
-import { filter, kebabCase } from 'lodash';
-import path from 'path';
 import { hooks as auth } from 'feathers-authentication';
+import { filter, kebabCase } from 'lodash';
 import { hooks } from 'mostly-feathers-mongoose';
-import { queryWithCurrentUser, restrictToOwner } from 'feathers-authentication-hooks';
+import path from 'path';
 import { config } from 'common';
 import { entities } from '~/models';
+import FolderEntity from '~/entities/folder-entity';
 
 const autoPath = hook => {
   const folders = hook.app.service('folders');
@@ -47,29 +47,18 @@ const hasFolderishChild = hook => {
   return Promise.all(results.map(folderishChild)).then(results => hook);
 };
 
-export const beforeHook = {
-  all: [
-    auth.authenticate('jwt')
-  ],
-  find: [],
-  get: [],
-  create: [ autoPath ],
-  update: [ autoPath ],
-  patch: [ autoPath ],
-  remove: []
-};
-
-export const afterHook = {
-  all: [
-    hooks.populate('parent', { service: 'folders' }),
-    hooks.presentEntity(entities.Folder),
-    hasFolderishChild,
-    hooks.responder()
-  ],
-  find: [],
-  get: [],
-  create: [],
-  update: [],
-  patch: [],
-  remove: []
+module.exports = {
+  before: {
+    all: [
+      auth.authenticate('jwt')
+    ]
+  },
+  after: {
+    all: [
+      hooks.populate('parent', { service: 'folders' }),
+      hooks.presentEntity(FolderEntity),
+      hasFolderishChild,
+      hooks.responder()
+    ]
+  }
 };
