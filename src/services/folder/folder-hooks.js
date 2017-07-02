@@ -3,8 +3,6 @@ import { hooks as auth } from 'feathers-authentication';
 import { filter, kebabCase } from 'lodash';
 import { hooks } from 'mostly-feathers-mongoose';
 import path from 'path';
-import { config } from 'common';
-import { entities } from '~/models';
 import FolderEntity from '~/entities/folder-entity';
 
 const autoPath = hook => {
