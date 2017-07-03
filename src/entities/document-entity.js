@@ -8,8 +8,10 @@ const DocumentEntity = new Entity('Document', {
 DocumentEntity.expose('metadata', {}, obj => {
   const breadcrumbs = getBreadcrumbs(obj);
   const facets = [];
+  const favorites = [];
   const subtypes = [];
-  return Object.assign(obj.metadata || {}, { breadcrumbs, facets, subtypes });
+  const thumbnail = '/bower_components/playing-content-elements/images/icons/icon_100.png';
+  return Object.assign(obj.metadata || {}, { breadcrumbs, facets, favorites, subtypes });
 });
 
 DocumentEntity.excepts('destroyedAt');

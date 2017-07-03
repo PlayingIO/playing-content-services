@@ -20,7 +20,9 @@ const fields = {
   language: { type: 'String' },
   creator: { type: 'String' },
   contributors: [{ type: 'String' }],
-  verion: { type: 'String' }
+  file: { type: 'ObjectId' }, // main blob
+  files: [{ type: 'ObjectId' }], // attachements
+  verion: { type: 'Number' }
 };
 
 export default function(app, name) {

@@ -8,7 +8,9 @@ const FolderEntity = new Entity('Folder', {
 FolderEntity.expose('metadata', {}, obj => {
   const breadcrumbs = getBreadcrumbs(obj);
   const facets = ['Folderish'];
+  const favorites = [];
   const subtypes = ['folder', 'file', 'note'];
+  const thumbnail = '/bower_components/playing-content-elements/images/icons/icon_100.png';
   return Object.assign(obj.metadata || {}, { breadcrumbs, facets, subtypes });
 });
 
