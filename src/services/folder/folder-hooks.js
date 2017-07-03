@@ -5,7 +5,7 @@ import { hooks } from 'mostly-feathers-mongoose';
 import path from 'path';
 import FolderEntity from '~/entities/folder-entity';
 
-const autoPath = hook => {
+const computePath = hook => {
   const folders = hook.app.service('folders');
 
   // get parent or root
@@ -14,7 +14,7 @@ const autoPath = hook => {
     : folders.first({ query: { path : '/' } });
 
   return parentQuery.then(parent => {
-    hook.data.parent = parent._id;
+    hook.data.parent = parent.id;
     hook.data.path = path.join(parent.path, kebabCase(hook.data.title));
     return hook;
   });
@@ -33,7 +33,7 @@ const hasFolderishChild = hook => {
 
   function folderishChild(doc) {
     return folders.find({ query: {
-      parent: doc._id
+      parent: doc.id
     }}).then(result => {
       let folderishChildren = filter(result.data, child => {
         return child.metadata.facets && child.metadata.facets.indexOf('Folderish') !== -1;
@@ -49,7 +49,10 @@ module.exports = {
   before: {
     all: [
       auth.authenticate('jwt')
-    ]
+    ],
+    create: [ computePath ],
+    update: [ computePath ],
+    patch: [ computePath ],
   },
   after: {
     all: [
