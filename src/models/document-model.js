@@ -1,6 +1,6 @@
 import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
-import { resource, resources } from './embeded-model';
+import { resource, resources } from './resource-schema';
 
 const options = {
   discriminatorKey: 'type'
