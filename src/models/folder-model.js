@@ -2,7 +2,6 @@ import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
 
 const fields = {
-  parent: { type: 'ObjectId', ref: 'folder' },
   path: { type: 'String', default: '/', unique: true },
   color: { type: 'String' }
 };

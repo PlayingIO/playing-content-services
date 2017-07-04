@@ -20,6 +20,7 @@ const fields = {
   language: { type: 'String' },
   creator: { type: 'String' },
   contributors: [{ type: 'String' }],
+  parent: { type: 'ObjectId' },
   file: { type: 'ObjectId' }, // main blob
   files: [{ type: 'ObjectId' }], // attachements
   verion: { type: 'Number' }
