@@ -1,5 +1,6 @@
 import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
+import { resource, resources } from './embeded-model';
 
 const options = {
   discriminatorKey: 'type'
@@ -8,6 +9,8 @@ const options = {
 const fields = {
   title: { type: 'String', required: true },
   description: { type: 'String' },
+  parent: { type: 'ObjectId' },
+  path: { type: 'String', default: '/', unique: true },
   subjects: [{ type: 'String' }],
   rights: [{ type: 'String' }],
   source: { type: 'String' },
@@ -20,9 +23,8 @@ const fields = {
   language: { type: 'String' },
   creator: { type: 'String' },
   contributors: [{ type: 'String' }],
-  parent: { type: 'ObjectId' },
-  file: { type: 'ObjectId' }, // main blob
-  files: [{ type: 'ObjectId' }], // attachements
+  file: resource, // main blob
+  files: resources, // attachements
   verion: { type: 'Number' }
 };
 

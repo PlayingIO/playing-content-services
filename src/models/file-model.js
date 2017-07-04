@@ -2,7 +2,8 @@ import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
 
 const fields = {
-  color: { type: 'String' }
+  content: { type: 'String'  },
+  mimeType: { type: 'String' }
 };
 
 export default function(app, name) {

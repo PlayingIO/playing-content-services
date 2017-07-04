@@ -2691,9 +2691,9 @@ natives@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/natives/-/natives-1.1.0.tgz#e9ff841418a6b2ec7a495e939984f78f163e6e31"
 
-nats@^0.7.16:
-  version "0.7.16"
-  resolved "http://registry.npm.taobao.org/nats/download/nats-0.7.16.tgz#7e4c35ee79a33a3d2fabcdaa6c17c3e6f00069e5"
+nats@^0.7.20:
+  version "0.7.20"
+  resolved "https://registry.yarnpkg.com/nats/-/nats-0.7.20.tgz#f951d815e2dddce65cd0dda5fb0124ebc0936dd9"
   dependencies:
     nuid ">=0.6.8"
 
@@ -3291,6 +3291,10 @@ shelljs@^0.7.5:
     glob "^7.0.0"
     interpret "^1.0.0"
     rechoir "^0.6.2"
+
+shortid@^2.2.8:
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/shortid/-/shortid-2.2.8.tgz#033b117d6a2e975804f6f0969dbe7d3d0b355131"
 
 sigmund@~1.0.0:
   version "1.0.1"

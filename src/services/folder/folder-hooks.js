@@ -4,7 +4,6 @@ import { filter, kebabCase } from 'lodash';
 import { hooks } from 'mostly-feathers-mongoose';
 import path from 'path';
 import * as content from '../content-hooks';
-import FolderEntity from '~/entities/folder-entity';
 
 module.exports = {
   before: {
@@ -24,7 +23,7 @@ module.exports = {
   after: {
     all: [
       hooks.populate('parent', { service: 'folders' }),
-      hooks.presentEntity(FolderEntity),
+      content.presentEntity(),
       content.hasFolderishChild(),
       hooks.responder()
     ]
