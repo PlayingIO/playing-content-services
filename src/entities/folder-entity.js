@@ -10,8 +10,10 @@ FolderEntity.expose('metadata', {}, obj => {
   const facets = ['Folderish'];
   const favorites = [];
   const subtypes = ['folder', 'file', 'note'];
-  const thumbnail = '/bower_components/playing-content-elements/images/icons/icon_100.png';
-  return Object.assign(obj.metadata || {}, { breadcrumbs, facets, subtypes });
+  const thumbnail = {
+    url: '/bower_components/playing-content-elements/images/icons/icon_100.png'
+  };
+  return Object.assign(obj.metadata || {}, { breadcrumbs, facets, favorites, subtypes, thumbnail });
 });
 
 FolderEntity.excepts('destroyedAt');

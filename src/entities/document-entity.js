@@ -10,8 +10,10 @@ DocumentEntity.expose('metadata', {}, obj => {
   const facets = [];
   const favorites = [];
   const subtypes = [];
-  const thumbnail = '/bower_components/playing-content-elements/images/icons/icon_100.png';
-  return Object.assign(obj.metadata || {}, { breadcrumbs, facets, favorites, subtypes });
+  const thumbnail = {
+    url: '/bower_components/playing-content-elements/images/icons/icon_100.png'
+  };
+  return Object.assign(obj.metadata || {}, { breadcrumbs, facets, favorites, subtypes, thumbnail });
 });
 
 DocumentEntity.excepts('destroyedAt');
