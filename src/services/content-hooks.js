@@ -28,6 +28,7 @@ export function presentEntity(entities = {}) {
       if (hook.result.data) {
         hook.result.data = hook.result.data.map(doc => {
           if (doc.type && entities[doc.type]) {
+            debug('Document type entity', doc.id, doc.type, options);
             return entities[doc.type].parse(doc, options);
           } else {
             debug('WARNING: Document type entity', doc.id, doc.type, 'not found in');
@@ -38,6 +39,7 @@ export function presentEntity(entities = {}) {
       } else {
         let doc = hook.result;
         if (doc.type && entities[doc.type]) {
+          debug('Document type entity', doc.id, doc.type, options);
           hook.result = entities[doc.type].parse(doc, options);
         } else {
           debug('WARNING: Document type entity', doc.id, doc.type, 'not found in');

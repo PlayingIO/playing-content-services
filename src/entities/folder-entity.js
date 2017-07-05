@@ -16,14 +16,16 @@ FolderEntity.expose('parent', (obj, options) => {
 });
 
 FolderEntity.expose('metadata', {}, obj => {
+  if (obj.metadata) return obj.metadata;
+  
   const breadcrumbs = getBreadcrumbs(obj);
-  const facets = ['Folderish'];
+  const facets = [];
   const favorites = [];
-  const subtypes = ['folder', 'file', 'note'];
+  const subtypes = [];
   const thumbnail = {
     url: '/bower_components/playing-content-elements/images/icons/icon_100.png'
   };
-  return Object.assign(obj.metadata || {}, { breadcrumbs, facets, favorites, subtypes, thumbnail });
+  return Object.assign({}, { breadcrumbs, facets, favorites, subtypes, thumbnail });
 });
 
 FolderEntity.excepts('destroyedAt');

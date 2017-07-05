@@ -16,6 +16,8 @@ DocumentEntity.expose('parent', (obj, options) => {
 });
 
 DocumentEntity.expose('metadata', obj => {
+  if (obj.metadata) return obj.metadata;
+
   const breadcrumbs = getBreadcrumbs(obj);
   const facets = [];
   const favorites = [];
@@ -23,7 +25,7 @@ DocumentEntity.expose('metadata', obj => {
   const thumbnail = {
     url: '/bower_components/playing-content-elements/images/icons/icon_100.png'
   };
-  return Object.assign(obj.metadata || {}, { breadcrumbs, facets, favorites, subtypes, thumbnail });
+  return Object.assign({}, { breadcrumbs, facets, favorites, subtypes, thumbnail });
 });
 
 DocumentEntity.excepts('destroyedAt');
