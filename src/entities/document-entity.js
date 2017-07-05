@@ -1,11 +1,21 @@
+import { omit } from 'lodash';
 import Entity from 'mostly-entity';
 import { getBreadcrumbs } from '~/helpers';
+import ResourceEntity from './resource-entity';
 
 const DocumentEntity = new Entity('Document', {
-  parent: { omit: ['parent'] }
+  file: { using: ResourceEntity },
+  files: { using: ResourceEntity },
 });
 
-DocumentEntity.expose('metadata', {}, obj => {
+DocumentEntity.expose('parent', (obj, options) => {
+  if (options.provider && obj.parent.parent) {
+    return omit(obj.parent, ['parent']);
+  }
+  return obj.parent;
+});
+
+DocumentEntity.expose('metadata', obj => {
   const breadcrumbs = getBreadcrumbs(obj);
   const facets = [];
   const favorites = [];

@@ -24,24 +24,25 @@ export function presentEntity(entities = {}) {
 
   return hook => {
     if (hook.result) {
+      let options = { provider: hook.params.provider };
       if (hook.result.data) {
         hook.result.data = hook.result.data.map(doc => {
           if (doc.type && entities[doc.type]) {
-            return entities[doc.type].parse(doc);
+            return entities[doc.type].parse(doc, options);
           } else {
             debug('WARNING: Document type entity', doc.id, doc.type, 'not found in');
             debug('  =>', Object.keys(entities));
-            return DocumentEntity.parse(doc);
+            return DocumentEntity.parse(doc, options);
           }
         });
       } else {
         let doc = hook.result;
         if (doc.type && entities[doc.type]) {
-          hook.result = entities[doc.type].parse(doc);
+          hook.result = entities[doc.type].parse(doc, options);
         } else {
           debug('WARNING: Document type entity', doc.id, doc.type, 'not found in');
           debug('  =>', Object.keys(entities));
-          hook.result = DocumentEntity.parse(doc);
+          hook.result = DocumentEntity.parse(doc, options);
         }
       }
     }

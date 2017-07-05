@@ -1,8 +1,18 @@
+import { omit } from 'lodash';
 import Entity from 'mostly-entity';
 import { getBreadcrumbs } from '~/helpers';
+import ResourceEntity from './resource-entity';
 
 const FolderEntity = new Entity('Folder', {
-  parent: { omit: ['parent'] }
+  file: { using: ResourceEntity },
+  files: { using: ResourceEntity },
+});
+
+FolderEntity.expose('parent', (obj, options) => {
+  if (options.provider && obj.parent.parent) {
+    return omit(obj.parent, ['parent']);
+  }
+  return obj.parent;
 });
 
 FolderEntity.expose('metadata', {}, obj => {
