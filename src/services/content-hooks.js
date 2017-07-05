@@ -29,13 +29,19 @@ export function presentEntity(entities = {}) {
           if (doc.type && entities[doc.type]) {
             return entities[doc.type].parse(doc);
           } else {
-            return doc;
+            debug('WARNING: Document type entity', doc.id, doc.type, 'not found in');
+            debug('  =>', Object.keys(entities));
+            return DocumentEntity.parse(doc);
           }
         });
       } else {
         let doc = hook.result;
         if (doc.type && entities[doc.type]) {
           hook.result = entities[doc.type].parse(doc);
+        } else {
+          debug('WARNING: Document type entity', doc.id, doc.type, 'not found in');
+          debug('  =>', Object.keys(entities));
+          hook.result = DocumentEntity.parse(doc);
         }
       }
     }
