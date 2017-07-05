@@ -87,7 +87,7 @@ export function hasFolderishChild() {
     }
 
     const folders = hook.app.service('folders');
-    let results = Array.concat([], hook.result.data || hook.result);
+    let results = Array.concat([], hook.result? hook.result.data || hook.result : []);
 
     function folderishChild(doc) {
       // only folder need to check hasFolderishChild
