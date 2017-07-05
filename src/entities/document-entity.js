@@ -22,10 +22,11 @@ DocumentEntity.expose('metadata', obj => {
   const facets = [];
   const favorites = [];
   const subtypes = [];
+  const permissions = ['Everything'];
   const thumbnail = {
     url: '/bower_components/playing-content-elements/images/icons/icon_100.png'
   };
-  return Object.assign({}, { breadcrumbs, facets, favorites, subtypes, thumbnail });
+  return Object.assign({}, { breadcrumbs, facets, favorites, permissions, subtypes, thumbnail });
 });
 
 DocumentEntity.excepts('destroyedAt');

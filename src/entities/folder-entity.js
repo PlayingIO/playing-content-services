@@ -21,11 +21,12 @@ FolderEntity.expose('metadata', {}, obj => {
   const breadcrumbs = getBreadcrumbs(obj);
   const facets = [];
   const favorites = [];
-  const subtypes = [];
+  const subtypes = ['file'];
+  const permissions = ['Everything'];
   const thumbnail = {
     url: '/bower_components/playing-content-elements/images/icons/icon_100.png'
   };
-  return Object.assign({}, { breadcrumbs, facets, favorites, subtypes, thumbnail });
+  return Object.assign({}, { breadcrumbs, facets, favorites, permissions, subtypes, thumbnail });
 });
 
 FolderEntity.excepts('destroyedAt');
