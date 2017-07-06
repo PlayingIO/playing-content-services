@@ -1,6 +1,7 @@
-import { omit } from 'lodash';
+import { omit, pick } from 'lodash';
 import Entity from 'mostly-entity';
 import { getBreadcrumbs } from '~/helpers';
+import { DocTypes, Permissions } from '~/constants';
 import ResourceEntity from './resource-entity';
 
 const DocumentEntity = new Entity('Document', {
@@ -21,8 +22,8 @@ DocumentEntity.expose('metadata', obj => {
   const breadcrumbs = getBreadcrumbs(obj);
   const facets = [];
   const favorites = [];
-  const subtypes = [];
-  const permissions = ['Everything'];
+  const subtypes = Object.values(pick(DocTypes, ['Picture']));
+  const permissions = ['Everything', 'Read', 'Write', 'ReadWrite'];
   const thumbnail = {
     url: '/bower_components/playing-content-elements/images/icons/icon_100.png'
   };
