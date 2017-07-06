@@ -11,8 +11,8 @@ const fields = {
   description: { type: 'String' },
   parent: { type: 'ObjectId' },
   path: { type: 'String', default: '/', unique: true },
-  subjects: { type: 'Array' },
-  rights: { type: 'Array' },
+  subjects: [{ type: 'String' }],
+  rights: [{ type: 'String' }],
   source: { type: 'String' },
   nature: { type: 'String' },
   coverage: { type: 'String' },
@@ -22,7 +22,7 @@ const fields = {
   format: { type: 'String' },
   language: { type: 'String' },
   creator: { type: 'String' },
-  contributors: { type: 'Array' },
+  contributors: [{ type: 'String' }],
   files: resources, // attachements
   verion: { type: 'Number' }
 };

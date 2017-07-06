@@ -1,8 +1,5 @@
-import assert from 'assert';
 import { hooks as auth } from 'feathers-authentication';
-import { filter, kebabCase } from 'lodash';
 import { hooks } from 'mostly-feathers-mongoose';
-import path from 'path';
 import * as content from '../content-hooks';
 
 module.exports = {
@@ -18,7 +15,7 @@ module.exports = {
     ],
     patch: [
       content.computePath({ slug: true })
-    ],
+    ]
   },
   after: {
     all: [
