@@ -1,6 +1,6 @@
 import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
-import { resource, resources } from './resource-schema';
+import { resources } from './resource-schema';
 
 const options = {
   discriminatorKey: 'type'
@@ -11,8 +11,8 @@ const fields = {
   description: { type: 'String' },
   parent: { type: 'ObjectId' },
   path: { type: 'String', default: '/', unique: true },
-  subjects: [{ type: 'String' }],
-  rights: [{ type: 'String' }],
+  subjects: { type: 'Array' },
+  rights: { type: 'Array' },
   source: { type: 'String' },
   nature: { type: 'String' },
   coverage: { type: 'String' },
@@ -22,8 +22,7 @@ const fields = {
   format: { type: 'String' },
   language: { type: 'String' },
   creator: { type: 'String' },
-  contributors: [{ type: 'String' }],
-  file: resource, // main blob
+  contributors: { type: 'Array' },
   files: resources, // attachements
   verion: { type: 'Number' }
 };

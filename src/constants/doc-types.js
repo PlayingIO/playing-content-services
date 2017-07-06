@@ -1,7 +1,7 @@
 export default {
   Audio: {
-    "type":"Audio",
-    "facets":[
+    "type": "Audio",
+    "facets": [
       "Versionable",
       "Publishable",
       "Commentable",
@@ -9,16 +9,16 @@ export default {
     ]
   },
   Collection: {
-    "type":"Collection",
-    "facets":[
+    "type": "Collection",
+    "facets": [
       "Versionable",
       "Collection",
       "NotCollectionMember"
     ]
   },
   File: {
-    "type":"File",
-    "facets":[
+    "type": "File",
+    "facets": [
       "Versionable",
       "Publishable",
       "Commentable",
@@ -27,14 +27,14 @@ export default {
     ]
   },
   Folder: {
-    "type":"Folder",
-    "facets":[
+    "type": "Folder",
+    "facets": [
       "Folderish"
     ]
   },
   Note: {
-    "type":"Note",
-    "facets":[
+    "type": "Note",
+    "facets": [
       "Versionable",
       "Publishable",
       "Commentable",
@@ -60,7 +60,7 @@ export default {
   },
   Video: {
     "type": "Video",
-    "facets":[
+    "facets": [
       "Versionable",
       "Publishable",
       "Video",

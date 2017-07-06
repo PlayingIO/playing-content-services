@@ -1,9 +1,9 @@
 import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
+import { resource } from './resource-schema';
 
 const fields = {
-  content: { type: 'String'  },
-  mimeType: { type: 'String' }
+  file: resource, // main blob
 };
 
 export default function(app, name) {

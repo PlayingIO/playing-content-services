@@ -1,5 +1,5 @@
 const resource = {
-  name: { type: 'String', default: '' },
+  name: { type: 'String' },
   url: { type: 'String' },
   size: { type: 'Number' },
   width: { type: 'Number' },
