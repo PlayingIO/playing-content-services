@@ -22,7 +22,7 @@ FolderEntity.expose('metadata', {}, obj => {
   const breadcrumbs = getBreadcrumbs(obj);
   const facets = [];
   const favorites = [];
-  const subtypes = pick(DocTypes, ['File', 'Folder', 'Picture']);
+  const subtypes = Object.values(pick(DocTypes, ['File', 'Folder', 'Picture']));
   const permissions = ['Everything', 'Read', 'Write', 'ReadWrite', 'ReadChildren', 'AddChildren', 'RemoveChildren'];
   const thumbnail = {
     url: '/bower_components/playing-content-elements/images/icons/icon_100.png'
