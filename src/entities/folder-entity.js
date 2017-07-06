@@ -25,7 +25,7 @@ FolderEntity.expose('metadata', {}, obj => {
   const subtypes = Object.values(pick(DocTypes, ['File', 'Folder', 'Picture']));
   const permissions = ['Everything', 'Read', 'Write', 'ReadWrite', 'ReadChildren', 'AddChildren', 'RemoveChildren'];
   const thumbnail = {
-    url: '/bower_components/playing-content-elements/images/icons/icon_100.png'
+    url: 'bower_components/playing-content-elements/images/icons/icon_100.png'
   };
   return Object.assign({}, { breadcrumbs, facets, favorites, permissions, subtypes, thumbnail });
 });

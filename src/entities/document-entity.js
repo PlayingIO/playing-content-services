@@ -25,7 +25,7 @@ DocumentEntity.expose('metadata', obj => {
   const subtypes = Object.values(pick(DocTypes, ['Picture']));
   const permissions = ['Everything', 'Read', 'Write', 'ReadWrite'];
   const thumbnail = {
-    url: '/bower_components/playing-content-elements/images/icons/icon_100.png'
+    url: 'bower_components/playing-content-elements/images/icons/icon_100.png'
   };
   return Object.assign({}, { breadcrumbs, facets, favorites, permissions, subtypes, thumbnail });
 });
