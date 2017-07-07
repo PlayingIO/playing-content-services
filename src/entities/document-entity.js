@@ -10,7 +10,7 @@ const DocumentEntity = new Entity('Document', {
 });
 
 DocumentEntity.expose('parent', (obj, options) => {
-  if (options.provider && obj.parent.parent) {
+  if (options.provider && obj.parent && obj.parent.parent) {
     return omit(obj.parent, ['parent']);
   }
   return obj.parent;
