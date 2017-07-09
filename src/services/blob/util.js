@@ -1,3 +1,4 @@
+import assert from 'assert';
 import crypto from 'crypto';
 import from from 'from2';
 
@@ -5,7 +6,7 @@ import from from 'from2';
 // create a stream from a buffer
 // buffer -> stream
 export function fromBuffer (buffer) {
-  // assert.ok(Buffer.isBuffer(buffer))
+  assert.ok(Buffer.isBuffer(buffer));
 
   return from(function (size, next) {
     if (buffer.length <= 0) {

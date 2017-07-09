@@ -2,11 +2,11 @@ import { omit, pick } from 'lodash';
 import Entity from 'mostly-entity';
 import { getBreadcrumbs } from '~/helpers';
 import { DocTypes, Permissions } from '~/constants';
-import ResourceEntity from './resource-entity';
+import BlobEntity from './blob-entity';
 
 const FileEntity = new Entity('File', {
-  file: { using: ResourceEntity },
-  files: { using: ResourceEntity },
+  file: { using: BlobEntity },
+  files: { using: BlobEntity },
 });
 
 FileEntity.expose('parent', (obj, options) => {
