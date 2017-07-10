@@ -1,6 +1,7 @@
 const blob = {
   idx: { type: 'Number' },
   name: { type: 'String' },
+  vender: { type: 'String', enum: ['file', 's3', 'qiniu', 'cloudary'] },
   key: { type: 'String' }, // blob-storage key
   url: { type: 'String' }, // web only
   size: { type: 'Number' },
