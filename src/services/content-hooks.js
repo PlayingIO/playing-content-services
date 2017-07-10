@@ -79,7 +79,6 @@ export function computePath(options = { slug: false }) {
         debug('Parent path undefined', parent);
         throw new Error('Parent path undefined');
       }
-      console.log('hook.data', hook.data);
       return hook;
     });
   };
