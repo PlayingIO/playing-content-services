@@ -6,7 +6,7 @@ import { extname } from 'path';
 
 import assert from 'assert';
 import makeDebug from 'debug';
-import { Service, createService } from 'mostly-feathers-mongoose';
+import { Service, createService, transform } from 'mostly-feathers-mongoose';
 
 import BlobModel from '~/models/blob-model';
 import defaultHooks from './blob-hooks';
@@ -40,8 +40,8 @@ class BlobService extends Service {
   }
 
   get(id, params) {
-    let [batchId, idx] = id.split('.');
-    debug('get', batchId, idx);
+    let [batchId, index] = id.split('.');
+    debug('get', batchId, index);
 
     const readBlob = (blob) => {
       debug('readBlob', blob);
@@ -57,22 +57,26 @@ class BlobService extends Service {
       });
     };
 
-    if (idx !== undefined) {
-      return this._getBlob(batchId, idx).then(blob =>
+    if (index !== undefined) {
+      return this._getBlob(batchId, index).then(blob =>
         params.query.embedded !== undefined? readBlob(blob) : blob);
     } else {
-      return super.get(id, params);
+      return super.get(id, params).then(result => {
+        debug('getBatch', result);
+        result.blobs = transform(result.blobs);
+        return result;
+      });
     }
   }
 
-  _getBlob(batchId, idx) {
+  _getBlob(batchId, index) {
     return super.get(batchId).then(result => {
       if (!result) throw new Error('Blob batch id not exists');
       const batch = result.data || result;
       const blobs = batch.blobs || [];
-      if (idx >= blobs.length) throw new Error('Blob index out of range of the batch');
-      return blobs[idx];
-    });
+      if (index >= blobs.length) throw new Error('Blob index out of range of the batch');
+      return blobs[index];
+    }).then(transform);
   }
 
   create(data, params) {
@@ -99,19 +103,20 @@ class BlobService extends Service {
 
     const writeBlob = (batch) => {
       batch.blobs = batch.blobs || [];
-      const idx = data.fileIdx || batch.blobs.length;
-      const key = `${id}.${idx}.${ext}`;
+      const index = data.index || batch.blobs.length;
+      const vender = data.vender || 'file';
+      const key = `${id}.${index}.${ext}`;
       return new Promise((resolve, reject) => {
         fromBuffer(buffer)
           .pipe(this.Storage.createWriteStream({
-            key, name, mimetype, size
+            key, name, vender, mimetype, size
           }, (error) => {
             if (error) return reject(error);
             let blob = {
-              idx, name, key, mimetype, size
+              index, name, key, vender, mimetype, size
             };
-            if (idx < batch.blobs.length) {
-              batch.blobs[idx] = blob;
+            if (index < batch.blobs.length) {
+              batch.blobs[index] = blob;
             } else {
               batch.blobs.push(blob);
             }
@@ -122,10 +127,9 @@ class BlobService extends Service {
     };
 
     const updateBlobs = (blobs) => {
-      return super.patch(id, { blobs: blobs }).then(batch => {
-        let blob = batch.blobs[batch.blobs.length - 1];
-        return blob;
-      });
+      return super.patch(id, { blobs: blobs }).then(batch =>
+        batch.blobs? batch.blobs[batch.blobs.length - 1] : {}
+      ).then(transform);
     };
 
     return getBatch(id)
@@ -138,8 +142,8 @@ class BlobService extends Service {
   }
 
   remove (id) {
-    let [batchId, idx] = id.split('.');
-    debug('remove', batchId, idx);
+    let [batchId, index] = id.split('.');
+    debug('remove', batchId, index);
 
     const removeBlob = blob => {
       debug('remove blob', blob);
@@ -150,8 +154,8 @@ class BlobService extends Service {
       });
     };
 
-    if (idx !== undefined) {
-      return this._getBlob(batchId, idx).then(removeBlob);
+    if (index !== undefined) {
+      return this._getBlob(batchId, index).then(removeBlob);
     } else {
       return super.remove(batchId);
     }
