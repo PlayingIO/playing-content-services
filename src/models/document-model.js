@@ -1,6 +1,6 @@
 import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
-import { blobs } from './blob-schema';
+import { blob, blobs } from './blob-schema';
 
 const options = {
   discriminatorKey: 'type'
@@ -23,6 +23,7 @@ const fields = {
   language: { type: 'String' },
   creator: { type: 'String' },
   contributors: [{ type: 'String' }],
+  file: blob, // main blob
   files: blobs, // attachements
   verion: { type: 'Number' }
 };

@@ -3,7 +3,6 @@ import { plugins } from 'mostly-feathers-mongoose';
 import { blob } from './blob-schema';
 
 const fields = {
-  file: blob, // main blob
 };
 
 export default function(app, name) {

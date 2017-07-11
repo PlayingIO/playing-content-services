@@ -71,7 +71,7 @@ export function computePath(options = { slug: false }) {
             slug = kebabCase(hook.data.title);
           }
         } else {
-          slug = shortid.generate();
+          slug = hook.data.path || shortid.generate();
         }
         debug('compute parent path', parent.path, slug);
         hook.data.path = path.join(parent.path, slug);
@@ -87,7 +87,7 @@ export function computePath(options = { slug: false }) {
 // check whether there is any folder children
 export function hasFolderishChild() {
   return hook => {
-    assert(hook.type === 'after', `Must be used as a 'after' hook.`);
+    assert(hook.type === 'after', `hasFolderishChild must be used as a 'after' hook.`);
 
     // If it was an internal call then skip this hook
     if (!hook.params.provider) {
@@ -114,5 +114,48 @@ export function hasFolderishChild() {
       }
     }
     return Promise.all(results.map(folderishChild)).then(results => hook);
+  };
+}
+
+// check whether there is any folder children
+export function fetchBlobs(options) {
+  return hook => {
+    assert(hook.type === 'before', `fetchBlob must be used as a 'before' hook.`);
+
+    // If it was an internal call then skip this hook
+    if (!hook.params.provider) {
+      return hook;
+    }
+ 
+    const blobs = hook.app.service('blobs');
+
+    function getFullBlob(file) {
+      // fetch only file is not fulfilled
+      if (file && file.batch && file.index && !(file.key || file.url)) {
+        return blobs.get(file.batch).then(batch => {
+          let blob = batch.blobs.find(b => b.index === parseInt(file.index));
+          return Object.assign(file, blob);
+        });
+      }
+      return Promise.resolve(file);
+    }
+
+    let promises = {};
+    
+    promises.file = getFullBlob(hook.data.file).then(blob => {
+      debug('getFullBlob file', blob);
+      hook.data.file = blob;
+    });
+
+    promises.files = Promise.all((hook.data.files || []).map(file => getFullBlob(file)))
+      .then(blobs => {
+        debug('getFullBlob files', blobs);
+        hook.data.files = blobs;
+      });
+
+    Promise.props(promises).then(results => {
+      debug('fetchBlob hook.data', hook.data, results);
+      return hook;
+    });
   };
 }

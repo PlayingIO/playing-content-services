@@ -1,4 +1,4 @@
-import { remove } from 'feathers-hooks-common';
+import { discard } from 'feathers-hooks-common';
 import { hooks as auth } from 'feathers-authentication';
 import { hooks } from 'mostly-feathers-mongoose';
 import * as content from '../content-hooks';
@@ -13,12 +13,12 @@ module.exports = {
     ],
     update: [
       hooks.depopulate('parent'),
-      remove('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
+      discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
       content.computePath()
     ],
     patch: [
       hooks.depopulate('parent'),
-      remove('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
+      discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
       content.computePath()
     ]
   },
