@@ -14,11 +14,13 @@ module.exports = {
     update: [
       hooks.depopulate('parent'),
       discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
+      content.fetchBlobs(),
       content.computePath()
     ],
     patch: [
       hooks.depopulate('parent'),
       discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
+      content.fetchBlobs(),
       content.computePath()
     ]
   },
