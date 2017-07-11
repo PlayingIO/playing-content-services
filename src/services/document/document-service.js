@@ -20,6 +20,11 @@ class DocumentService extends Service {
     this.hooks(defaultHooks);
   }
 
+  patch(id, data, params) {
+    debug('patch', id, data, params);
+    return super.patch(id, data, params);
+  }
+
   removeFile(id, data, params, orignal) {
     return super.patch(id, { file: null }, params);
   }

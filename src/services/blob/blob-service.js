@@ -1,11 +1,9 @@
+import assert from 'assert';
 import toBuffer from 'concat-stream';
 import { getBase64DataURI, parseDataURI } from 'dauria';
+import makeDebug from 'debug';
 import errors from 'feathers-errors';
 import mimeTypes from 'mime-types';
-import { extname } from 'path';
-
-import assert from 'assert';
-import makeDebug from 'debug';
 import { Service, createService, transform } from 'mostly-feathers-mongoose';
 
 import BlobModel from '~/models/blob-model';
@@ -85,7 +83,7 @@ class BlobService extends Service {
 
   update(id, data, params) {
     debug('update', id, data, params);
-    assert(params.file, 'params file not uploaded.');
+    assert(params.file, 'params file not provided.');
     assert(params.file.buffer && params.file.buffer.type === 'Buffer', 'params file has no buffer.');
 
     const name = params.file.originalName;
@@ -158,6 +156,26 @@ class BlobService extends Service {
       return this._getBlob(batchId, index).then(removeBlob);
     } else {
       return super.remove(batchId);
+    }
+  }
+
+  attachOnDocument(id, data, params, original) {
+    assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
+    assert(data.context && data.context.documentType, 'context.documentType not provided.');
+    const documents = this.app.service('documents');
+    if (documents) {
+      let blobs = (original.blobs || []).map(blob => {
+        blob.batch = original.id;
+        delete blob.id;
+        return blob;
+      });
+      debug('attach blobs', blobs);
+      return documents.get(data.context.currentDocument).then(doc => {
+        if (!doc) throw new Error('currentDocument not exists');
+        let files = (doc.files || []).concat(blobs);
+        debug('attach files', files);
+        return documents.patch(doc.id, { files: files });
+      });
     }
   }
 }
