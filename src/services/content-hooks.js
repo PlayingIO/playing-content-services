@@ -19,33 +19,32 @@ const defaultEntities = {
 };
 
 // presentEntity by document type
-export function presentEntity(entities = {}) {
+export function presentDocument(entities = {}) {
   entities = Object.assign(defaultEntities, entities);
 
   return hook => {
-    if (hook.result) {
+    const presentEntity = function(doc) {
       let options = { provider: hook.params.provider };
-      if (hook.result.data) {
-        hook.result.data = hook.result.data.map(doc => {
-          if (doc.type && entities[doc.type]) {
-            debug('Document type entity', doc.id, doc.type, options);
-            return entities[doc.type].parse(doc, options);
-          } else {
-            debug('WARNING: Document type entity', doc.id, doc.type, 'not found in');
-            debug('  =>', Object.keys(entities));
-            return DocumentEntity.parse(doc, options);
-          }
-        });
+
+      if (doc.type && entities[doc.type]) {
+        debug('Document type entity', doc.id, doc.type, options);
+        return entities[doc.type].parse(doc, options);
       } else {
-        let doc = hook.result;
-        if (doc.type && entities[doc.type]) {
-          debug('Document type entity', doc.id, doc.type, options);
-          hook.result = entities[doc.type].parse(doc, options);
+        debug('WARNING: Document type entity', doc.id, doc.type, 'not found in');
+        debug('  =>', Object.keys(entities));
+        return DocumentEntity.parse(doc, options);
+      }
+    };
+
+    if (hook.result) {
+      if (hook.result.data) {
+        if (Array.isArray(hook.result.data)) {
+          hook.result.data = hook.result.data.map(presentEntity);
         } else {
-          debug('WARNING: Document type entity', doc.id, doc.type, 'not found in');
-          debug('  =>', Object.keys(entities));
-          hook.result = DocumentEntity.parse(doc, options);
+          hook.result.data = presentEntity(hook.result.data);
         }
+      } else {
+        hook.result = presentEntity(hook.result);
       }
     }
     return hook;
@@ -140,20 +139,18 @@ export function fetchBlobs(options) {
       return Promise.resolve(file);
     }
 
-    let promises = {};
-    
-    promises.file = getFullBlob(hook.data.file).then(blob => {
+    const getFileBlob = getFullBlob(hook.data.file).then(blob => {
       debug('getFullBlob file', blob);
       hook.data.file = blob;
     });
 
-    promises.files = Promise.all((hook.data.files || []).map(file => getFullBlob(file)))
+    const getFilesBlob = Promise.all((hook.data.files || []).map(file => getFullBlob(file)))
       .then(blobs => {
         debug('getFullBlob files', blobs);
         hook.data.files = blobs;
       });
 
-    Promise.props(promises).then(results => {
+    return Promise.all([getFileBlob, getFilesBlob]).then(results => {
       debug('fetchBlob hook.data', hook.data, results);
       return hook;
     });

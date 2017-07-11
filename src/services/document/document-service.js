@@ -1,6 +1,9 @@
+import makeDebug from 'debug';
 import { Service, createService } from 'mostly-feathers-mongoose';
 import DocumentModel from '~/models/document-model';
 import defaultHooks from './document-hooks';
+
+const debug = makeDebug('playing:content-services:documents');
 
 const defaultOptions = {
   name: 'document-service'
@@ -15,6 +18,10 @@ class DocumentService extends Service {
   setup(app) {
     super.setup(app);
     this.hooks(defaultHooks);
+  }
+
+  removeFile(id, data, params, orignal) {
+    return super.patch(id, { file: null }, params);
   }
 }
 

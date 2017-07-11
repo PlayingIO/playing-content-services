@@ -13,21 +13,19 @@ module.exports = {
     ],
     update: [
       hooks.depopulate('parent'),
-      discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
-      content.fetchBlobs(),
-      content.computePath({ slug: true })
+      discard('id', 'metadata', 'path', 'createdAt', 'updatedAt', 'destroyedAt'),
+      content.fetchBlobs()
     ],
     patch: [
       hooks.depopulate('parent'),
-      discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
-      content.fetchBlobs(),
-      content.computePath({ slug: true })
+      discard('id', 'metadata', 'path', 'createdAt', 'updatedAt', 'destroyedAt'),
+      content.fetchBlobs()
     ]
   },
   after: {
     all: [
       hooks.populate('parent', { service: 'folders' }),
-      content.presentEntity(),
+      content.presentDocument(),
       content.hasFolderishChild(),
       hooks.responder()
     ]
