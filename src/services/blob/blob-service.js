@@ -86,7 +86,7 @@ class BlobService extends Service {
     assert(params.file, 'params file not provided.');
     assert(params.file.buffer && params.file.buffer.type === 'Buffer', 'params file has no buffer.');
 
-    const name = params.file.originalName;
+    const name = params.file.originalname;
     const mimetype = params.file.mimetype;
     const ext = mimeTypes.extension(mimetype);
     const buffer = Buffer.from(params.file.buffer.data);
@@ -143,7 +143,7 @@ class BlobService extends Service {
     let [batchId, index] = id.split('.');
     debug('remove', batchId, index);
 
-    const removeBlob = blob => {
+    const removeBlob = (blob) => {
       debug('remove blob', blob);
       return new Promise((resolve, reject) => {
         this.Storage.remove({
@@ -162,21 +162,45 @@ class BlobService extends Service {
   attachOnDocument(id, data, params, original) {
     assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
     assert(data.context && data.context.documentType, 'context.documentType not provided.');
+
     const documents = this.app.service('documents');
-    if (documents) {
-      let blobs = (original.blobs || []).map(blob => {
-        blob.batch = original.id;
-        delete blob.id;
-        return blob;
-      });
-      debug('attach blobs', blobs);
-      return documents.get(data.context.currentDocument).then(doc => {
-        if (!doc) throw new Error('currentDocument not exists');
-        let files = (doc.files || []).concat(blobs);
-        debug('attach files', files);
+
+    let blobs = (original.blobs || []).map((blob) => {
+      blob.batch = original.id;
+      delete blob.id;
+      return blob;
+    });
+
+    return documents.get(data.context.currentDocument).then((doc) => {
+      if (!doc) throw new Error('currentDocument not exists');
+      let files = (doc.files || []).concat(blobs);
+      debug('attachOnDocument', files);
+      return documents.patch(doc.id, { files: files });
+    });
+  }
+
+  removeFromDocument(id, data, params, orignal) {
+    assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
+    assert(data.context && data.context.documentType, 'context.documentType not provided.');
+    assert(data.params && data.params.xpath, 'params.xpath not provided.');
+
+    const documents = this.app.service('documents');
+
+    return documents.get(data.context.currentDocument).then((doc) => {
+      if (!doc) throw new Error('currentDocument not exists');
+      if (data.params.xpath.startsWith('files')) {
+        let [xpath, index] = data.params.xpath.split('/');
+        let files = (doc.files || []).filter((blob) => {
+          return blob.index !== parseInt(index);
+        });
+        debug('removeFromDocument', xpath, index, files);
         return documents.patch(doc.id, { files: files });
-      });
-    }
+      } else {
+        let xpath = data.params.xpath;
+        debug('removeFromDocument', xpath);
+        return documents.patch(doc.id, { [xpath]: null });
+      }
+    });
   }
 }
 
