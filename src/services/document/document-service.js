@@ -20,7 +20,7 @@ class DocumentService extends Service {
     super.setup(app);
     this.hooks(defaultHooks);
   }
-
+  
   patch(id, data, params) {
     debug('patch', id, data, params);
     return super.patch(id, data, params);
