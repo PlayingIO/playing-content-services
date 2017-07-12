@@ -20,7 +20,7 @@ FolderEntity.expose('metadata', {}, obj => {
   if (obj.metadata) return obj.metadata;
   
   const breadcrumbs = getBreadcrumbs(obj);
-  const facets = [];
+  const facets = ['Folderish'];
   const favorites = [];
   const subtypes = Object.values(pick(DocTypes, ['File', 'Folder', 'Picture']));
   const permissions = ['Everything', 'Read', 'Write', 'ReadWrite', 'ReadChildren', 'AddChildren', 'RemoveChildren'];

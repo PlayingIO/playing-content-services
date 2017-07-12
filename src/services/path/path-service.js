@@ -11,9 +11,17 @@ class PathService {
     this.hooks(defaultHooks);
   }
 
+  find(params) {
+    params = params || { query: {} };
+    params.query.path = '/';
+
+    const documents = this.app.service('documents');
+    return documents.get(null, params);
+  }
+
   get(id, params) {
     params = params || { query: {} };
-    params.query.path = '/' + path.join(id, params.__action);
+    params.query.path = '/' + path.join(id, params.__action || '');
     delete params.__action;
 
     const documents = this.app.service('documents');

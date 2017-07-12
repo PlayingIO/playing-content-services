@@ -9,7 +9,8 @@ module.exports = {
       auth.authenticate('jwt')
     ],
     create: [
-      content.computePath()
+      content.computePath(),
+      content.fetchBlobs()
     ],
     update: [
       hooks.depopulate('parent'),

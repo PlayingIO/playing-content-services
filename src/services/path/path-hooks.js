@@ -6,9 +6,6 @@ module.exports = {
   before: {
     all: [
       auth.authenticate('jwt')
-    ],
-    get: [
-      hook => console.log('##########path.get', hook)
     ]
   },
   after: {
