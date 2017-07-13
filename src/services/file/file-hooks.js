@@ -28,7 +28,7 @@ module.exports = function(options = {}) {
     after: {
       all: [
         hooks.populate('parent', { service: 'folders' }),
-        hooks.presentEntity(FileEntity),
+        hooks.presentEntity(FileEntity, options),
         content.hasFolderishChild(),
         hooks.responder()
       ]

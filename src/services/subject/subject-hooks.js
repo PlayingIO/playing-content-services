@@ -11,7 +11,7 @@ module.exports = function(options = {}) {
     },
     after: {
       all: [
-        hooks.presentEntity(SubjectEntity),
+        hooks.presentEntity(SubjectEntity, options),
         hooks.responder()
       ]
     }

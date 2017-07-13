@@ -16,7 +16,7 @@ FolderEntity.expose('parent', (obj, options) => {
   return obj.parent;
 });
 
-FolderEntity.expose('metadata', {}, obj => {
+FolderEntity.expose('metadata', (obj, options) => {
   if (obj.metadata) return obj.metadata;
   
   const breadcrumbs = getBreadcrumbs(obj);

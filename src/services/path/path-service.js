@@ -8,6 +8,7 @@ const debug = makeDebug('playing:content-services:path');
 // Path proxy service to documents
 class PathService {
   constructor(options) {
+    this.options = options;
   }
 
   setup(app) {

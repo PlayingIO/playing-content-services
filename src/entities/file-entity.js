@@ -16,7 +16,7 @@ FileEntity.expose('parent', (obj, options) => {
   return obj.parent;
 });
 
-FileEntity.expose('metadata', {}, obj => {
+FileEntity.expose('metadata', (obj, options) => {
   if (obj.metadata) return obj.metadata;
 
   const breadcrumbs = getBreadcrumbs(obj);

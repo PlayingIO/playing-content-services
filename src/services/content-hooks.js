@@ -19,18 +19,18 @@ const defaultEntities = {
 };
 
 // presentEntity by document type
-export function presentDocument(entities = {}) {
-  entities = Object.assign(defaultEntities, entities);
+export function presentDocument(options = {}) {
+  const entities = Object.assign(defaultEntities, options.entities);
 
   return hook => {
     const presentEntity = function(doc) {
-      let options = { provider: hook.params.provider };
+      options.provider = hook.params.provider;
 
       if (doc.type && entities[doc.type]) {
-        debug('Document type entity', doc.id, doc.type, options);
+        debug('present ' + doc.type + ' type entity', doc.id);
         return entities[doc.type].parse(doc, options);
       } else {
-        debug('WARNING: Document type entity', doc.id, doc.type, 'not found in');
+        debug('WARNING: ' + doc.type + ' type entity not found in');
         debug('  =>', Object.keys(entities));
         return DocumentEntity.parse(doc, options);
       }
