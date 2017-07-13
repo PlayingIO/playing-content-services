@@ -20,14 +20,15 @@ FolderEntity.expose('metadata', {}, obj => {
   if (obj.metadata) return obj.metadata;
   
   const breadcrumbs = getBreadcrumbs(obj);
-  const facets = ['Folderish'];
+  const facets = DocTypes[obj.type].facets;
   const favorites = [];
-  const subtypes = Object.values(pick(DocTypes, ['File', 'Folder', 'Picture']));
+  const packages = DocTypes[obj.type].packages;
   const permissions = ['Everything', 'Read', 'Write', 'ReadWrite', 'ReadChildren', 'AddChildren', 'RemoveChildren'];
+  const subtypes = Object.values(pick(DocTypes, ['collection', 'file', 'folder', 'picture']));
   const thumbnail = {
     url: 'bower_components/playing-content-elements/images/icons/folder.png'
   };
-  return Object.assign({}, { breadcrumbs, facets, favorites, permissions, subtypes, thumbnail });
+  return Object.assign({}, { breadcrumbs, facets, favorites, packages, permissions, subtypes, thumbnail });
 });
 
 FolderEntity.excepts('destroyedAt');

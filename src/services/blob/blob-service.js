@@ -14,27 +14,24 @@ const debug = makeDebug('playing:content-services:blob');
 
 const defaultOptions = {
   name: 'blob-service',
-  fileCDN: '/file/'
+  blobs: {
+    fileCDN: '/file/'
+  }
 };
 
 class BlobService extends Service {
   constructor(options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);
-
-    if (!options.Storage) {
-      throw new Error('BlobService `options.Storage` must be provided');
-    }
-
-    this.Storage = options.Storage;
-    this.fileCDN = options.fileCDN;
   }
 
   setup(app) {
     super.setup(app);
-    this.hooks(defaultHooks({
-      fileCDN: this.fileCDN
-    }));
+    this.storage = app.get('storage');
+    if (!this.storage) {
+      throw new Error('app context `storage` must be provided');
+    }
+    this.hooks(defaultHooks(this.options));
   }
 
   get(id, params) {
@@ -44,7 +41,7 @@ class BlobService extends Service {
     const readBlob = (blob) => {
       debug('readBlob', blob);
       return new Promise((resolve, reject) => {
-        this.Storage.createReadStream({
+        this.storage.createReadStream({
           key: blob.key
         })
         .on('error', reject)
@@ -106,7 +103,7 @@ class BlobService extends Service {
       const key = `${id}.${index}.${ext}`;
       return new Promise((resolve, reject) => {
         fromBuffer(buffer)
-          .pipe(this.Storage.createWriteStream({
+          .pipe(this.storage.createWriteStream({
             key, name, vender, mimetype, size
           }, (error) => {
             if (error) return reject(error);
@@ -146,7 +143,7 @@ class BlobService extends Service {
     const removeBlob = (blob) => {
       debug('remove blob', blob);
       return new Promise((resolve, reject) => {
-        this.Storage.remove({
+        this.storage.remove({
           key: blob.key
         }, error => error ? reject(error) : resolve(blob));
       });

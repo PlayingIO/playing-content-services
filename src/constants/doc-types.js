@@ -1,6 +1,7 @@
 export default {
-  Audio: {
+  audio: {
     "type": "Audio",
+    "packages": "playing-content-elements",
     "facets": [
       "Versionable",
       "Publishable",
@@ -8,16 +9,18 @@ export default {
       "Audio"
     ]
   },
-  Collection: {
+  collection: {
     "type": "Collection",
+    "packages": "playing-interaction-elements",
     "facets": [
       "Versionable",
       "Collection",
       "NotCollectionMember"
     ]
   },
-  File: {
+  file: {
     "type": "File",
+    "packages": "playing-content-elements",
     "facets": [
       "Versionable",
       "Publishable",
@@ -26,14 +29,16 @@ export default {
       "Downloadable"
     ]
   },
-  Folder: {
+  folder: {
     "type": "Folder",
+    "packages": "playing-content-elements",
     "facets": [
       "Folderish"
     ]
   },
-  Note: {
+  note: {
     "type": "Note",
+    "packages": "playing-content-elements",
     "facets": [
       "Versionable",
       "Publishable",
@@ -41,15 +46,17 @@ export default {
       "HasRelatedText"
     ]
   },
-  OrderedFolder: {
+  orderedFolder: {
     "type": "OrderedFolder",
+    "packages": "playing-content-elements",
     "facets": [
       "Folderish",
       "Orderable"
     ]
   },
-  Picture: {
+  picture: {
     "type": "Picture",
+    "packages": "playing-content-elements",
     "facets": [
       "Versionable",
       "Publishable",
@@ -58,8 +65,9 @@ export default {
       "HasRelatedText"
     ]
   },
-  Video: {
+  video: {
     "type": "Video",
+    "packages": "playing-content-elements",
     "facets": [
       "Versionable",
       "Publishable",

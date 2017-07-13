@@ -20,14 +20,15 @@ FileEntity.expose('metadata', {}, obj => {
   if (obj.metadata) return obj.metadata;
 
   const breadcrumbs = getBreadcrumbs(obj);
-  const facets = [];
+  const facets = DocTypes[obj.type].facets;
   const favorites = [];
-  const subtypes = Object.values(pick(DocTypes, ['Picture']));
+  const packages = DocTypes[obj.type].packages;
   const permissions = ['Everything', 'Read', 'Write', 'ReadWrite'];
+  const subtypes = Object.values(pick(DocTypes, ['picture']));
   const thumbnail = {
     url: 'bower_components/playing-content-elements/images/icons/file.png'
   };
-  return Object.assign({}, { breadcrumbs, facets, favorites, permissions, subtypes, thumbnail });
+  return Object.assign({}, { breadcrumbs, facets, favorites, packages, permissions, subtypes, thumbnail });
 });
 
 FileEntity.excepts('destroyedAt');
