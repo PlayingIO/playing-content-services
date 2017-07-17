@@ -5,6 +5,7 @@ import FolderEntity from '~/entities/folder-entity';
 import * as content from '../content-hooks';
 
 module.exports = function(options = {}) {
+  console.log('#########FolderService hooks', options);
   return {
     before: {
       all: [
@@ -29,7 +30,7 @@ module.exports = function(options = {}) {
       all: [
         hooks.populate('parent', { service: 'folders' }),
         hooks.presentEntity(FolderEntity, options),
-        content.documentEnrichers(),
+        content.documentEnrichers(options),
         hooks.responder()
       ]
     }

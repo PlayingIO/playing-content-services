@@ -21,7 +21,7 @@ class PathService {
     params.query.path = '/';
 
     const folders = this.app.service('folders');
-    return folders.first({ query: { path: '/' } });
+    return folders.first(params);
   }
 
   get(id, params) {

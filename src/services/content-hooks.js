@@ -1,11 +1,13 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import { hooks as auth } from 'feathers-authentication';
-import { filter, kebabCase, omit } from 'lodash';
+import { filter, kebabCase, omit, pick } from 'lodash';
 import { hooks } from 'mostly-feathers-mongoose';
 import path from 'path';
 import shortid from 'shortid';
+import url from 'url';
 
+import { DocTypes, Permissions } from '~/constants';
 import DocumentEntity from '~/entities/document-entity';
 import FolderEntity from '~/entities/folder-entity';
 import FileEntity from '~/entities/file-entity';
@@ -84,7 +86,7 @@ export function computePath(options = { slug: false }) {
 }
 
 // check whether there is any folder children
-function hasFolderishChild(hook, doc) {
+function hasFolderishChild(hook, doc, options) {
   const folders = hook.app.service('folders');
   // only folder need to check hasFolderishChild
   if (doc.type === 'folder') {
@@ -102,7 +104,7 @@ function hasFolderishChild(hook, doc) {
   }
 }
 
-function getBreadcrumbs(doc) {
+function getBreadcrumbs(hook, doc, options) {
   let breadcrumbs = [];
   let parent = doc.parent;
   while (parent && parent.path) {
@@ -113,25 +115,58 @@ function getBreadcrumbs(doc) {
   return breadcrumbs;
 }
 
-function getCollections(hook, doc) {
+function getCollections(hook, doc, options) {
   const collections = hook.app.service('collections');
+  // doc.metadata.collections = [];
   return Promise.resolve(doc);
 }
 
+function getFavorites(hook, doc, options) {
+  const favorites = hook.app.service('favorites');
+  // doc.metadata.favorites = [];
+  return Promise.resolve(doc);
+}
+
+function getPermission(hook, doc, options) {
+  switch(doc.type) {
+    case 'document': return ['Everything', 'Read', 'Write', 'ReadWrite'];
+    case 'file': return ['Everything', 'Read', 'Write', 'ReadWrite'];
+    case 'folder': return ['Everything', 'Read', 'Write', 'ReadWrite', 'ReadChildren', 'AddChildren', 'RemoveChildren'];
+    default: return ['Everything', 'Read', 'Write', 'ReadWrite'];
+  }
+}
+
+function getSubtypes(hook, doc, options) {
+  const Types = options.DocTypes || DocTypes;
+  switch(doc.type) {
+    case 'document': return Object.values(pick(Types, ['picture']));
+    case 'file': return Object.values(pick(Types, ['picture']));
+    case 'folder': return Object.values(pick(Types, ['collection', 'file', 'folder', 'picture']));
+    default: return [];
+  }
+}
+
+function getThumbnail(hook, doc) {
+  const baseUrl = 'bower_components/playing-content-elements/images/icons/';
+  return {
+    url: url.resolve(baseUrl, doc.type + '.png')
+  };
+}
+
 // Add document metadata according to request header
-export function documentEnrichers() {
+export function documentEnrichers(options = {}) {
   return hook => {
     assert(hook.type === 'after', `hasFolderishChild must be used as a 'after' hook.`);
 
-    // If it was an internal call then skip this hook
-    if (!hook.params.provider) {
+    // If no enrichers-document header then skip this hook
+    if (!hook.params.headers || !hook.params.headers['enrichers-document']) {
+      debug('Skip documentEnrichers without headers', hook.params);
       return hook;
     }
 
-    let enrichers = (hook.params.headers['enrichers-document'] || '')
-      .split(',')
+    let enrichers = hook.params.headers['enrichers-document'].split(',')
       .map(e => e.trim());
-    debug('enrichers-document', enrichers);
+    debug('enrichers-document %j', enrichers);
 
     let results = Array.concat([], hook.result? hook.result.data || hook.result : []);
     let promises = [];
@@ -141,27 +176,31 @@ export function documentEnrichers() {
       enrichers.forEach(enricher => {
         switch(enricher) {
           case 'breadcrumb':
-            doc.metadata.breadcrumbs = getBreadcrumbs(doc);
+            doc.metadata.breadcrumbs = getBreadcrumbs(hook, doc, options);
             break;
           case 'collections':
-            promises.push(getCollections(hook, doc));
+            promises.push(getCollections(hook, doc, options));
             break;
           case 'favorites':
+            promises.push(getFavorites(hook, doc, options));
             break;
           case 'hasFolderishChild':
-            promises.push(hasFolderishChild(hook, doc));
+            promises.push(hasFolderishChild(hook, doc, options));
             break;
           case 'permissions':
+            doc.metadata.permissions = getPermission(hook, doc, options);
             break;
           case 'preview':
             break;
           case 'renditions':
             break;
           case 'subtypes':
+            doc.metadata.subtypes = getSubtypes(hook, doc, options);
             break;
           case 'tags':
             break;
           case 'thumbnail':
+            doc.metadata.thumbnail = getThumbnail(hook, doc, options);
             break;
         }
       });

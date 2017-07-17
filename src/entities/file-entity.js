@@ -1,7 +1,7 @@
 import { omit, pick } from 'lodash';
 import Entity from 'mostly-entity';
 import { getBreadcrumbs } from '~/helpers';
-import { DocTypes, Permissions } from '~/constants';
+import { DocTypes } from '~/constants';
 import BlobEntity from './blob-entity';
 
 const FileEntity = new Entity('File', {
@@ -17,18 +17,14 @@ FileEntity.expose('parent', (obj, options) => {
 });
 
 FileEntity.expose('metadata', (obj, options) => {
-  if (obj.metadata) return obj.metadata;
+  obj.metadata = obj.metadata || {};
+  
+  const Types = options.DocTypes || DocTypes;
 
-  const breadcrumbs = getBreadcrumbs(obj);
-  const facets = DocTypes[obj.type].facets;
-  const favorites = [];
-  const packages = DocTypes[obj.type].packages;
-  const permissions = ['Everything', 'Read', 'Write', 'ReadWrite'];
-  const subtypes = Object.values(pick(DocTypes, ['picture']));
-  const thumbnail = {
-    url: 'bower_components/playing-content-elements/images/icons/file.png'
-  };
-  return Object.assign({}, { breadcrumbs, facets, favorites, packages, permissions, subtypes, thumbnail });
+  obj.metadata.facets = Types[obj.type].facets;
+  obj.metadata.packages = Types[obj.type].packages;
+
+  return obj.metadata;
 });
 
 FileEntity.excepts('destroyedAt');
