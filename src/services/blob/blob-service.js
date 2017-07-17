@@ -179,21 +179,21 @@ class BlobService extends Service {
   removeFromDocument(id, data, params, orignal) {
     assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
     assert(data.context && data.context.documentType, 'context.documentType not provided.');
-    assert(data.params && data.params.xpath, 'params.xpath not provided.');
+    assert(data.xpath, 'data.xpath not provided.');
 
     const documents = this.app.service('documents');
 
     return documents.get(data.context.currentDocument).then((doc) => {
       if (!doc) throw new Error('currentDocument not exists');
-      if (data.params.xpath.startsWith('files')) {
-        let [xpath, index] = data.params.xpath.split('/');
+      if (data.xpath.startsWith('files')) {
+        let [xpath, index] = data.xpath.split('/');
         let files = (doc.files || []).filter((blob) => {
           return blob.index !== parseInt(index);
         });
         debug('removeFromDocument', xpath, index, files);
         return documents.patch(doc.id, { files: files });
       } else {
-        let xpath = data.params.xpath;
+        let xpath = data.xpath;
         debug('removeFromDocument', xpath);
         return documents.patch(doc.id, { [xpath]: null });
       }
