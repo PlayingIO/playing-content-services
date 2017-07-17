@@ -3,7 +3,7 @@ import FileModel from '~/models/file-model';
 import defaultHooks from './file-hooks';
 
 const defaultOptions = {
-  name: 'file-service'
+  name: 'files'
 };
 
 class FileService extends Service {

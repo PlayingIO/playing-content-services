@@ -3,7 +3,7 @@ import SubjectModel from '~/models/subject-model';
 import defaultHooks from './subject-hooks';
 
 const defaultOptions = {
-  name: 'subject-service'
+  name: 'subjects'
 };
 
 class SubjectService extends Service {

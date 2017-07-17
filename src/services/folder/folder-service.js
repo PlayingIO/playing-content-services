@@ -3,7 +3,7 @@ import FolderModel from '~/models/folder-model';
 import defaultHooks from './folder-hooks';
 
 const defaultOptions = {
-  name: 'folder-service'
+  name: 'folders'
 };
 
 class FolderService extends Service {

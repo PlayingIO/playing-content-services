@@ -13,7 +13,7 @@ import { fromBuffer, bufferToHash } from './util';
 const debug = makeDebug('playing:content-services:blob');
 
 const defaultOptions = {
-  name: 'blob-service',
+  name: 'blobs',
   blobs: {
     fileCDN: '/file/'
   }

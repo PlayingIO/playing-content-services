@@ -8,7 +8,7 @@ import defaultHooks from './document-hooks';
 const debug = makeDebug('playing:content-services:documents');
 
 const defaultOptions = {
-  name: 'document-service'
+  name: 'documents'
 };
 
 class DocumentService extends Service {
