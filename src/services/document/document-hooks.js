@@ -28,7 +28,7 @@ module.exports = function(options = {}) {
       all: [
         hooks.populate('parent', { service: 'folders' }),
         content.presentDocument(options),
-        content.hasFolderishChild(),
+        content.documentEnrichers(),
         hooks.responder()
       ]
     }

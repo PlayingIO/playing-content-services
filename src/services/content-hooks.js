@@ -1,7 +1,7 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import { hooks as auth } from 'feathers-authentication';
-import { filter, kebabCase } from 'lodash';
+import { filter, kebabCase, omit } from 'lodash';
 import { hooks } from 'mostly-feathers-mongoose';
 import path from 'path';
 import shortid from 'shortid';
@@ -84,7 +84,42 @@ export function computePath(options = { slug: false }) {
 }
 
 // check whether there is any folder children
-export function hasFolderishChild() {
+function hasFolderishChild(hook, doc) {
+  const folders = hook.app.service('folders');
+  // only folder need to check hasFolderishChild
+  if (doc.type === 'folder') {
+    return folders.find({ query: {
+      parent: doc.id
+    }}).then(result => {
+      let folderishChildren = filter(result.data, child => {
+        return child.metadata.facets && child.metadata.facets.indexOf('Folderish') !== -1;
+      });
+      doc.metadata.hasFolderishChild = folderishChildren.length > 0;
+      return doc;
+    });
+  } else {
+    return Promise.resolve(doc);
+  }
+}
+
+function getBreadcrumbs(doc) {
+  let breadcrumbs = [];
+  let parent = doc.parent;
+  while (parent && parent.path) {
+    let bread = omit(parent, ['parent']);
+    breadcrumbs = [bread, ...breadcrumbs];
+    parent = parent.parent;
+  }
+  return breadcrumbs;
+}
+
+function getCollections(hook, doc) {
+  const collections = hook.app.service('collections');
+  return Promise.resolve(doc);
+}
+
+// Add document metadata according to request header
+export function documentEnrichers() {
   return hook => {
     assert(hook.type === 'after', `hasFolderishChild must be used as a 'after' hook.`);
 
@@ -93,26 +128,46 @@ export function hasFolderishChild() {
       return hook;
     }
 
-    const folders = hook.app.service('folders');
-    let results = Array.concat([], hook.result? hook.result.data || hook.result : []);
+    let enrichers = (hook.params.headers['enrichers-document'] || '')
+      .split(',')
+      .map(e => e.trim());
+    debug('enrichers-document', enrichers);
 
-    function folderishChild(doc) {
-      // only folder need to check hasFolderishChild
-      if (doc.type === 'folder') {
-        return folders.find({ query: {
-          parent: doc.id
-        }}).then(result => {
-          let folderishChildren = filter(result.data, child => {
-            return child.metadata.facets && child.metadata.facets.indexOf('Folderish') !== -1;
-          });
-          doc.metadata.hasFolderishChild = folderishChildren.length > 0;
-          return doc;
-        });
-      } else {
-        return Promise.resolve(doc);
-      }
-    }
-    return Promise.all(results.map(folderishChild)).then(results => hook);
+    let results = Array.concat([], hook.result? hook.result.data || hook.result : []);
+    let promises = [];
+
+    results.forEach(doc => {
+      doc.metadata = doc.metadata || {};
+      enrichers.forEach(enricher => {
+        switch(enricher) {
+          case 'breadcrumb':
+            doc.metadata.breadcrumbs = getBreadcrumbs(doc);
+            break;
+          case 'collections':
+            promises.push(getCollections(hook, doc));
+            break;
+          case 'favorites':
+            break;
+          case 'hasFolderishChild':
+            promises.push(hasFolderishChild(hook, doc));
+            break;
+          case 'permissions':
+            break;
+          case 'preview':
+            break;
+          case 'renditions':
+            break;
+          case 'subtypes':
+            break;
+          case 'tags':
+            break;
+          case 'thumbnail':
+            break;
+        }
+      });
+    });
+
+    return Promise.all(promises).then(results => hook);
   };
 }
 

@@ -3,7 +3,7 @@ import TagModel from '~/models/tag-model';
 import defaultHooks from './tag-hooks';
 
 const defaultOptions = {
-  name: 'tag-service'
+  name: 'tags'
 };
 
 class TagService extends Service {
