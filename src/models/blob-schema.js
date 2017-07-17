@@ -1,4 +1,5 @@
 const blob = {
+  _id: false,
   batch: { type: 'ObjectId' }, // upload batch id
   index: { type: 'Number' }, // upload batch index
   name: { type: 'String' },
