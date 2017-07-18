@@ -1,6 +1,5 @@
 import { omit, pick } from 'lodash';
 import Entity from 'mostly-entity';
-import { getBreadcrumbs } from '~/helpers';
 import { DocTypes } from '~/constants';
 import BlobEntity from './blob-entity';
 

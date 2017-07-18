@@ -1,12 +1,26 @@
-import { isObject, map, omit } from 'lodash';
+import { flatten, groupBy, map, omit } from 'lodash';
+import { plural } from 'pluralize';
 
-export function getBreadcrumbs(obj) {
-  let breadcrumbs = [];
-  let parent = obj.parent;
-  while (parent && parent.path) {
-    let bread = omit(parent, ['parent']);
-    breadcrumbs = [bread, ...breadcrumbs];
-    parent = parent.parent;
-  }
-  return breadcrumbs;
+export function populateByService(app, documents, idField, typeField, options) {
+  let types = groupBy(documents, typeField);
+  return Promise.all(
+    Object.keys(types).map((type) => {
+      let entries = types[type];
+      return app.service(plural(type)).find(Object.assign({
+        query: {
+          _id: { $in: map(entries, idField) },
+        }
+      }, options));
+    })
+  ).then((results) => {
+    results = flatten(map(results, 'data'));
+    documents = map(documents, (doc) => {
+      doc = Object.assign(doc, results.find((item) => {
+        return String(doc[idField]) === String(item.id);
+      }));
+      delete doc[idField];
+      return doc;
+    });
+    return documents;
+  });
 }
