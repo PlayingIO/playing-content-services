@@ -15,11 +15,9 @@ export function populateByService(app, documents, idField, typeField, options) {
   ).then((results) => {
     results = flatten(map(results, 'data'));
     documents = map(documents, (doc) => {
-      doc = Object.assign(doc, results.find((item) => {
+      return Object.assign({ _id: doc.id }, doc, results.find((item) => {
         return String(doc[idField]) === String(item.id);
       }));
-      delete doc[idField];
-      return doc;
     });
     return documents;
   });
