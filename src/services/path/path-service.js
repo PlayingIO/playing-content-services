@@ -5,9 +5,15 @@ import defaultHooks from './path-hooks';
 
 const debug = makeDebug('playing:content-services:path');
 
+const defaultOptions = {
+  name: 'paths'
+};
+
 // Path proxy service to documents
 class PathService {
   constructor(options) {
+    options = Object.assign({}, defaultOptions, options);
+    this.name = options.name;
     this.options = options;
   }
 
@@ -46,7 +52,7 @@ class PathService {
   }
 }
 
-export default function init (options) {
+export default function init (app, options, hooks) {
   return new PathService(options);
 }
 
