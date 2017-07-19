@@ -67,11 +67,17 @@ class DocumentService extends Service {
     }
   }
 
-  remove(id, data, params) {
-    if (params.type) {
-      return this.app.service(plural(params.type)).remove(id, data, params);
+  remove(id, params) {
+    if (params.query.type) {
+      return this.app.service(plural(params.type)).remove(id, params);
     } else {
-      return super.remove(id, data, params);
+      if (params && params.query.more) {
+        let more = [id].concat(params.query.more.split(','));
+        delete params.query.more;
+        return Promise.all(more.map(id => super.remove(id, params)));
+      } else {
+        return super.remove(id, params);
+      }
     }
   }
 }
