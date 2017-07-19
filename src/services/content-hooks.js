@@ -159,16 +159,15 @@ export function documentEnrichers(options = {}) {
     assert(hook.type === 'after', `hasFolderishChild must be used as a 'after' hook.`);
 
     // If no enrichers-document header then skip this hook
-    if (!hook.params.headers || !hook.params.headers['enrichers-document']) {
+    if (!(hook.params.headers && hook.params.headers['enrichers-document'])) {
       debug('Skip documentEnrichers without headers', hook.params);
       return hook;
     }
 
-    let enrichers = hook.params.headers['enrichers-document'].split(',')
-      .map(e => e.trim());
+    let enrichers = hook.params.headers['enrichers-document'].split(',').map(e => e.trim());
     debug('enrichers-document %j', enrichers);
 
-    let results = Array.concat([], hook.result? hook.result.data || hook.result : []);
+    let results = [].concat(hook.result? hook.result.data || hook.result : []);
     let promises = [];
 
     results.forEach(doc => {

@@ -3,6 +3,7 @@ export default [
   'Read',
   'Write',
   'ReadWrite',
+  'ReadCanCollect',
   'ReadChildren',
   'AddChildren',
   'RemoveChildren'
