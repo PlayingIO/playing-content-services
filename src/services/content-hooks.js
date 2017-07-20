@@ -123,8 +123,12 @@ function getCollections(hook, doc, options) {
 
 function getFavorites(hook, doc, options) {
   const favorites = hook.app.service('favorites');
-  // doc.metadata.favorites = [];
-  return Promise.resolve(doc);
+  return favorites.get(doc.id, {
+    query: { owner: hook.params.user.id }
+  }).then((result) => {
+    console.log('#########', result);
+    doc.metadata.favorites = { isFavorite: !!result };
+  });
 }
 
 function getPermission(hook, doc, options) {
