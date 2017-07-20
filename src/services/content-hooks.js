@@ -24,7 +24,7 @@ const defaultEntities = {
 export function presentDocument(options = {}) {
   const entities = Object.assign(defaultEntities, options.entities);
 
-  return hook => {
+  return (hook) => {
     const presentEntity = function(doc) {
       options.provider = hook.params.provider;
 
@@ -55,7 +55,7 @@ export function presentDocument(options = {}) {
 
 // compute current path by parent
 export function computePath(options = { slug: false }) {
-  return hook => {
+  return (hook) => {
     const folders = hook.app.service('folders');
 
     // get parent or root
@@ -155,7 +155,7 @@ function getThumbnail(hook, doc) {
 
 // Add document metadata according to request header
 export function documentEnrichers(options = {}) {
-  return hook => {
+  return (hook) => {
     assert(hook.type === 'after', `hasFolderishChild must be used as a 'after' hook.`);
 
     // If no enrichers-document header then skip this hook
@@ -211,7 +211,7 @@ export function documentEnrichers(options = {}) {
 
 // check whether there is any folder children
 export function fetchBlobs(options) {
-  return hook => {
+  return (hook) => {
     assert(hook.type === 'before', `fetchBlob must be used as a 'before' hook.`);
 
     // If it was an internal call then skip this hook
