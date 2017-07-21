@@ -4,6 +4,7 @@ import { hooks as auth } from 'feathers-authentication';
 import { filter, kebabCase, omit, pick } from 'lodash';
 import { hooks } from 'mostly-feathers-mongoose';
 import path from 'path';
+import fp from 'ramda';
 import shortid from 'shortid';
 import url from 'url';
 
@@ -116,14 +117,23 @@ function getBreadcrumbs(hook, doc, options) {
 }
 
 function getCollections(hook, doc, options) {
+  const documents = hook.app.service('documents');
   const entries = hook.app.service('document-entries');
   return entries.find({ query: {
     owner: hook.params.user.id,
     entry: doc.id,
     category: 'collection'
   }}).then((results) => {
-    console.log('#####getCollections', results);
-    doc.metadata.collections = results && results.data;
+    if (results && results.total > 0) {
+      let collections = fp.map(fp.prop('_parent'), results && results.data);
+      return documents.find({ query: {
+        _id: { $in: collections }
+      }});
+    } else {
+      return null;
+    }
+  }).then((results) => {
+    doc.metadata.collections = results && results.data || [];
   });
 }
 
@@ -134,7 +144,6 @@ function getFavorites(hook, doc, options) {
     entry: doc.id,
     category: 'favorite'
   }}).then((results) => {
-    console.log('#####getFavorites', results);
     doc.metadata.favorites = { isFavorite: results && results.total > 0 };
   });
 }

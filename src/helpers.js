@@ -1,17 +1,21 @@
 import fp from 'ramda';
 import { plural } from 'pluralize';
 
-const populateList = (list, idField) => (data) => {
+const populateList = (list, idField, options = {}) => (data) => {
   return fp.map((doc) => {
     let item = data.find((item) => {
       return String(doc[idField]) === String(item.id);
     });
     // retain _id for orignal id
-    return item && fp.mergeAll([{ _id: doc.id }, doc, item]);
+    const retained = fp.reduce((acc, field) => {
+      acc['_' + field] = doc[field];
+      return acc;
+    }, {});
+    return item && fp.mergeAll([retained(options.retained || []), doc, item]);
   })(list);
 };
 
-const populateByService = (app, idField, typeField, options) => (list) => {
+const populateByService = (app, idField, typeField, options = {}) => (list) => {
   let types = fp.groupBy(fp.prop(typeField), list);
   return Promise.all(
     Object.keys(types).map((type) => {
@@ -26,7 +30,7 @@ const populateByService = (app, idField, typeField, options) => (list) => {
     return fp.pipe(
       fp.map(fp.prop('data')),
       fp.flatten,
-      populateList(list, idField),
+      populateList(list, idField, options),
       fp.reject(fp.isNil)
     )(results);
   });
