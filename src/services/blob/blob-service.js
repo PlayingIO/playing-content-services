@@ -122,9 +122,9 @@ class BlobService extends Service {
     };
 
     const updateBlobs = (blobs) => {
-      return super.patch(id, { blobs: blobs }).then(batch =>
-        batch.blobs? batch.blobs[batch.blobs.length - 1] : {}
-      ).then(transform);
+      return super.patch(id, { blobs: blobs }).then(batch => {
+        batch.blobs && batch.blobs[batch.blobs.length - 1]
+      });
     };
 
     return getBatch(id)
