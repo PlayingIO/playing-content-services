@@ -6,6 +6,7 @@ const populateList = (list, idField) => (data) => {
     let item = data.find((item) => {
       return String(doc[idField]) === String(item.id);
     });
+    // retain _id for orignal id
     return item && fp.mergeAll([{ _id: doc.id }, doc, item]);
   })(list);
 };

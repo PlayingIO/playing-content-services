@@ -116,21 +116,26 @@ function getBreadcrumbs(hook, doc, options) {
 }
 
 function getCollections(hook, doc, options) {
-  const collections = hook.app.service('collections');
-  // doc.metadata.collections = [];
-  return Promise.resolve(doc);
+  const entries = hook.app.service('document-entries');
+  return entries.find({ query: {
+    owner: hook.params.user.id,
+    entry: doc.id,
+    category: 'collection'
+  }}).then((results) => {
+    console.log('#####getCollections', results);
+    doc.metadata.collections = results && results.data;
+  });
 }
 
 function getFavorites(hook, doc, options) {
-  const favorites = hook.app.service('favorites');
-  return favorites.get('me', {
-    query: {
-      owner: hook.params.user.id,
-      entry: doc.id,
-    },
-    __action: 'entry'
-  }).then((result) => {
-    doc.metadata.favorites = { isFavorite: !!result };
+  const entries = hook.app.service('document-entries');
+  return entries.find({ query: {
+    owner: hook.params.user.id,
+    entry: doc.id,
+    category: 'favorite'
+  }}).then((results) => {
+    console.log('#####getFavorites', results);
+    doc.metadata.favorites = { isFavorite: results && results.total > 0 };
   });
 }
 
