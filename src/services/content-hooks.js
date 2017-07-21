@@ -123,10 +123,13 @@ function getCollections(hook, doc, options) {
 
 function getFavorites(hook, doc, options) {
   const favorites = hook.app.service('favorites');
-  return favorites.get(doc.id, {
-    query: { owner: hook.params.user.id }
+  return favorites.get('me', {
+    query: {
+      owner: hook.params.user.id,
+      entry: doc.id,
+    },
+    __action: 'entry'
   }).then((result) => {
-    console.log('#########', result);
     doc.metadata.favorites = { isFavorite: !!result };
   });
 }
