@@ -5,6 +5,7 @@ import makeDebug from 'debug';
 import errors from 'feathers-errors';
 import mimeTypes from 'mime-types';
 import { Service, createService, transform } from 'mostly-feathers-mongoose';
+import request from 'request';
 
 import BlobModel from '~/models/blob-model';
 import defaultHooks from './blob-hooks';
@@ -81,13 +82,22 @@ class BlobService extends Service {
   update(id, data, params) {
     debug('update', id, data, params);
     assert(params.file, 'params file not provided.');
-    assert(params.file.buffer && params.file.buffer.type === 'Buffer', 'params file has no buffer.');
+    assert(params.file.url, 'params file has no url.');
 
     const name = params.file.originalname;
     const mimetype = params.file.mimetype;
     const ext = mimeTypes.extension(mimetype);
-    const buffer = Buffer.from(params.file.buffer.data);
     const size = params.file.size;
+
+    const getBuffer = (url) => {
+      const req = request.defaults({ encoding: null });
+      return new Promise((resolve, reject) => {
+        req.get(url, function(err, res, buffer) {
+          if (err) return reject(err);
+          return resolve(buffer);
+        });
+      });
+    };
 
     const getBatch = (id) => {
       return super.get(id).then(result => {
@@ -96,7 +106,8 @@ class BlobService extends Service {
       });
     };
 
-    const writeBlob = (batch) => {
+    const writeBlob = ([batch, buffer]) => {
+      console.log('######writeBlob', batch, buffer);
       batch.blobs = batch.blobs || [];
       const index = data.index || batch.blobs.length;
       const vender = data.vender || 'file';
@@ -127,9 +138,12 @@ class BlobService extends Service {
       });
     };
 
-    return getBatch(id)
-      .then(writeBlob)
-      .then(updateBlobs);
+    return Promise.all([
+      getBatch(id),
+      getBuffer(params.file.url)
+    ])
+    .then(writeBlob)
+    .then(updateBlobs);
   }
 
   patch(id, data, params) {
