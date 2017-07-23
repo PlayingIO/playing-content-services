@@ -34,20 +34,25 @@ export function presentDocument(options = {}) {
         return entities[doc.type].parse(doc, options);
       } else {
         debug('WARNING: ' + doc.type + ' type entity not found in');
-        debug('  =>', Object.keys(entities));
+        debug('  options  =>', options);
+        debug('  document =>', doc);
         return DocumentEntity.parse(doc, options);
+      }
+    };
+
+    const presentData = function(data) {
+      if (Array.isArray(data)) {
+        return data.map(presentEntity);
+      } else {
+        return presentEntity(data);
       }
     };
 
     if (hook.result) {
       if (hook.result.data) {
-        if (Array.isArray(hook.result.data)) {
-          hook.result.data = hook.result.data.map(presentEntity);
-        } else {
-          hook.result.data = presentEntity(hook.result.data);
-        }
+        hook.result.data = presentData(hook.result.data);
       } else {
-        hook.result = presentEntity(hook.result);
+        hook.result = presentData(hook.result);
       }
     }
     return hook;
@@ -60,29 +65,35 @@ export function computePath(options = { slug: false }) {
     const folders = hook.app.service('folders');
 
     // get parent or root
-    const parentQuery = hook.data.parent
-      ? folders.get(hook.data.parent)
-      : folders.first({ query: { path : '/' } });
+    let parentQuery = null;
+    if (hook.method === 'create') {
+      parentQuery = folders.first({ query: { path : '/' } });
+    }
+    if (hook.data.parent) {
+      parentQuery = folders.get(hook.data.parent);
+    }
 
-    return parentQuery.then(parent => {
-      if (parent && parent.path) {
-        hook.data.parent = parent.id;
-        let slug = 'untitled';
-        if (options.slug) {
-          if (hook.data.title && hook.data.title.length > 0) {
-            slug = kebabCase(hook.data.title);
+    if (parentQuery) {
+      return parentQuery.then(parent => {
+        if (parent && parent.path) {
+          hook.data.parent = parent.id;
+          let slug = 'untitled';
+          if (options.slug) {
+            if (hook.data.title && hook.data.title.length > 0) {
+              slug = kebabCase(hook.data.title);
+            }
+          } else {
+            slug = hook.data.path && path.basename(hook.data.path) || shortid.generate();
           }
+          debug('compute parent path', parent.path, slug);
+          hook.data.path = path.join(parent.path, slug);
         } else {
-          slug = hook.data.path || shortid.generate();
+          debug('Parent path undefined', parent);
+          throw new Error('Parent path undefined');
         }
-        debug('compute parent path', parent.path, slug);
-        hook.data.path = path.join(parent.path, slug);
-      } else {
-        debug('Parent path undefined', parent);
-        throw new Error('Parent path undefined');
-      }
-      return hook;
-    });
+        return hook;
+      });
+    }
   };
 }
 

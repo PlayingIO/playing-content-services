@@ -1,7 +1,9 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import { Service, createService } from 'mostly-feathers-mongoose';
+import path from 'path';
 import { plural } from 'pluralize';
+import fp from 'ramda';
 import DocumentModel from '~/models/document-model';
 import defaultHooks from './document-hooks';
 
@@ -79,6 +81,42 @@ class DocumentService extends Service {
         return super.remove(id, params);
       }
     }
+  }
+
+  copyDocument(id, data, params, target) {
+    assert(data.documents, 'data.documents not provided.');
+    assert(data.target, 'data.target not provided.');
+    debug('copyDocument target', target.id, data.documents);
+
+    const copyDoc = (id) => {
+      return this.get(id).then((doc) => {
+        let service = plural(doc.type || 'document');
+        let clone = fp.omit(['id', 'metadata', 'parent', 'path', 'createdAt', 'updatedAt', 'destroyedAt'], doc);
+        clone.parent = target.id;
+        return this.app.service(service).create(clone);
+      });
+    };
+
+    return Promise.all(data.documents.map(copyDoc));
+  }
+
+  moveDocument(id, data, params, target) {
+    assert(data.documents, 'data.documents not provided.');
+    assert(data.target, 'data.target not provided.');
+    debug('moveDocument target', target.id, data.documents);
+
+    const moveDoc = (id) => {
+      return this.get(id).then((doc) => {
+        let service = plural(doc.type || 'document');
+        let data = {
+          parent: target.id,
+          path: path.resolve(target.path, path.basename(doc.path))
+        };
+        return this.app.service(service).patch(doc.id, data);
+      });
+    };
+
+    return Promise.all(data.documents.map(moveDoc));
   }
 }
 

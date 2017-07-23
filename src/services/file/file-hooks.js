@@ -16,12 +16,14 @@ module.exports = function(options = {}) {
       ],
       update: [
         hooks.depopulate('parent'),
-        discard('id', 'metadata', 'path', 'createdAt', 'updatedAt', 'destroyedAt'),
+        content.computePath(),
+        discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs()
       ],
       patch: [
         hooks.depopulate('parent'),
-        discard('id', 'metadata', 'path', 'createdAt', 'updatedAt', 'destroyedAt'),
+        content.computePath(),
+        discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs()
       ]
     },
