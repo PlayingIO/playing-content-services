@@ -3,7 +3,7 @@ import { plugins } from 'mostly-feathers-mongoose';
 
 const fields = {
   name: { type: 'String', required: true  },
-  label: { type: 'String', required: true  },
+  displayLabel: { type: 'String', required: true  },
   parent: { type: 'ObjectId' }
 };
 

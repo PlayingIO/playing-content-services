@@ -3,6 +3,7 @@ import TagModel from '~/models/tag-model';
 import defaultHooks from './tag-hooks';
 
 const defaultOptions = {
+  id: 'id',
   name: 'tags'
 };
 
@@ -15,6 +16,10 @@ class TagService extends Service {
   setup(app) {
     super.setup(app);
     this.hooks(defaultHooks(this.options));
+  }
+
+  suggestion(id, data, params) {
+    return super.find(params);
   }
 }
 

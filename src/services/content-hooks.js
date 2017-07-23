@@ -178,6 +178,10 @@ function getSubtypes(hook, doc, options) {
   }
 }
 
+function getTags(hook, doc, options) {
+  return (doc.tags || []);
+}
+
 function getThumbnail(hook, doc) {
   const baseUrl = 'bower_components/playing-content-elements/images/icons/';
   return {
@@ -229,6 +233,7 @@ export function documentEnrichers(options = {}) {
             doc.metadata.subtypes = getSubtypes(hook, doc, options);
             break;
           case 'tags':
+            doc.metadata.tags = getTags(hook, doc, options);
             break;
           case 'thumbnail':
             doc.metadata.thumbnail = getThumbnail(hook, doc, options);

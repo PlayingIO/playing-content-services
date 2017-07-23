@@ -12,6 +12,7 @@ const fields = {
   parent: { type: 'ObjectId' },
   path: { type: 'String', default: '/', unique: true },
   subjects: [{ type: 'String' }],
+  tags: [{ type: 'String' }],
   rights: [{ type: 'String' }],
   source: { type: 'String' },
   nature: { type: 'String' },
