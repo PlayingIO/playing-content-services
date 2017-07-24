@@ -1,4 +1,5 @@
 import timestamps from 'mongoose-timestamp';
+import uniqueArray from 'mongoose-unique-array';
 import { plugins } from 'mostly-feathers-mongoose';
 import { blob, blobs } from './blob-schema';
 
@@ -12,7 +13,7 @@ const fields = {
   parent: { type: 'ObjectId' },
   path: { type: 'String', default: '/', unique: true },
   subjects: [{ type: 'String' }],
-  tags: [{ type: 'String' }],
+  tags: [{ type: 'String', unique: true }],
   rights: [{ type: 'String' }],
   source: { type: 'String' },
   nature: { type: 'String' },
@@ -33,6 +34,7 @@ export default function(app, name) {
   const mongoose = app.get('mongoose');
   const schema = new mongoose.Schema(fields, options);
   schema.plugin(timestamps);
+  schema.plugin(uniqueArray);
   schema.plugin(plugins.softDelete);
   return mongoose.model(name, schema);
 }
