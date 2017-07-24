@@ -1,7 +1,6 @@
 const gulp = require('gulp');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
-const nodemon = require('gulp-nodemon');
 const eslint = require('gulp-eslint');
 const changed = require('gulp-changed');
 
@@ -22,20 +21,8 @@ gulp.task('compile', ['lint'], () => {
     .pipe(gulp.dest('lib'));
 });
 
-gulp.task('server', ['compile'], () => {
-  return nodemon({
-    script: 'index.js',
-    nodeArgs: ['--preserve-symlinks'],
-    env: {
-      'NODE_ENV': 'development',
-      'DEBUG': 'mostly:* feathers:* playread:*',
-      'APP': 'all'
-    },
-  });
-});
-
 gulp.task('watch', () => {
-  gulp.watch('src/**/*.js', ['lint', 'compile', 'server']);
+  gulp.watch('src/**/*.js', ['lint', 'compile']);
 });
 
-gulp.task('default', ['watch', 'server']);
+gulp.task('default', ['watch']);
