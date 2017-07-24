@@ -12,13 +12,15 @@ import { DocTypes, Permissions } from '~/constants';
 import DocumentEntity from '~/entities/document-entity';
 import FolderEntity from '~/entities/folder-entity';
 import FileEntity from '~/entities/file-entity';
+import NoteEntity from '~/entities/note-entity';
 
 const debug = makeDebug('playing:content-services:hooks');
 
 const defaultEntities = {
   document: DocumentEntity,
   folder: FolderEntity,
-  file: FileEntity
+  file: FileEntity,
+  note: NoteEntity
 };
 
 // presentEntity by document type
@@ -171,9 +173,9 @@ function getPermission(hook, doc, options) {
 function getSubtypes(hook, doc, options) {
   const Types = options.DocTypes || DocTypes;
   switch(doc.type) {
-    case 'document': return Object.values(pick(Types, ['picture']));
-    case 'file': return Object.values(pick(Types, ['picture']));
-    case 'folder': return Object.values(pick(Types, ['collection', 'file', 'folder', 'picture']));
+    case 'document': return [];
+    case 'file': return [];
+    case 'folder': return Object.values(pick(Types, ['collection', 'file', 'folder', 'note']));
     default: return [];
   }
 }
