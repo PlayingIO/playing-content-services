@@ -194,7 +194,7 @@ function getThumbnail(hook, doc) {
 // Add document metadata according to request header
 export function documentEnrichers(options = {}) {
   return (hook) => {
-    assert(hook.type === 'after', `hasFolderishChild must be used as a 'after' hook.`);
+    assert(hook.type === 'after', `documentEnrichers must be used as a 'after' hook.`);
 
     // If no enrichers-document header then skip this hook
     if (!(hook.params.headers && hook.params.headers['enrichers-document'])) {
