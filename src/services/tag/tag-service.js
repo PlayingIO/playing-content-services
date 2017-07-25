@@ -17,10 +17,6 @@ class TagService extends Service {
     super.setup(app);
     this.hooks(defaultHooks(this.options));
   }
-
-  suggestion(id, data, params) {
-    return super.find(params);
-  }
 }
 
 export default function init(app, options, hooks) {

@@ -93,7 +93,7 @@ class DocumentService extends Service {
       super.patch(doc.id, { tags }, params),
       data.tags.map((tag) => service.upsert({
         id: tag.toLowerCase(),
-        displayLabel: tag
+        label: tag
       }))
     ]).then(([docs, tags]) => docs);
   }

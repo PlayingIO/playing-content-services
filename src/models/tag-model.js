@@ -3,7 +3,7 @@ import { plugins } from 'mostly-feathers-mongoose';
 
 const fields = {
   id: { type: 'String', required: true  }, // lowercase label
-  displayLabel: { type: 'String', required: true  }
+  label: { type: 'String', required: true  }
 };
 
 export default function(app, name) {
