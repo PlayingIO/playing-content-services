@@ -271,18 +271,25 @@ export function fetchBlobs(options) {
       return Promise.resolve(file);
     }
 
-    const getFileBlob = getFullBlob(hook.data.file).then(blob => {
-      debug('getFullBlob file', blob);
-      hook.data.file = blob;
-    });
+    let promises = [];
 
-    const getFilesBlob = Promise.all((hook.data.files || []).map(file => getFullBlob(file)))
-      .then(blobs => {
-        debug('getFullBlob files', blobs);
-        hook.data.files = blobs;
+    if (hook.data.file) {
+      const getFileBlob = getFullBlob(hook.data.file).then(blob => {
+        debug('getFullBlob file', blob);
+        hook.data.file = blob;
       });
+      promises.push(getFileBlob);
+    }
+    
+    if (hook.data.files) {
+      const getFilesBlob = Promise.all(hook.data.files.map(file => getFullBlob(file)))
+        .then(blobs => {
+          debug('getFullBlob files', blobs);
+          hook.data.files = blobs;
+        });
+    }
 
-    return Promise.all([getFileBlob, getFilesBlob]).then(results => {
+    return Promise.all(promises).then(results => {
       debug('fetchBlob hook.data', hook.data, results);
       return hook;
     });
