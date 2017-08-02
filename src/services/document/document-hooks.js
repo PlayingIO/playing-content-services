@@ -11,10 +11,10 @@ module.exports = function(options = {}) {
         auth.authenticate('jwt')
       ],
       get: [
-        queryWithCurrentUser({ idField: 'id', as: 'creator' })
+        // queryWithCurrentUser({ idField: 'id', as: 'creator' })
       ],
       find: [
-        queryWithCurrentUser({ idField: 'id', as: 'creator' })
+        // queryWithCurrentUser({ idField: 'id', as: 'creator' })
       ],
       create: [
         associateCurrentUser({ idField: 'id', as: 'creator' }),
