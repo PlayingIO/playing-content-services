@@ -1,5 +1,6 @@
 import { discard } from 'feathers-hooks-common';
 import { hooks as auth } from 'feathers-authentication';
+import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
 import FolderEntity from '~/entities/folder-entity';
 import * as content from '../content-hooks';
@@ -10,17 +11,26 @@ module.exports = function(options = {}) {
       all: [
         auth.authenticate('jwt')
       ],
+      get: [
+        queryWithCurrentUser({ idField: 'id', as: 'creator' })
+      ],
+      find: [
+        queryWithCurrentUser({ idField: 'id', as: 'creator' })
+      ],
       create: [
+        associateCurrentUser({ idField: 'id', as: 'creator' }),
         content.computePath({ slug: true }),
         content.fetchBlobs()
       ],
       update: [
+        associateCurrentUser({ idField: 'id', as: 'creator' }),
         hooks.depopulate('parent'),
         content.computePath(),
         discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs()
       ],
       patch: [
+        associateCurrentUser({ idField: 'id', as: 'creator' }),
         hooks.depopulate('parent'),
         content.computePath(),
         discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
@@ -30,9 +40,13 @@ module.exports = function(options = {}) {
     after: {
       all: [
         hooks.populate('parent', { service: 'folders' }),
+        hooks.populate('creator', { service: 'users' }),
         hooks.presentEntity(FolderEntity, options),
         content.documentEnrichers(options),
         hooks.responder()
+      ],
+      create: [
+        hooks.publishEvent('folder.create', { prefix: 'playing' })
       ]
     }
   };
