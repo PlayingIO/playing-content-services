@@ -133,7 +133,7 @@ function getCollections(hook, doc, options) {
   const documents = hook.app.service('documents');
   const entries = hook.app.service('document-entries');
   return entries.find({ query: {
-    owner: hook.params.user.id,
+    creator: hook.params.user.id,
     entry: doc.id,
     category: 'collection'
   }}).then((results) => {
@@ -153,7 +153,7 @@ function getCollections(hook, doc, options) {
 function getFavorites(hook, doc, options) {
   const entries = hook.app.service('document-entries');
   return entries.find({ query: {
-    owner: hook.params.user.id,
+    creator: hook.params.user.id,
     entry: doc.id,
     category: 'favorite'
   }}).then((results) => {

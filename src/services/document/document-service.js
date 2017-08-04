@@ -6,6 +6,7 @@ import { plural } from 'pluralize';
 import fp from 'ramda';
 import DocumentModel from '~/models/document-model';
 import defaultHooks from './document-hooks';
+import { subDocumentEvents } from './document-events';
 
 const debug = makeDebug('playing:content-services:documents');
 
@@ -23,6 +24,7 @@ class DocumentService extends Service {
     super.setup(app);
     this.options.entities = app.get('entities');
     this.hooks(defaultHooks(this.options));
+    subDocumentEvents(this.app, this.options);
   }
 
   find(params) {
