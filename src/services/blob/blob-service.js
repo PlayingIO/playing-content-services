@@ -107,7 +107,6 @@ class BlobService extends Service {
     };
 
     const writeBlob = ([batch, buffer]) => {
-      console.log('######writeBlob', batch, buffer);
       batch.blobs = batch.blobs || [];
       const index = data.index || batch.blobs.length;
       const vender = data.vender || 'file';
