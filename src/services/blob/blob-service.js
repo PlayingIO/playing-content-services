@@ -1,11 +1,12 @@
 import assert from 'assert';
-import toBuffer from 'concat-stream';
+import concat from 'concat-stream';
 import { getBase64DataURI, parseDataURI } from 'dauria';
 import makeDebug from 'debug';
 import errors from 'feathers-errors';
 import mimeTypes from 'mime-types';
 import { Service, createService, transform } from 'mostly-feathers-mongoose';
 import request from 'request';
+import stream from 'stream';
 
 import BlobModel from '~/models/blob-model';
 import defaultHooks from './blob-hooks';
@@ -40,15 +41,8 @@ class BlobService extends Service {
 
     const readBlob = (blob) => {
       debug('readBlob', blob);
-      return new Promise((resolve, reject) => {
-        this.storage.createReadStream({
-          key: blob.key
-        })
-        .on('error', reject)
-        .pipe(toBuffer(buffer => {
-          blob.file = getBase64DataURI(buffer, blob.mimetype);
-          resolve(blob);
-        }));
+      return this._readBlob(blob).then(buffer => {
+        blob.file = getBase64DataURI(buffer, blob.mimetype);
       });
     };
 
@@ -62,6 +56,16 @@ class BlobService extends Service {
         return result;
       });
     }
+  }
+
+  _readBlob(blob, bucket) {
+    return new Promise((resolve, reject) => {
+      this.storage.createReadStream(blob)
+      .on('error', reject)
+      .pipe(concat(buffer => {
+        resolve(buffer);
+      }));
+    });
   }
 
   _getBlob(batchId, index) {
@@ -98,7 +102,7 @@ class BlobService extends Service {
         });
       }
       if (file.key) {
-
+        return this._readBlob(file);
       }
       debug('getBuffer not supports this file', file);
       throw new Error('getBuffer not supported on this file');
@@ -113,17 +117,18 @@ class BlobService extends Service {
 
     const writeBlob = ([batch, buffer]) => {
       batch.blobs = batch.blobs || [];
+      const bucket = data.bucket || this.storage.bucket;
       const index = data.index || batch.blobs.length;
       const vender = data.vender || this.storage.name;
       const key = `${id}.${index}.${ext}`;
       return new Promise((resolve, reject) => {
         fromBuffer(buffer)
           .pipe(this.storage.createWriteStream({
-            key, name, vender, mimetype, size
+            bucket, key, name, vender, mimetype, size
           }, (error) => {
             if (error) return reject(error);
             let blob = {
-              index, name, key, vender, mimetype, size
+              bucket, key, index, name, vender, mimetype, size
             };
             if (index < batch.blobs.length) {
               batch.blobs[index] = blob;
