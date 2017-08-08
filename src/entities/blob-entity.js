@@ -5,9 +5,10 @@ import url from 'url';
 const BlobEntity = new Entity('Blob');
 
 BlobEntity.expose('url', (obj, options) => {
-  const fileCDN = options.blobs && options.blobs.fileCDN;
   switch(obj.vender) {
-    case 'file': return url.resolve(fileCDN, obj.key);
+    case 'local':
+      const baseUrl = options.blobs && options.blobs.baseUrl;
+      return url.resolve(baseUrl, obj.key);
     default: return obj.url || obj.key;
   }
 });

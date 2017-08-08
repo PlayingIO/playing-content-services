@@ -15,14 +15,13 @@ const debug = makeDebug('playing:content-services:blob');
 
 const defaultOptions = {
   name: 'blobs',
-  blobs: {
-    fileCDN: '/file/'
-  }
 };
 
 class BlobService extends Service {
   constructor(options) {
     options = Object.assign({}, defaultOptions, options);
+    assert(options.blobs, 'BlobService blobs option required');
+
     super(options);
   }
 
@@ -98,6 +97,9 @@ class BlobService extends Service {
           });
         });
       }
+      if (file.key) {
+
+      }
       debug('getBuffer not supports this file', file);
       throw new Error('getBuffer not supported on this file');
     };
@@ -112,7 +114,7 @@ class BlobService extends Service {
     const writeBlob = ([batch, buffer]) => {
       batch.blobs = batch.blobs || [];
       const index = data.index || batch.blobs.length;
-      const vender = data.vender || 'file';
+      const vender = data.vender || this.storage.name;
       const key = `${id}.${index}.${ext}`;
       return new Promise((resolve, reject) => {
         fromBuffer(buffer)
