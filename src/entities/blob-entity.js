@@ -1,15 +1,17 @@
-import { omit } from 'lodash';
+import fp from 'ramda';
 import Entity from 'mostly-entity';
 import url from 'url';
 
 const BlobEntity = new Entity('Blob');
 
 BlobEntity.expose('url', (obj, options) => {
+  let baseUrl = '';
   switch(obj.vender) {
     case 'local':
-      const baseUrl = options.blobs
-        && options.blobs.local
-        && options.blobs.local.baseUrl;
+      baseUrl = fp.path(['local', 'baseUrl'], options.blobs);
+      return url.resolve(baseUrl, obj.key);
+    case 'minio':
+      baseUrl = fp.path(['minio', 'baseUrl'], options.blobs);
       return url.resolve(baseUrl, obj.key);
     default: return obj.url || obj.key;
   }
