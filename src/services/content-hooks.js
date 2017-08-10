@@ -131,14 +131,14 @@ function getBreadcrumbs(hook, doc, options) {
 
 function getCollections(hook, doc, options) {
   const documents = hook.app.service('documents');
-  const entries = hook.app.service('document-entries');
-  return entries.find({ query: {
+  const catalogs = hook.app.service('catalogs');
+  return catalogs.find({ query: {
     creator: hook.params.user.id,
-    entry: doc.id,
+    document: doc.id,
     category: 'collection'
   }}).then((results) => {
     if (results && results.total > 0) {
-      let collections = fp.map(fp.prop('_parent'), results && results.data);
+      let collections = fp.map(fp.prop('parent'), results && results.data);
       return documents.find({ query: {
         _id: { $in: collections }
       }});
@@ -151,10 +151,10 @@ function getCollections(hook, doc, options) {
 }
 
 function getFavorites(hook, doc, options) {
-  const entries = hook.app.service('document-entries');
-  return entries.find({ query: {
+  const catalogs = hook.app.service('catalogs');
+  return catalogs.find({ query: {
     creator: hook.params.user.id,
-    entry: doc.id,
+    document: doc.id,
     category: 'favorite'
   }}).then((results) => {
     doc.metadata.favorites = { isFavorite: results && results.total > 0 };
