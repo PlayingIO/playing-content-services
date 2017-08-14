@@ -138,7 +138,7 @@ function getCollections(hook, doc, options) {
     category: 'collection'
   }}).then((results) => {
     if (results && results.total > 0) {
-      let collections = fp.map(fp.prop('parent'), results && results.data);
+      let collections = fp.map(fp.path(['parent', 'id']), results && results.data);
       return documents.find({ query: {
         _id: { $in: collections }
       }});
