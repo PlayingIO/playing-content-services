@@ -23,12 +23,14 @@ const fields = {
   expired: { type: 'Date' },
   format: { type: 'String' },
   language: { type: 'String' },
-  author: { type: 'String' }, // real author of the document
+  author: { type: 'String' },    // real author of the document
   creator: { type: 'ObjectId' }, // creator of the document
   contributors: [{ type: 'ObjectId' }], // contributor of the document
   file: blob, // main blob
   files: blobs, // attachements
-  verion: { type: 'Number' }
+  verion: { type: 'Number' },
+  locker: { type: 'ObjectId' },  // lock owner
+  lockedAt: { type: 'Date' }     // locked time
 };
 
 export default function(app, name) {

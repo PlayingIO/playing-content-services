@@ -103,8 +103,6 @@ class DocumentService extends Service {
   untagDocument(id, data, params, doc) {
     assert(data.tags, 'data.tags not provided.');
 
-    const service = this.app.service('tags');
-
     let tags = fp.without(data.tags, doc.tags || []);
     return super.patch(doc.id, { tags }, params);
   }
@@ -143,6 +141,20 @@ class DocumentService extends Service {
     };
 
     return Promise.all(data.documents.map(moveDoc));
+  }
+
+  lockDocument(id, data, params, doc) {
+    return super.patch(doc.id, {
+      locker: data.creator,
+      lockedAt: new Date()
+    });
+  }
+
+  unlockDocument(id, data, params, doc) {
+    return super.patch(doc.id, {
+      locker: null,
+      lockedAt: null
+    });
   }
 }
 
