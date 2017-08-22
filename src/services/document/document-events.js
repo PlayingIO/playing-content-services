@@ -6,18 +6,17 @@ const createActivity = function(app, document, verb, message) {
   const feeds = app.service('feeds');
   const activities = app.service('activities');
 
-  const creator = document && document.creator;
   return feeds.get(`document:${document.id}`).then((feed) => {
-    if (creator && feed) {
+    if (feed) {
       activities.create({
         feed: feed.id,
-        actor: `user:${creator.id}`,
+        actor: `user:${document.creator}`,
         verb: verb,
         object: `document:${document.id}`,
         foreignId: `document:${document.id}`,
         message: message,
         title: document.title,
-        cc: [`user:${creator.id}`]
+        cc: [`user:${document.creator}`]
       });
     }
   });
@@ -32,7 +31,7 @@ export function subDocumentEvents(app, options) {
   }, (resp) => {
     const document = resp.event;
     debug('document.create', document);
-    if (document && creator) {
+    if (document) {
       createActivity(app, document, 'documentCreated', 'created the document');
     }
   });
