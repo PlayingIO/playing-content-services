@@ -5,6 +5,7 @@ import makeDebug from 'debug';
 import errors from 'feathers-errors';
 import mimeTypes from 'mime-types';
 import { Service, createService, transform } from 'mostly-feathers-mongoose';
+import fp from 'ramda';
 import request from 'request';
 import stream from 'stream';
 
@@ -118,7 +119,7 @@ class BlobService extends Service {
     const writeBlob = ([batch, buffer]) => {
       batch.blobs = batch.blobs || [];
       const bucket = data.bucket || this.storage.bucket;
-      const index = data.index || batch.blobs.length;
+      const index = parseInt(data.index) || batch.blobs.length;
       const vender = data.vender || this.storage.name;
       const key = `${id}.${index}.${ext}`;
       return new Promise((resolve, reject) => {
@@ -187,8 +188,7 @@ class BlobService extends Service {
 
     let blobs = (original.blobs || []).map((blob) => {
       blob.batch = original.id;
-      delete blob.id;
-      return blob;
+      return fp.dissoc('id', blob);
     });
 
     return documents.get(data.context.currentDocument).then((doc) => {
@@ -210,9 +210,7 @@ class BlobService extends Service {
       if (!doc) throw new Error('currentDocument not exists');
       if (data.xpath.startsWith('files')) {
         let [xpath, index] = data.xpath.split('/');
-        let files = (doc.files || []).filter((blob) => {
-          return blob.index !== parseInt(index);
-        });
+        let files = fp.remove(parseInt(index), 1, doc.files || []);
         debug('removeFromDocument', xpath, index, files);
         return documents.patch(doc.id, { files: files });
       } else {
