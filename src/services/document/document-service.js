@@ -37,7 +37,7 @@ class DocumentService extends Service {
 
   get(id, params) {
     return super.get(id, params).then(doc => {
-      if (doc && doc.type !== 'document') {
+      if (doc && doc.type && doc.type !== 'document') {
         let service = plural(doc.type || 'document');
         debug('proxy document get => ', service, doc.id);
         return this.app.service(service).get(doc.id, params);
