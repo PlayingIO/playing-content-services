@@ -20,8 +20,10 @@ DocumentEntity.expose('metadata', (obj, options) => {
   
   const Types = options.DocTypes || DocTypes;
 
-  obj.metadata.facets = Types[obj.type].facets;
-  obj.metadata.packages = Types[obj.type].packages;
+  if (Types[obj.type]) {
+    obj.metadata.facets = Types[obj.type].facets;
+    obj.metadata.packages = Types[obj.type].packages;
+  }
 
   return obj.metadata;
 });
