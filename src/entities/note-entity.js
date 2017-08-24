@@ -8,13 +8,6 @@ const NoteEntity = new Entity('Note', {
   files: { using: BlobEntity },
 });
 
-NoteEntity.expose('parent', (obj, options) => {
-  if (options.provider && obj.parent && obj.parent.parent) {
-    return omit(obj.parent, ['parent']);
-  }
-  return obj.parent;
-});
-
 NoteEntity.expose('metadata', (obj, options) => {
   obj.metadata = obj.metadata || {};
   

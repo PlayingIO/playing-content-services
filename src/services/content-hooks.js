@@ -132,32 +132,41 @@ function getBreadcrumbs(hook, doc, options) {
 function getCollections(hook, doc, options) {
   const documents = hook.app.service('documents');
   const catalogs = hook.app.service('catalogs');
-  return catalogs.find({ query: {
-    creator: hook.params.user.id,
-    document: doc.id,
-    category: 'collection'
-  }}).then((results) => {
-    if (results && results.total > 0) {
-      let collections = fp.map(fp.path(['parent', 'id']), results && results.data);
-      return documents.find({ query: {
-        _id: { $in: collections }
-      }});
-    } else {
-      return null;
+  return catalogs.find({
+    query: {
+      creator: hook.params.user.id,
+      document: doc.id,
+      category: 'collection'
+    },
+    paginate: false
+  }).then((results) => {
+    if (results) {
+      let collections = fp.map(fp.prop('parent'), results);
+      if (collections.length > 0) {
+        return documents.find({
+          query: { _id: { $in: collections } },
+          paginate: false
+        });
+      }
     }
   }).then((results) => {
-    doc.metadata.collections = results && results.data || [];
+    doc.metadata.collections = results || [];
   });
 }
 
 function getFavorites(hook, doc, options) {
   const catalogs = hook.app.service('catalogs');
-  return catalogs.find({ query: {
-    creator: hook.params.user.id,
-    document: doc.id,
-    category: 'favorite'
-  }}).then((results) => {
-    doc.metadata.favorites = { isFavorite: results && results.total > 0 };
+  return catalogs.find({
+    query: {
+      creator: hook.params.user.id,
+      document: doc.id,
+      category: 'favorite'
+    },
+    paginate: false
+  }).then((results) => {
+    if (results) {
+      doc.metadata.favorites = { isFavorite: results.length > 0 };
+    }
   });
 }
 
@@ -262,7 +271,7 @@ export function fetchBlobs(options) {
 
     function getFullBlob(file) {
       // fetch only file is not fulfilled
-      if (file && file.batch && file.index && !(file.key || file.url)) {
+      if (file && file.batch && !fp.isNil(file.index) && !(file.key || file.url)) {
         return blobs.get(file.batch).then(batch => {
           let blob = batch.blobs.find(b => b.index === parseInt(file.index));
           return Object.assign(file, blob);

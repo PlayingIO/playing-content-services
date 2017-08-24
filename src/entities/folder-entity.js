@@ -8,13 +8,6 @@ const FolderEntity = new Entity('Folder', {
   files: { using: BlobEntity },
 });
 
-FolderEntity.expose('parent', (obj, options) => {
-  if (options.provider && obj.parent && obj.parent.parent) {
-    return omit(obj.parent, ['parent']);
-  }
-  return obj.parent;
-});
-
 FolderEntity.expose('metadata', (obj, options) => {
   obj.metadata = obj.metadata || {};
   

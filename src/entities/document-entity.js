@@ -8,13 +8,6 @@ const DocumentEntity = new Entity('Document', {
   files: { using: BlobEntity },
 });
 
-DocumentEntity.expose('parent', (obj, options) => {
-  if (options.provider && obj.parent && obj.parent.parent) {
-    return omit(obj.parent, ['parent']);
-  }
-  return obj.parent;
-});
-
 DocumentEntity.expose('metadata', (obj, options) => {
   obj.metadata = obj.metadata || {};
   
