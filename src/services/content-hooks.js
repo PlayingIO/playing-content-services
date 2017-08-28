@@ -170,6 +170,22 @@ function getFavorites(hook, doc, options) {
   });
 }
 
+function getAcls(hook, doc, options) {
+  let inherited = { name: 'inherited', aces: [] };
+  inherited.aces.push({
+    begin: null,
+    end: null,
+    creator: null,
+    externalUser: false,
+    granted: true,
+    id: "Administrator:Everything:true:::",
+    permission: "Everything",
+    status: "effective",
+    user: hook.params.user
+  });
+  return [inherited];
+}
+
 function getPermission(hook, doc, options) {
   switch(doc.type) {
     case 'document': return ['Everything', 'Read', 'Write', 'ReadWrite'];
@@ -177,6 +193,10 @@ function getPermission(hook, doc, options) {
     case 'folder': return ['Everything', 'Read', 'Write', 'ReadWrite', 'ReadChildren', 'AddChildren', 'RemoveChildren'];
     default: return ['Everything', 'Read', 'Write', 'ReadWrite'];
   }
+}
+
+function getUserVisiblePermissions(hook, doc, options) {
+  return ['Read', 'ReadWrite', 'Everything'];
 }
 
 function getSubtypes(hook, doc, options) {
@@ -221,6 +241,9 @@ export function documentEnrichers(options = {}) {
       doc.metadata = doc.metadata || {};
       enrichers.forEach(enricher => {
         switch(enricher) {
+          case 'acls':
+            doc.metadata.acls = getAcls(hook, doc, options);
+            break;
           case 'breadcrumb':
             doc.metadata.breadcrumbs = getBreadcrumbs(hook, doc, options);
             break;
@@ -248,6 +271,9 @@ export function documentEnrichers(options = {}) {
             break;
           case 'thumbnail':
             doc.metadata.thumbnail = getThumbnail(hook, doc, options);
+            break;
+          case 'userVisiblePermissions':
+            doc.metadata.userVisiblePermissions = getUserVisiblePermissions(hook, doc, options);
             break;
         }
       });
