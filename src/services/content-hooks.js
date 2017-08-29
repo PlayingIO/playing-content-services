@@ -3,8 +3,8 @@ import makeDebug from 'debug';
 import { hooks as auth } from 'feathers-authentication';
 import { filter, kebabCase, omit, pick } from 'lodash';
 import { hooks } from 'mostly-feathers-mongoose';
+import fp from 'mostly-func';
 import path from 'path';
-import fp from 'ramda';
 import shortid from 'shortid';
 import url from 'url';
 
@@ -171,6 +171,7 @@ function getFavorites(hook, doc, options) {
 }
 
 function getAcls(hook, doc, options) {
+  let local = { name: 'local', aces: [] };
   let inherited = { name: 'inherited', aces: [] };
   inherited.aces.push({
     begin: null,

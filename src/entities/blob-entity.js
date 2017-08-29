@@ -1,4 +1,4 @@
-import fp from 'ramda';
+import fp from 'mostly-func';
 import Entity from 'mostly-entity';
 import url from 'url';
 

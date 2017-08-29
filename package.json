@@ -39,7 +39,6 @@
     "mongoose-unique-array": "^0.2.0",
     "nats": "^0.7.20",
     "pluralize": "^5.0.0",
-    "ramda": "^0.24.1",
     "shortid": "^2.2.8",
     "uberproto": "^1.2.0"
   },

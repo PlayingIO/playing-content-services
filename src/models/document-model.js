@@ -39,5 +39,6 @@ export default function(app, name) {
   schema.plugin(timestamps);
   schema.plugin(uniqueArray);
   schema.plugin(plugins.softDelete);
+  schema.plugin(plugins.acl);
   return mongoose.model(name, schema);
 }

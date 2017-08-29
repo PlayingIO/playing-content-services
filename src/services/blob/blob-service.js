@@ -5,7 +5,7 @@ import makeDebug from 'debug';
 import errors from 'feathers-errors';
 import mimeTypes from 'mime-types';
 import { Service, createService, transform } from 'mostly-feathers-mongoose';
-import fp from 'ramda';
+import fp from 'mostly-func';
 import request from 'request';
 import stream from 'stream';
 

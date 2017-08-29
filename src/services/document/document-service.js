@@ -1,9 +1,9 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import { Service, createService } from 'mostly-feathers-mongoose';
+import fp from 'mostly-func';
 import path from 'path';
 import { plural } from 'pluralize';
-import fp from 'ramda';
 import DocumentModel from '~/models/document-model';
 import defaultHooks from './document-hooks';
 import { subDocumentEvents } from './document-events';
@@ -155,6 +155,28 @@ class DocumentService extends Service {
       locker: null,
       lockedAt: null
     });
+  }
+
+  addPermission(id, data, params, doc) {
+    assert(data.permission, 'data.permission is not provided');
+    assert(data.user, 'data.user is not provided');
+
+    let ACL = Object.assign(doc.ACL || {}, {
+      [data.user]: { [data.permission]: true }
+    });
+    return super.patch(doc.id, { ACL }, params);
+  }
+
+  replacePermission(id, data, params, doc) {
+    return addPermission(id, data, params, doc);
+  }
+
+  removePermission(id, data, params, doc) {
+    assert(data.permission, 'data.permission is not provided');
+    assert(data.user, 'data.user is not provided');
+
+    let ACL = fp.dissoc([data.user, data.permission], doc.ACL || {});
+    return super.patch(doc.id, { ACL }, params);
   }
 }
 
