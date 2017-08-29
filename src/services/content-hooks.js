@@ -24,6 +24,23 @@ const defaultEntities = {
   note: NoteEntity
 };
 
+export function isDocument() {
+  return (hook) => {
+    if (hook.type === 'before') {
+      return hook.params.type === 'document';
+    }
+    if (hook.type === 'after') {
+      const result = hook.result.data || hook.result;
+      if (Array.isArray(result)) {
+        return fp.reduce((acc, doc) =>
+          acc && doc.type === 'document', true, result);
+      } else {
+        return result.type === 'document';
+      }
+    }
+  };
+}
+
 // presentEntity by document type
 export function presentDocument(options = {}) {
   const entities = Object.assign(defaultEntities, options.entities);
@@ -181,23 +198,23 @@ function getPermisionStatus(ace) {
   return 'effective';
 }
 
-function getAcls(hook, doc, options) {
-  let local = { name: 'local', aces: [] };
-  let inherited = { name: 'inherited', aces: [] };
-  
-  let getUsers = Promise.resolve([]);
-  if (doc.ACL) {
+function getAces(app, document) {
+  const getDocument = document.title
+    ? Promise.resolve(document)
+    : app.service('documents').get(document);
+  return getDocument.then((doc) => {
+    if (!doc.ACL) return null;
+    
+    let findUsers = Promise.resolve([]);
     let keys = fp.reject(fp.equals('*'), Object.keys(doc.ACL));
     const creators = fp.reject(fp.isNil, fp.map(fp.prop('creator'), Object.values(doc.ACL)));
-    keys = keys.concat(creators)
+    keys = keys.concat(creators);
     if (keys.length > 0) {
-      getUsers = hook.app.service('user-groups').find({ query: {
+      findUsers = app.service('user-groups').find({ query: {
         _id: { $in: keys }
       }});
     }
-  }
-  return getUsers.then(users => {
-    if (doc.ACL) {
+    return findUsers.then(users => {
       const aces = fp.map(key => {
         const ace = doc.ACL[key];
         return Object.assign({}, ace, {
@@ -206,21 +223,39 @@ function getAcls(hook, doc, options) {
           user: fp.findById(key, users)
         });
       }, Object.keys(doc.ACL));
-      local.aces = aces;
-    }
-    inherited.aces.push({
-      begin: null,
-      end: null,
-      creator: null,
-      externalUser: false,
-      granted: true,
-      id: "Administrator:Everything:true:::",
-      permission: "Everything",
-      status: "effective",
-      user: hook.params.user
+      return aces;
     });
-    doc.metadata.acls = [local, inherited];
   });
+}
+
+function getAcls(hook, doc, options) {
+  if (!doc.ACL) return Promise.resolve(null);
+
+  const inherited = doc.ACL['*'] && doc.ACL['*'].inherited === true;
+  const getLocalAces = getAces(hook.app, doc);
+  const getInheritedAces = getAces(hook.app, doc.parent);
+
+  return Promise.all([getLocalAces, getInheritedAces])
+    .then(([localAces, inheritedAces]) => {
+      doc.metadata.acls = [];
+      // local permissions
+      if (localAces) doc.metadata.acls.push({ name: 'local', aces: localAces });
+      // inherited permissions
+      if (inherited) {
+        doc.metadata.acls.push({ name: 'inherited', aces: inheritedAces || []});
+      }
+      // inherited.aces.push({
+      //   begin: null,
+      //   end: null,
+      //   creator: null,
+      //   externalUser: false,
+      //   granted: true,
+      //   id: "Administrator:Everything:true:::",
+      //   permission: "Everything",
+      //   status: "effective",
+      //   user: hook.params.user
+      // });
+    });
 }
 
 function getPermission(hook, doc, options) {

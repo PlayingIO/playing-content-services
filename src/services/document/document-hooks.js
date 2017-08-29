@@ -1,4 +1,4 @@
-import { discard } from 'feathers-hooks-common';
+import { discard, iff } from 'feathers-hooks-common';
 import { hooks as auth } from 'feathers-authentication';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
@@ -38,11 +38,20 @@ module.exports = function(options = {}) {
     },
     after: {
       all: [
+        hooks.responder()
+      ],
+      find: [
         hooks.populate('parent', { service: 'folders' }),
         hooks.populate('creator', { service: 'users' }),
-        content.presentDocument(options),
         content.documentEnrichers(options),
-        hooks.responder()
+        content.presentDocument(options),
+      ],
+      get: [
+        // only populate with document type to avoid duplicated process
+        iff(content.isDocument(), hooks.populate('parent', { service: 'folders' })),
+        iff(content.isDocument(), hooks.populate('creator', { service: 'users' })),
+        iff(content.isDocument(), content.documentEnrichers(options)),
+        iff(content.isDocument(), content.presentDocument(options)),
       ],
       create: [
         hooks.publishEvent('document.create', { prefix: 'playing' })

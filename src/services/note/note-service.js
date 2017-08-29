@@ -3,7 +3,7 @@ import NoteModel from '~/models/note-model';
 import defaultHooks from './note-hooks';
 
 const defaultOptions = {
-  name: 'files'
+  name: 'notes'
 };
 
 class NoteService extends Service {

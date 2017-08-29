@@ -184,6 +184,24 @@ class DocumentService extends Service {
     let ACL = fp.dissoc(data.user, doc.ACL || {});
     return super.patch(doc.id, { ACL }, params);
   }
+
+  blockPermissionInheritance(id, data, params, doc) {
+    let ACL = Object.assign(doc.ACL || {}, {
+      '*': {
+        inherited: false
+      }
+    });
+    return super.patch(doc.id, { ACL }, params);
+  }
+
+  unblockPermissionInheritance(id, data, params, doc) {
+    let ACL = Object.assign(doc.ACL || {}, {
+      '*': {
+        inherited: true
+      }
+    });
+    return super.patch(doc.id, { ACL }, params);
+  }
 }
 
 export default function init(app, options) {
