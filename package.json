@@ -22,6 +22,7 @@
     "babel-polyfill": "^6.23.0",
     "bluebird": "^3.5.0",
     "concat-stream": "^1.6.0",
+    "date-fns": "^1.28.5",
     "dauria": "^2.0.0",
     "feathers-authentication": "^1.2.3",
     "feathers-authentication-hooks": "^0.1.4",

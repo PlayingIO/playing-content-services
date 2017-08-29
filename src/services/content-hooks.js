@@ -4,6 +4,7 @@ import { hooks as auth } from 'feathers-authentication';
 import { filter, kebabCase, omit, pick } from 'lodash';
 import { hooks } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
+import dateF from 'date-fns';
 import path from 'path';
 import shortid from 'shortid';
 import url from 'url';
@@ -170,21 +171,56 @@ function getFavorites(hook, doc, options) {
   });
 }
 
+function getPermisionStatus(ace) {
+  const now = new Date();
+  if (ace.begin || ace.end) {
+    if (ace.begin && dateF.isBefore(now, ace.begin)) return 'pending';
+    if (ace.begin && ace.end && dateF.isWithinRange(now, ace.start, ace.end)) return 'effective';
+    if (ace.end && dateF.isAfter(now, ace.end)) return 'archived';
+  }
+  return 'effective';
+}
+
 function getAcls(hook, doc, options) {
   let local = { name: 'local', aces: [] };
   let inherited = { name: 'inherited', aces: [] };
-  inherited.aces.push({
-    begin: null,
-    end: null,
-    creator: null,
-    externalUser: false,
-    granted: true,
-    id: "Administrator:Everything:true:::",
-    permission: "Everything",
-    status: "effective",
-    user: hook.params.user
+  
+  let getUsers = Promise.resolve([]);
+  if (doc.ACL) {
+    let keys = fp.reject(fp.equals('*'), Object.keys(doc.ACL));
+    const creators = fp.reject(fp.isNil, fp.map(fp.prop('creator'), Object.values(doc.ACL)));
+    keys = keys.concat(creators)
+    if (keys.length > 0) {
+      getUsers = hook.app.service('user-groups').find({ query: {
+        _id: { $in: keys }
+      }});
+    }
+  }
+  return getUsers.then(users => {
+    if (doc.ACL) {
+      const aces = fp.map(key => {
+        const ace = doc.ACL[key];
+        return Object.assign({}, ace, {
+          status: getPermisionStatus(ace),
+          creator: ace.creator? fp.findById(ace.creator, users) : null,
+          user: fp.findById(key, users)
+        });
+      }, Object.keys(doc.ACL));
+      local.aces = aces;
+    }
+    inherited.aces.push({
+      begin: null,
+      end: null,
+      creator: null,
+      externalUser: false,
+      granted: true,
+      id: "Administrator:Everything:true:::",
+      permission: "Everything",
+      status: "effective",
+      user: hook.params.user
+    });
+    doc.metadata.acls = [local, inherited];
   });
-  return [inherited];
 }
 
 function getPermission(hook, doc, options) {
@@ -243,7 +279,7 @@ export function documentEnrichers(options = {}) {
       enrichers.forEach(enricher => {
         switch(enricher) {
           case 'acls':
-            doc.metadata.acls = getAcls(hook, doc, options);
+            promises.push(getAcls(hook, doc, options));
             break;
           case 'breadcrumb':
             doc.metadata.breadcrumbs = getBreadcrumbs(hook, doc, options);

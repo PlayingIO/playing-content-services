@@ -160,22 +160,28 @@ class DocumentService extends Service {
   addPermission(id, data, params, doc) {
     assert(data.permission, 'data.permission is not provided');
     assert(data.user, 'data.user is not provided');
-
+    
     let ACL = Object.assign(doc.ACL || {}, {
-      [data.user]: { [data.permission]: true }
+      [data.user]: {
+        creator: params.user.id,
+        permission: data.permission,
+        granted: true,
+        begin: data.begin || undefined,
+        end: data.end || undefined
+      }
     });
     return super.patch(doc.id, { ACL }, params);
   }
 
   replacePermission(id, data, params, doc) {
-    return addPermission(id, data, params, doc);
+    return this.addPermission(id, data, params, doc);
   }
 
   removePermission(id, data, params, doc) {
     assert(data.permission, 'data.permission is not provided');
     assert(data.user, 'data.user is not provided');
 
-    let ACL = fp.dissoc([data.user, data.permission], doc.ACL || {});
+    let ACL = fp.dissoc(data.user, doc.ACL || {});
     return super.patch(doc.id, { ACL }, params);
   }
 }
