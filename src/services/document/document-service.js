@@ -166,8 +166,8 @@ class DocumentService extends Service {
         creator: params.user.id,
         permission: data.permission,
         granted: true,
-        begin: data.begin || undefined,
-        end: data.end || undefined
+        begin: data.begin,
+        end: data.end
       }
     });
     return super.patch(doc.id, { ACL }, params);

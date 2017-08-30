@@ -18,6 +18,9 @@ module.exports = function(options = {}) {
       ],
       create: [
         associateCurrentUser({ idField: 'id', as: 'creator' }),
+        hooks.defaultAcls('restrictToOwner', 'ReadWrite'),
+        hooks.defaultAcls('restrictToPublic', 'Read'),
+        hooks.defaultAcls('inheriteParent', true),
         content.computePath(),
         content.fetchBlobs()
       ],

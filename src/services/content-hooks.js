@@ -244,17 +244,6 @@ function getAcls(hook, doc, options) {
       if (inherited) {
         doc.metadata.acls.push({ name: 'inherited', aces: inheritedAces || []});
       }
-      // inherited.aces.push({
-      //   begin: null,
-      //   end: null,
-      //   creator: null,
-      //   externalUser: false,
-      //   granted: true,
-      //   id: "Administrator:Everything:true:::",
-      //   permission: "Everything",
-      //   status: "effective",
-      //   user: hook.params.user
-      // });
     });
 }
 
