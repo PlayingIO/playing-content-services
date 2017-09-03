@@ -3,7 +3,7 @@ import { plugins } from 'mostly-feathers-mongoose';
 import { blob } from './blob-schema';
 
 const fields = {
-  note: { type: 'String' },
+  content: { type: 'String' },
   mimetype: { type: 'String' }
 };
 
