@@ -39,11 +39,11 @@ module.exports = function(options = {}) {
     },
     after: {
       all: [
-        iff(isProvider('external'), discard('ACL')),
         hooks.populate('parent', { service: 'folders' }),
         hooks.populate('creator', { service: 'users' }),
-        hooks.presentEntity(NoteEntity, options),
         content.documentEnrichers(options),
+        hooks.presentEntity(NoteEntity, options),
+        iff(isProvider('external'), discard('ACL')),
         hooks.responder()
       ],
       create: [
