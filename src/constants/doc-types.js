@@ -34,7 +34,8 @@ export default {
     "packages": "playing-content-elements",
     "facets": [
       "Folderish"
-    ]
+    ],
+    "subtypes": ['collection', 'file', 'folder', 'note']
   },
   note: {
     "type": "Note",

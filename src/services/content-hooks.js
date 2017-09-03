@@ -82,15 +82,14 @@ export function presentDocument(options = {}) {
 // compute current path by parent
 export function computePath(options = { slug: false }) {
   return (hook) => {
-    const folders = hook.app.service('folders');
+    const documents = hook.app.service('documents');
 
     // get parent or root
     let parentQuery = null;
-    if (hook.method === 'create') {
-      parentQuery = folders.first({ query: { path : '/' } });
-    }
     if (hook.data.parent) {
-      parentQuery = folders.get(hook.data.parent);
+      parentQuery = documents.get(hook.data.parent);
+    } else if (hook.method === 'create') {
+      parentQuery = documents.first({ query: { path : '/' } });
     }
 
     if (parentQuery) {
@@ -248,12 +247,14 @@ function getAcls(hook, doc, options) {
 }
 
 function getPermission(hook, doc, options) {
-  switch(doc.type) {
-    case 'document': return ['Everything', 'Read', 'Write', 'ReadWrite'];
-    case 'file': return ['Everything', 'Read', 'Write', 'ReadWrite'];
-    case 'folder': return ['Everything', 'Read', 'Write', 'ReadWrite', 'ReadChildren', 'AddChildren', 'RemoveChildren'];
-    default: return ['Everything', 'Read', 'Write', 'ReadWrite'];
+  const Types = options.DocTypes || DocTypes;
+  const subtypes = Types[doc.type] && Types[doc.type].subtypes;
+  // TODO: user acls
+  let permissions = ['Everything', 'Read', 'Write', 'ReadWrite'];
+  if (subtypes) {
+    permissions = permissions.concat(['ReadChildren', 'AddChildren', 'RemoveChildren']);
   }
+  return permissions;
 }
 
 function getUserVisiblePermissions(hook, doc, options) {
@@ -262,12 +263,11 @@ function getUserVisiblePermissions(hook, doc, options) {
 
 function getSubtypes(hook, doc, options) {
   const Types = options.DocTypes || DocTypes;
-  switch(doc.type) {
-    case 'document': return [];
-    case 'file': return [];
-    case 'folder': return Object.values(pick(Types, ['collection', 'file', 'folder', 'note']));
-    default: return [];
+  const subtypes = Types[doc.type] && Types[doc.type].subtypes;
+  if (subtypes) {
+    return Object.values(pick(Types, subtypes));
   }
+  return [];
 }
 
 function getTags(hook, doc, options) {
