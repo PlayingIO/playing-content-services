@@ -172,12 +172,11 @@ function getCollections(hook, doc, options) {
 }
 
 function getFavorites(hook, doc, options) {
-  const catalogs = hook.app.service('catalogs');
-  return catalogs.find({
+  const userFavorites = hook.app.service('user-favorites');
+  return userFavorites.find({
     query: {
-      creator: hook.params.user.id,
-      document: doc.id,
-      category: 'favorite'
+      user: hook.params.user.id,
+      document: doc.id
     },
     paginate: false
   }).then((results) => {
