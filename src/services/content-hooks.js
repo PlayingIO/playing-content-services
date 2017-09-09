@@ -148,8 +148,8 @@ function getBreadcrumbs(hook, doc, options) {
 
 function getCollections(hook, doc, options) {
   const documents = hook.app.service('documents');
-  const catalogs = hook.app.service('catalogs');
-  return catalogs.find({
+  const userCollections = hook.app.service('user-collections');
+  return userCollections.find({
     query: {
       creator: hook.params.user.id,
       document: doc.id,
