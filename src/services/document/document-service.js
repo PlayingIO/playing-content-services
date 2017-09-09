@@ -85,7 +85,7 @@ class DocumentService extends Service {
     }
   }
 
-  tagDocument(id, data, params, doc) {
+  _tagDocument(id, data, params, doc) {
     assert(data.tags, 'data.tags not provided.');
 
     const service = this.app.service('tags');
@@ -100,14 +100,14 @@ class DocumentService extends Service {
     ]).then(([docs, tags]) => docs);
   }
 
-  untagDocument(id, data, params, doc) {
+  _untagDocument(id, data, params, doc) {
     assert(data.tags, 'data.tags not provided.');
 
     let tags = fp.without(data.tags, doc.tags || []);
     return super.patch(doc.id, { tags }, params);
   }
 
-  copyDocument(id, data, params, target) {
+  _copyDocument(id, data, params, target) {
     assert(data.documents, 'data.documents not provided.');
     assert(data.target, 'data.target not provided.');
     debug('copyDocument target', target.id, data.documents);
@@ -124,7 +124,7 @@ class DocumentService extends Service {
     return Promise.all(data.documents.map(copyDoc));
   }
 
-  moveDocument(id, data, params, target) {
+  _moveDocument(id, data, params, target) {
     assert(data.documents, 'data.documents not provided.');
     assert(data.target, 'data.target not provided.');
     debug('moveDocument target', target.id, data.documents);
@@ -143,21 +143,21 @@ class DocumentService extends Service {
     return Promise.all(data.documents.map(moveDoc));
   }
 
-  lockDocument(id, data, params, doc) {
+  _lockDocument(id, data, params, doc) {
     return super.patch(doc.id, {
       locker: data.creator,
       lockedAt: new Date()
     });
   }
 
-  unlockDocument(id, data, params, doc) {
+  _unlockDocument(id, data, params, doc) {
     return super.patch(doc.id, {
       locker: null,
       lockedAt: null
     });
   }
 
-  addPermission(id, data, params, doc) {
+  _addPermission(id, data, params, doc) {
     assert(data.permission, 'data.permission is not provided');
     assert(data.user, 'data.user is not provided');
     
@@ -173,11 +173,11 @@ class DocumentService extends Service {
     return super.patch(doc.id, { ACL }, params);
   }
 
-  replacePermission(id, data, params, doc) {
+  _replacePermission(id, data, params, doc) {
     return this.addPermission(id, data, params, doc);
   }
 
-  removePermission(id, data, params, doc) {
+  _removePermission(id, data, params, doc) {
     assert(data.permission, 'data.permission is not provided');
     assert(data.user, 'data.user is not provided');
 
@@ -185,7 +185,7 @@ class DocumentService extends Service {
     return super.patch(doc.id, { ACL }, params);
   }
 
-  blockPermissionInheritance(id, data, params, doc) {
+  _blockPermissionInheritance(id, data, params, doc) {
     let ACL = Object.assign(doc.ACL || {}, {
       '*': {
         inherited: false
@@ -194,7 +194,7 @@ class DocumentService extends Service {
     return super.patch(doc.id, { ACL }, params);
   }
 
-  unblockPermissionInheritance(id, data, params, doc) {
+  _unblockPermissionInheritance(id, data, params, doc) {
     let ACL = Object.assign(doc.ACL || {}, {
       '*': {
         inherited: true

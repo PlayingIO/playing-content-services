@@ -180,7 +180,7 @@ class BlobService extends Service {
     }
   }
 
-  attachOnDocument(id, data, params, original) {
+  _attachOnDocument(id, data, params, original) {
     assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
     assert(data.context && data.context.documentType, 'context.documentType not provided.');
 
@@ -199,7 +199,7 @@ class BlobService extends Service {
     });
   }
 
-  removeFromDocument(id, data, params, orignal) {
+  _removeFromDocument(id, data, params, orignal) {
     assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
     assert(data.context && data.context.documentType, 'context.documentType not provided.');
     assert(data.xpath, 'data.xpath not provided.');
