@@ -39,7 +39,7 @@ module.exports = function(options = {}) {
     },
     after: {
       all: [
-        hooks.populate('parent', { service: 'folders' }),
+        hooks.populate('parent', { service: 'folders', fallThrough: ['headers'] }),
         hooks.populate('creator', { service: 'users' }),
         content.documentEnrichers(options),
         hooks.presentEntity(NoteEntity, options),

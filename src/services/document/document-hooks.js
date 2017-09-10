@@ -45,7 +45,7 @@ module.exports = function(options = {}) {
         hooks.responder()
       ],
       find: [
-        hooks.populate('parent', { service: 'folders' }),
+        hooks.populate('parent', { service: 'folders', fallThrough: ['headers'] }),
         hooks.populate('creator', { service: 'users' }),
         content.documentEnrichers(options),
         content.presentDocument(options),
