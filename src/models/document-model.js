@@ -17,7 +17,7 @@ const fields = {
   parent: { type: 'ObjectId' },               // parent resource
   path: { type: 'String', default: '/', unique: true },
   subjects: [{ type: 'String' }],             // the topic of the resource
-  tags: [{ type: 'String', unique: true }],   // the tags of the resource
+  tags: [{ type: 'String' }],                 // the tags of the resource
   rights: [{ type: 'String' }],               // information about rights held in and over the resource.
   source: { type: 'String' },                 // related resource from which the described resource is derived.
   nature: { type: 'String' },                 // nature or genre of the resource

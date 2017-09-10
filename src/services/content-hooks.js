@@ -5,6 +5,7 @@ import { filter, kebabCase, omit, pick } from 'lodash';
 import { hooks } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 import dateF from 'date-fns';
+import slug from 'limax';
 import path from 'path';
 import shortid from 'shortid';
 import url from 'url';
@@ -30,12 +31,12 @@ export function isDocument() {
       return hook.params.type === 'document';
     }
     if (hook.type === 'after') {
-      const result = hook.result.data || hook.result;
+      const result = hook.result && hook.result.data || hook.result;
       if (Array.isArray(result)) {
         return fp.reduce((acc, doc) =>
           acc && doc.type === 'document', true, result);
       } else {
-        return result.type === 'document';
+        return result && result.type === 'document';
       }
     }
   };
@@ -88,7 +89,7 @@ export function computePath(options = { slug: false }) {
     let parentQuery = null;
     if (hook.data.parent) {
       parentQuery = documents.get(hook.data.parent);
-    } else if (hook.method === 'create') {
+    } else if (hook.method === 'create' && hook.data.path !== '/') {
       parentQuery = documents.first({ query: { path : '/' } });
     }
 
@@ -96,16 +97,22 @@ export function computePath(options = { slug: false }) {
       return parentQuery.then(parent => {
         if (parent && parent.path) {
           hook.data.parent = parent.id;
-          let slug = 'untitled';
+          // generate new type-name or use the existing name
+          const type = hook.data.type || 'document';
+          let name = type + '-' + shortid.generate();
           if (options.slug) {
             if (hook.data.title && hook.data.title.length > 0) {
-              slug = kebabCase(hook.data.title);
+              name = type + '-' + slug(hook.data.title, { tone: false });
             }
-          } else {
-            slug = hook.data.path && path.basename(hook.data.path) || shortid.generate();
+          } else if (hook.data.path) {
+            name = path.basename(hook.data.path);
+            if (!name.startsWith(type)) {
+              name = type + '-' + name;
+            }
           }
-          debug('compute parent path', parent.path, slug);
-          hook.data.path = path.join(parent.path, slug);
+          debug('compute parent path', parent.path, name);
+          // join the parent path (against parent changing)
+          hook.data.path = path.join(parent.path, name);
         } else {
           debug('Parent path undefined', parent);
           throw new Error('Parent path undefined');

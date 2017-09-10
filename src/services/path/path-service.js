@@ -1,6 +1,8 @@
 import makeDebug from 'debug';
+import fp from 'mostly-func';
 import { join } from 'path';
 import { plural } from 'pluralize';
+import path from 'path';
 import defaultHooks from './path-hooks';
 
 const debug = makeDebug('playing:content-services:path');
@@ -32,23 +34,19 @@ class PathService {
 
   get(id, params) {
     params = params || { query: {} };
-    let path = '/' + join(id || '', params.__action || '');
-    params.query.path = path;
+    const name = '/' + join(id || '', params.__action || '');
+    params.query.path = name;
     delete params.__action;
 
-    // optimized select only query
-    return this.app.service('documents').first({ query: {
-      path: path,
-      $select: ['id', 'type']
-    }}).then(doc => {
-      if (doc) {
-        let service = plural(doc.type || 'document');
-        debug('proxy document get => ', service, doc.id);
-        return this.app.service(service).get(doc.id, params);
-      } else {
-        return null;
-      }
-    });
+    let type = params.query.type;
+    const basename = path.basename(name);
+    if (!type && basename.indexOf('-') > 0) {
+      type = fp.head(basename.split('-'));
+    }
+
+    let service = plural(type || 'document');
+    debug('document get by path => ', service, type, name);
+    return this.app.service(service).first(params);
   }
 }
 

@@ -5,6 +5,7 @@ const debug = makeDebug('playing:content-services:documents:events');
 const createActivity = function(app, document, verb, message) {
   const feeds = app.service('feeds');
   const activities = app.service('activities');
+  if (!document.creator) return; // skip feeds without actor
 
   return feeds.get(`document:${document.id}`).then((feed) => {
     if (feed) {

@@ -47,7 +47,7 @@ module.exports = function(options = {}) {
         hooks.responder()
       ],
       create: [
-        hooks.publishEvent('note.create', { prefix: 'playing' })
+        hooks.publishEvent('document.create', { prefix: 'playing' })
       ]
     }
   };
