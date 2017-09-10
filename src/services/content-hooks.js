@@ -156,6 +156,8 @@ function getBreadcrumbs(hook, doc, options) {
 function getCollections(hook, doc, options) {
   const documents = hook.app.service('documents');
   const userCollections = hook.app.service('user-collections');
+  if (!hook.params.user) return Promise.resolve();
+
   return userCollections.find({
     query: {
       creator: hook.params.user.id,
@@ -180,6 +182,8 @@ function getCollections(hook, doc, options) {
 
 function getFavorites(hook, doc, options) {
   const userFavorites = hook.app.service('user-favorites');
+  if (!hook.params.user) return Promise.resolve();
+  
   return userFavorites.find({
     query: {
       user: hook.params.user.id,
