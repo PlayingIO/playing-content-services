@@ -90,7 +90,7 @@ export function computePath(options = { slug: false }) {
     if (hook.data.parent) {
       parentQuery = documents.get(hook.data.parent);
     } else if (hook.method === 'create' && hook.data.path !== '/') {
-      parentQuery = documents.first({ query: { path : '/' } });
+      parentQuery = documents.action('first').find({ query: { path : '/' } });
     }
 
     if (parentQuery) {
