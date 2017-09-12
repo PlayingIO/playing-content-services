@@ -29,7 +29,7 @@ class PathService {
     params.query.path = '/';
 
     const folders = this.app.service('folders');
-    return folders.first(params);
+    return folders.action('first').find(params);
   }
 
   get(id, params) {
@@ -44,9 +44,8 @@ class PathService {
       type = fp.head(basename.split('-'));
     }
 
-    let service = plural(type || 'document');
-    debug('document get by path => ', service, type, name);
-    return this.app.service(service).first(params);
+    let service = this.app.service(plural(type || 'document'));
+    return service.action('first').find(params);
   }
 }
 
