@@ -18,19 +18,22 @@ module.exports = function(options = {}) {
         // queryWithCurrentUser({ idField: 'id', as: 'creator' })
       ],
       create: [
-        associateCurrentUser({ idField: 'id', as: 'creator' }),
+        iff(isProvider('external'),
+          associateCurrentUser({ idField: 'id', as: 'creator' })),
         content.computePath({ slug: true }),
         content.fetchBlobs()
       ],
       update: [
-        associateCurrentUser({ idField: 'id', as: 'creator' }),
+        iff(isProvider('external'),
+          associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         content.computePath(),
         discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs()
       ],
       patch: [
-        associateCurrentUser({ idField: 'id', as: 'creator' }),
+        iff(isProvider('external'),
+          associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         content.computePath(),
         discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),

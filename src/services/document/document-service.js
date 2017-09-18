@@ -93,7 +93,7 @@ class DocumentService extends Service {
     let tags = fp.union(doc.tags || [], data.tags);
     return Promise.all([
       super.patch(doc.id, { tags }, params),
-      data.tags.map((tag) => service.upsert({
+      data.tags.map((tag) => service.action('upsert').create({
         id: tag.toLowerCase(),
         label: tag
       }))
