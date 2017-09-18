@@ -2,7 +2,7 @@ import { discard, iff, isProvider } from 'feathers-hooks-common';
 import { hooks as auth } from 'feathers-authentication';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
-import * as content from '../content-hooks';
+import * as content from '~/hooks';
 
 module.exports = function(options = {}) {
   return {
