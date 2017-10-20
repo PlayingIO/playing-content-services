@@ -3,13 +3,13 @@ import makeDebug from 'debug';
 const debug = makeDebug('playing:content-services:documents:events');
 
 const createActivity = function(app, document, verb, message) {
-  const feeds = app.service('feeds');
-  const activities = app.service('activities');
+  const svcFeeds = app.service('feeds');
+  const svcActivities = app.service('activities');
   if (!document.creator) return; // skip feeds without actor
 
-  return feeds.get(`document:${document.id}`).then((feed) => {
+  return svcFeeds.get(`document:${document.id}`).then((feed) => {
     if (feed) {
-      activities.create({
+      svcActivities.create({
         feed: feed.id,
         actor: `user:${document.creator}`,
         verb: verb,

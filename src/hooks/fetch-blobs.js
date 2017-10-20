@@ -16,12 +16,12 @@ export default function fetchBlobs(options) {
       return hook;
     }
  
-    const blobs = hook.app.service('blobs');
+    const svcBlobs = hook.app.service('blobs');
 
     function getFullBlob(file) {
       // fetch only file is not fulfilled
       if (file && file.batch && !fp.isNil(file.index) && !(file.key || file.url)) {
-        return blobs.get(file.batch).then(batch => {
+        return svcBlobs.get(file.batch).then(batch => {
           let blob = batch.blobs.find(b => b.index === parseInt(file.index));
           return Object.assign(file, blob);
         });

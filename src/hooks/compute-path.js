@@ -9,14 +9,14 @@ const debug = makeDebug('playing:content-services:hooks:computePath');
 // compute current path by parent
 export default function computePath(options = { slug: false }) {
   return (hook) => {
-    const documents = hook.app.service('documents');
+    const svcDocuments = hook.app.service('documents');
 
     // get parent or root
     let parentQuery = null;
     if (hook.data.parent) {
-      parentQuery = documents.get(hook.data.parent);
+      parentQuery = svcDocuments.get(hook.data.parent);
     } else if (hook.method === 'create' && hook.data.path !== '/') {
-      parentQuery = documents.action('first').find({ query: { path : '/' } });
+      parentQuery = svcDocuments.action('first').find({ query: { path : '/' } });
     }
 
     if (parentQuery) {
