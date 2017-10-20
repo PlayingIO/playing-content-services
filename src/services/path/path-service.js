@@ -28,8 +28,8 @@ class PathService {
     params = params || { query: {} };
     params.query.path = '/';
 
-    const folders = this.app.service('folders');
-    return folders.action('first').find(params);
+    const svcFolders = this.app.service('folders');
+    return svcFolders.action('first').find(params);
   }
 
   get(id, params) {

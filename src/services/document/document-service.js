@@ -88,12 +88,12 @@ class DocumentService extends Service {
   _tagDocument(id, data, params, doc) {
     assert(data.tags, 'data.tags not provided.');
 
-    const service = this.app.service('tags');
+    const svcTags = this.app.service('tags');
 
     let tags = fp.union(doc.tags || [], data.tags);
     return Promise.all([
       super.patch(doc.id, { tags }, params),
-      data.tags.map((tag) => service.action('upsert').create({
+      data.tags.map((tag) => svcTags.action('upsert').create({
         id: tag.toLowerCase(),
         label: tag
       }))

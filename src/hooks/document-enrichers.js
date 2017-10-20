@@ -11,10 +11,10 @@ const debug = makeDebug('playing:content-services:hooks:documentEnrichers');
 
 // check whether there is any folder children
 function hasFolderishChild(hook, doc, options) {
-  const folders = hook.app.service('folders');
+  const svcFolders = hook.app.service('folders');
   // only folder need to check hasFolderishChild
   if (doc.type === 'folder') {
-    return folders.find({ query: {
+    return svcFolders.find({ query: {
       parent: doc.id
     }}).then(result => {
       let folderishChildren = fp.filter(child => {
@@ -40,11 +40,11 @@ function getBreadcrumbs(hook, doc, options) {
 }
 
 function getCollections(hook, doc, options) {
-  const documents = hook.app.service('documents');
-  const userCollections = hook.app.service('user-collections');
+  const svcDocuments = hook.app.service('documents');
+  const svcUserCollections = hook.app.service('user-collections');
   if (!hook.params.user) return Promise.resolve();
 
-  return userCollections.find({
+  return svcUserCollections.find({
     query: {
       creator: hook.params.user.id,
       document: doc.id,
@@ -55,7 +55,7 @@ function getCollections(hook, doc, options) {
     if (results) {
       let collections = fp.map(fp.prop('parent'), results);
       if (collections.length > 0) {
-        return documents.find({
+        return svcDocuments.find({
           query: { _id: { $in: collections } },
           paginate: false
         });
@@ -67,10 +67,10 @@ function getCollections(hook, doc, options) {
 }
 
 function getFavorites(hook, doc, options) {
-  const userFavorites = hook.app.service('user-favorites');
+  const svcUserFavorites = hook.app.service('user-favorites');
   if (!hook.params.user) return Promise.resolve();
   
-  return userFavorites.find({
+  return svcUserFavorites.find({
     query: {
       user: hook.params.user.id,
       document: doc.id
@@ -94,9 +94,12 @@ function getPermisionStatus(ace) {
 }
 
 function getAces(app, document) {
+  const svcDocuments = app.service('documents');
+  const svcUserGroups = app.service('user-groups');
+
   const getDocument = document.title
     ? Promise.resolve(document)
-    : app.service('documents').get(document);
+    : svcDocuments.get(document);
   return getDocument.then((doc) => {
     if (!doc.ACL) return null;
     
@@ -105,7 +108,7 @@ function getAces(app, document) {
     const creators = fp.reject(fp.isNil, fp.map(fp.prop('creator'), Object.values(doc.ACL)));
     keys = keys.concat(creators);
     if (keys.length > 0) {
-      findUsers = app.service('user-groups').find({ query: {
+      findUsers = svcUserGroups.find({ query: {
         _id: { $in: keys }
       }});
     }

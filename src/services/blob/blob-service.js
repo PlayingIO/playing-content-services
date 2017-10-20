@@ -184,18 +184,18 @@ class BlobService extends Service {
     assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
     assert(data.context && data.context.documentType, 'context.documentType not provided.');
 
-    const documents = this.app.service('documents');
+    const svcDocuments = this.app.service('documents');
 
     let blobs = (original.blobs || []).map((blob) => {
       blob.batch = original.id;
       return fp.dissoc('id', blob);
     });
 
-    return documents.get(data.context.currentDocument).then((doc) => {
+    return svcDocuments.get(data.context.currentDocument).then((doc) => {
       if (!doc) throw new Error('currentDocument not exists');
       let files = (doc.files || []).concat(blobs);
       debug('attachOnDocument', files);
-      return documents.patch(doc.id, { files: files });
+      return svcDocuments.patch(doc.id, { files: files });
     });
   }
 
@@ -204,19 +204,19 @@ class BlobService extends Service {
     assert(data.context && data.context.documentType, 'context.documentType not provided.');
     assert(data.xpath, 'data.xpath not provided.');
 
-    const documents = this.app.service('documents');
+    const svcDocuments = this.app.service('documents');
 
-    return documents.get(data.context.currentDocument).then((doc) => {
+    return svcDocuments.get(data.context.currentDocument).then((doc) => {
       if (!doc) throw new Error('currentDocument not exists');
       if (data.xpath.startsWith('files')) {
         let [xpath, index] = data.xpath.split('/');
         let files = fp.remove(parseInt(index), 1, doc.files || []);
         debug('removeFromDocument', xpath, index, files);
-        return documents.patch(doc.id, { files: files });
+        return svcDocuments.patch(doc.id, { files: files });
       } else {
         let xpath = data.xpath;
         debug('removeFromDocument', xpath);
-        return documents.patch(doc.id, { [xpath]: null });
+        return svcDocuments.patch(doc.id, { [xpath]: null });
       }
     });
   }
