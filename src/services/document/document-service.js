@@ -134,7 +134,8 @@ class DocumentService extends Service {
         let service = plural(doc.type || 'document');
         let data = {
           parent: target.id,
-          path: path.resolve(target.path, path.basename(doc.path))
+          path: path.resolve(target.path, path.basename(doc.path)),
+          type: doc.type
         };
         return this.app.service(service).patch(doc.id, data);
       });

@@ -32,7 +32,8 @@ export default function computePath(options = { slug: false }) {
             }
           } else if (hook.data.path) {
             name = path.basename(hook.data.path);
-            if (!name.startsWith(type)) {
+            // if name does not contain and start with doc type, add doc type to name
+            if (name.indexOf('-') < 0 && !name.startsWith(type)) {
               name = type + '-' + name;
             }
           }
