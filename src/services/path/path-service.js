@@ -1,6 +1,5 @@
 import makeDebug from 'debug';
 import fp from 'mostly-func';
-import { join } from 'path';
 import { plural } from 'pluralize';
 import path from 'path';
 import defaultHooks from './path-hooks';
@@ -34,7 +33,7 @@ class PathService {
 
   get(id, params) {
     params = params || { query: {} };
-    const name = '/' + join(id || '', params.__action || '');
+    const name = '/' + path.join(id || '', params.__action || '');
     params.query.path = name;
     delete params.__action;
 
