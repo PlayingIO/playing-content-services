@@ -12,29 +12,29 @@ const options = {
  * http://dublincore.org/documents/dcmi-terms/
  */
 const fields = {
-  title: { type: 'String', required: true },  // name given to the resource
-  description: { type: 'String' },            // description of the resource.
-  parent: { type: 'ObjectId' },               // parent resource
-  path: { type: 'String', default: '/', unique: true },
-  subjects: [{ type: 'String' }],             // the topic of the resource
-  tags: [{ type: 'String' }],                 // the tags of the resource
-  rights: [{ type: 'String' }],               // information about rights held in and over the resource.
-  source: { type: 'String' },                 // related resource from which the described resource is derived.
-  nature: { type: 'String' },                 // nature or genre of the resource
-  coverage: { type: 'String' },               // spatial or temporal topic of the resource
-  issued: { type: 'Date' },                   // date issued
-  valid: { type: 'Date' },                    // start date of validity of a resource
-  expired: { type: 'Date' },                  // end date of validity of a resource
-  format: { type: 'String' },                 // file format, physical medium, or dimensions of the resource.
-  language: { type: 'String' },               // language of the resource.
-  author: { type: 'String' },                 // real author of the document
-  creator: { type: 'ObjectId' },              // creator of the document
+  authors: [{ type: 'String' }],              // real author of the document
   contributors: [{ type: 'ObjectId' }],       // contributor of the document
+  coverage: { type: 'String' },               // spatial or temporal topic of the resource
+  creator: { type: 'ObjectId' },              // creator of the document
+  description: { type: 'String' },            // description of the resource.
+  expired: { type: 'Date' },                  // end date of validity of a resource
   file: blob,                                 // main blob of the resource
   files: blobs,                               // attachements of the resource
-  verion: { type: 'Number' },                 // version of the resource
+  format: { type: 'String' },                 // file format, physical medium, or dimensions of the resource.
+  issuedAt: { type: 'Date' },                 // date issued
+  language: { type: 'String' },               // language of the resource.
   locker: { type: 'ObjectId' },               // lock owner
-  lockedAt: { type: 'Date' }                  // locked time
+  lockedAt: { type: 'Date' },                 // locked time
+  nature: { type: 'String' },                 // nature or genre of the resource
+  parent: { type: 'ObjectId' },               // parent resource
+  path: { type: 'String', default: '/', unique: true },
+  rights: [{ type: 'String' }],               // information about rights held in and over the resource.
+  source: { type: 'String' },                 // related resource from which the described resource is derived.
+  subjects: [{ type: 'String' }],             // the topic of the resource
+  tags: [{ type: 'String' }],                 // the tags of the resource
+  title: { type: 'String', required: true },  // name given to the resource
+  valid: { type: 'Date' },                    // start date of validity of a resource
+  version: { type: 'Number' },                // version of the resource
 };
 
 export default function model (app, name) {

@@ -1,16 +1,16 @@
 const blob = {
   _id: false,
   batch: { type: 'ObjectId' }, // upload batch id
-  index: { type: 'Number' },   // upload batch index
-  name: { type: 'String' },
-  vender: { type: 'String', enum: ['local', 'minio', 's3', 'qiniu', 'cloudary'] },
   bucket: { type: 'String' },  // blob-storage bucket
-  key: { type: 'String' },     // blob-storage key
-  url: { type: 'String' },     // web only
-  size: { type: 'Number' },
-  width: { type: 'Number' },
   height: { type: 'Number' },
+  index: { type: 'Number' },   // upload batch index
+  key: { type: 'String' },     // blob-storage key
   mimetype: { type: 'String' },
+  name: { type: 'String' },
+  size: { type: 'Number' },
+  url: { type: 'String' },     // web only
+  vender: { type: 'String', enum: ['local', 'minio', 's3', 'qiniu', 'cloudary'] },
+  width: { type: 'Number' },
 };
 
 const blobs = [ blob ];
