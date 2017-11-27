@@ -55,13 +55,18 @@ module.exports = function(options = {}) {
       ],
       get: [
         // only populate with document type to avoid duplicated process
-        iff(content.isDocument(), hooks.populate('parent', { service: 'folders' })),
-        iff(content.isDocument(), hooks.populate('creator', { service: 'users' })),
-        iff(content.isDocument(), content.documentEnrichers(options)),
-        iff(content.isDocument(), content.presentDocument(options)),
+        iff(content.isDocumentType('document'),
+          hooks.populate('parent', { service: 'folders' })),
+        iff(content.isDocumentType('document'),
+          hooks.populate('creator', { service: 'users' })),
+        iff(content.isDocumentType('document'),
+          content.documentEnrichers(options)),
+        iff(content.isDocumentType('document'),
+          content.presentDocument(options)),
       ],
       create: [
-        hooks.publishEvent('document.create', { prefix: 'playing' })
+        iff(content.isDocumentType('document'),
+          hooks.publishEvent('document.create', { prefix: 'playing' }))
       ]
     }
   };
