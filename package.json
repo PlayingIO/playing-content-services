@@ -1,7 +1,7 @@
 {
   "name": "playing-content-services",
-  "version": "1.0.0",
-  "description": "Content management microservices for playful application",
+  "version": "1.0.1",
+  "description": "Content management microservices for playful applications",
   "author": "Forafish",
   "license": "MIT",
   "main": "index.js",
