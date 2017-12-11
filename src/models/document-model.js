@@ -1,7 +1,7 @@
 import timestamps from 'mongoose-timestamp';
 import uniqueArray from 'mongoose-unique-array';
 import { plugins } from 'mostly-feathers-mongoose';
-import { blob, blobs } from './blob-schema';
+import { blob } from './blob-schema';
 
 const options = {
   discriminatorKey: 'type'
@@ -19,7 +19,7 @@ const fields = {
   description: { type: 'String' },            // description of the resource.
   expired: { type: 'Date' },                  // end date of validity of a resource
   file: blob,                                 // main blob of the resource
-  files: blobs,                               // attachements of the resource
+  files: [blob],                              // attachements of the resource
   format: { type: 'String' },                 // file format, physical medium, or dimensions of the resource.
   issuedAt: { type: 'Date' },                 // date issued
   language: { type: 'String' },               // language of the resource.

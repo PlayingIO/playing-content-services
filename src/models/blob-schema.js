@@ -13,6 +13,4 @@ const blob = {
   width: { type: 'Number' },
 };
 
-const blobs = [ blob ];
-
-export default { blob, blobs };
+export default { blob };
