@@ -131,7 +131,7 @@ function getAcls(hook, doc, options) {
 
   const inherited = doc.ACL['*'] && doc.ACL['*'].inherited === true;
   const getLocalAces = getAces(hook.app, doc);
-  const getInheritedAces = getAces(hook.app, doc.parent);
+  const getInheritedAces = doc.parent? getAces(hook.app, doc.parent) : Promise.resolve(null);
 
   return Promise.all([getLocalAces, getInheritedAces])
     .then(([localAces, inheritedAces]) => {
