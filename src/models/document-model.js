@@ -30,6 +30,7 @@ const fields = {
   path: { type: 'String', default: '/', unique: true },
   rights: [{ type: 'String' }],               // information about rights held in and over the resource.
   source: { type: 'String' },                 // related resource from which the described resource is derived.
+  state: { type: 'String' },                  // lifecycle of the document: project, approved, obsolete and deleted
   subjects: [{ type: 'String' }],             // the topic of the resource
   tags: [{ type: 'String' }],                 // the tags of the resource
   title: { type: 'String', required: true },  // name given to the resource
