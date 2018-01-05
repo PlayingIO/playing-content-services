@@ -6,6 +6,7 @@ export default {
       "Versionable",
       "Publishable",
       "Commentable",
+      "Tagable",
       "Audio"
     ]
   },
@@ -15,6 +16,7 @@ export default {
     "facets": [
       "Versionable",
       "Collection",
+      "Tagable",
       "NotCollectionMember"
     ]
   },
@@ -26,6 +28,7 @@ export default {
       "Publishable",
       "Commentable",
       "HasRelatedText",
+      "Tagable",
       "Downloadable"
     ]
   },
@@ -33,6 +36,7 @@ export default {
     "type": "Folder",
     "packages": "playing-content-elements",
     "facets": [
+      "Tagable",
       "Folderish"
     ],
     "subtypes": ['collection', 'file', 'folder', 'note']
@@ -44,6 +48,7 @@ export default {
       "Versionable",
       "Publishable",
       "Commentable",
+      "Tagable",
       "HasRelatedText"
     ]
   },
@@ -52,6 +57,7 @@ export default {
     "packages": "playing-content-elements",
     "facets": [
       "Folderish",
+      "Tagable",
       "Orderable"
     ]
   },
@@ -63,6 +69,7 @@ export default {
       "Publishable",
       "Picture",
       "Commentable",
+      "Tagable",
       "HasRelatedText"
     ]
   },
@@ -75,6 +82,7 @@ export default {
       "Video",
       "HasStoryboard",
       "Commentable",
+      "Tagable",
       "HasVideoPreview"
     ]
   },
