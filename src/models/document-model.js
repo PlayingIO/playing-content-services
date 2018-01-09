@@ -17,7 +17,7 @@ const fields = {
   coverage: { type: 'String' },               // spatial or temporal topic of the resource
   creator: { type: 'ObjectId' },              // creator of the document
   description: { type: 'String' },            // description of the resource.
-  expired: { type: 'Date' },                  // end date of validity of a resource
+  expiredAt: { type: 'Date' },                // end date of validity of a resource
   file: blob,                                 // main blob of the resource
   files: [blob],                              // attachements of the resource
   format: { type: 'String' },                 // file format, physical medium, or dimensions of the resource.
