@@ -24,7 +24,7 @@ export default function computePath(options = { slug: false }) {
         if (parent && parent.path) {
           hook.data.parent = parent.id;
           // generate new type-name or use the existing name
-          const type = hook.data.type || 'document';
+          const type = hook.data.type || options.type || 'document';
           let name = type + '-' + shortid.generate();
           if (options.slug) {
             if (hook.data.title && hook.data.title.length > 0) {
