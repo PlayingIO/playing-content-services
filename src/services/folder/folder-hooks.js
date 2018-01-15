@@ -20,14 +20,14 @@ module.exports = function(options = {}) {
       create: [
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
-        content.computePath({ slug: true }),
+        content.computePath({ type: 'folder', slug: true }),
         content.fetchBlobs()
       ],
       update: [
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
-        content.computePath(),
+        content.computePath({ type: 'folder', slug: true }),
         discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs()
       ],
@@ -35,7 +35,7 @@ module.exports = function(options = {}) {
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
-        content.computePath(),
+        content.computePath({ type: 'folder', slug: true }),
         discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs()
       ]
