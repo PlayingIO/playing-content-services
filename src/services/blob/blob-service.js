@@ -13,7 +13,7 @@ import BlobModel from '~/models/blob-model';
 import defaultHooks from './blob-hooks';
 import { fromBuffer, bufferToHash } from './util';
 
-const debug = makeDebug('playing:content-services:blob');
+const debug = makeDebug('playing:content-services:blobs');
 
 const defaultOptions = {
   name: 'blobs',

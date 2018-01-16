@@ -1,10 +1,11 @@
 import makeDebug from 'debug';
 import fp from 'mostly-func';
-import { plural } from 'pluralize';
 import path from 'path';
+import { plural } from 'pluralize';
+
 import defaultHooks from './path-hooks';
 
-const debug = makeDebug('playing:content-services:path');
+const debug = makeDebug('playing:content-services:paths');
 
 const defaultOptions = {
   name: 'paths'

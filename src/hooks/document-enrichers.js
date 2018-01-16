@@ -101,7 +101,7 @@ function getAces(app, document) {
     ? Promise.resolve(document)
     : svcDocuments.get(document);
   return getDocument.then((doc) => {
-    if (!doc.ACL) return null;
+    if (!(doc && doc.ACL)) return null;
     
     let findUsers = Promise.resolve([]);
     let keys = fp.reject(fp.equals('*'), Object.keys(doc.ACL));
@@ -127,7 +127,7 @@ function getAces(app, document) {
 }
 
 function getAcls(hook, doc, options) {
-  if (!doc.ACL) return Promise.resolve(null);
+  if (!(doc && doc.ACL)) return Promise.resolve(null);
 
   const inherited = doc.ACL['*'] && doc.ACL['*'].inherited === true;
   const getLocalAces = getAces(hook.app, doc);
