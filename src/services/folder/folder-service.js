@@ -16,6 +16,32 @@ class FolderService extends Service {
   setup(app) {
     super.setup(app);
     this.hooks(defaultHooks(this.options));
+
+    // root folder
+    this.action('first').find({ query: {
+      path: '/'
+    }}).then(result => {
+      if (!result) {
+        return this.create({
+          title: 'Root',
+          color: '#000000',
+          path: '/'
+        });
+      }
+    }).catch(console.error);
+
+    // workspaces folder
+    this.action('first').find({ query: {
+      path: '/workspaces'
+    }}).then(result => {
+      if (!result) {
+        return this.create({
+          title: 'Workspaces',
+          color: '#555555',
+          path: '/workspaces'
+        });
+      }
+    }).catch(console.error);
   }
 }
 
