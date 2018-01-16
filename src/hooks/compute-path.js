@@ -15,8 +15,12 @@ export default function computePath(options = { slug: false }) {
     let parentQuery = null;
     if (hook.data.parent) {
       parentQuery = svcDocuments.get(hook.data.parent);
-    } else if (hook.method === 'create' && hook.data.path !== '/') {
-      parentQuery = svcDocuments.action('first').find({ query: { path : '/' } });
+    } else if (hook.method === 'create' && hook.data.path !== '/' && hook.data.path !== '/workspaces') {
+      if (hook.data.path.startsWith('/workspaces')) {
+        parentQuery = svcDocuments.action('first').find({ query: { path : '/workspaces' } });
+      } else {
+        parentQuery = svcDocuments.action('first').find({ query: { path : '/' } });
+      }
     }
 
     if (parentQuery) {
@@ -26,16 +30,14 @@ export default function computePath(options = { slug: false }) {
           // generate new type-name or use the existing name
           const type = hook.data.type || options.type || 'document';
           let name = type + '-' + shortid.generate();
-          if (options.slug) {
-            if (hook.data.title && hook.data.title.length > 0) {
-              name = type + '-' + slug(hook.data.title, { tone: false });
-            }
-          } else if (hook.data.path) {
+          if (hook.data.path) {
             name = path.basename(hook.data.path);
-            // if name does not contain and start with doc type, add doc type to name
-            if (name.indexOf('-') < 0 && !name.startsWith(type)) {
-              name = type + '-' + name;
-            }
+          } else if (options.slug && hook.data.title) {
+            name = type + '-' + slug(hook.data.title, { tone: false });
+          }
+          // if name does not contain and start with doc type, add doc type to name
+          if (name.indexOf('-') < 0 && !name.startsWith(type)) {
+            name = type + '-' + name;
           }
           debug('compute parent path', parent.path, name);
           // join the parent path (against parent changing)
