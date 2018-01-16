@@ -1,4 +1,4 @@
-import { discard, iff, isProvider } from 'feathers-hooks-common';
+import { discard, existsByDot, iff, isProvider } from 'feathers-hooks-common';
 import { hooks as auth } from 'feathers-authentication';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
@@ -46,7 +46,7 @@ module.exports = function(options = {}) {
         hooks.populate('creator', { service: 'users' }),
         content.documentEnrichers(options),
         hooks.presentEntity(FolderEntity, options),
-        iff(isProvider('external'), discard('ACL')),
+        //iff(isProvider('external') && !existsByDot('ACL'), discard('ACL')),
         hooks.responder()
       ],
       create: [
