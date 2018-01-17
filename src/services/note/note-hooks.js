@@ -1,4 +1,4 @@
-import { discard, iff, isProvider } from 'feathers-hooks-common';
+import { iff, isProvider } from 'feathers-hooks-common';
 import { hooks as auth } from 'feathers-authentication';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
@@ -28,7 +28,7 @@ module.exports = function(options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         content.computePath({ type: 'note' }),
-        discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
+        hooks.discardPath('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs()
       ],
       patch: [
@@ -36,7 +36,7 @@ module.exports = function(options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         content.computePath({ type: 'note' }),
-        discard('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
+        hooks.discardPath('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs()
       ]
     },
@@ -46,7 +46,7 @@ module.exports = function(options = {}) {
         hooks.populate('creator', { service: 'users' }),
         content.documentEnrichers(options),
         hooks.presentEntity(NoteEntity, options),
-        iff(isProvider('external'), discard('ACL')),
+        iff(isProvider('external'), hooks.discardPath('ACL')),
         hooks.responder()
       ],
       create: [
