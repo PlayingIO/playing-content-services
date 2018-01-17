@@ -2,6 +2,7 @@ import { hooks as auth } from 'feathers-authentication';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { iff, isProvider } from 'feathers-hooks-common';
 import { hooks } from 'mostly-feathers-mongoose';
+import * as content from '~/hooks';
 
 module.exports = function(options = {}) {
   return {
@@ -14,6 +15,7 @@ module.exports = function(options = {}) {
     },
     after: {
       all: [
+        content.addMetadata('facets', ['HiddenInNavigation']),
         hooks.responder()
       ]
     }
