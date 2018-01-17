@@ -46,7 +46,7 @@ module.exports = function(options = {}) {
         hooks.populate('creator', { service: 'users' }),
         content.documentEnrichers(options),
         hooks.presentEntity(FolderEntity, options),
-        //iff(isProvider('external') && !existsByDot('ACL'), discard('ACL')),
+        iff(isProvider('external'), hooks.discardPath('ACL')),
         hooks.responder()
       ],
       create: [
