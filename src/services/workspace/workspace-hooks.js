@@ -15,7 +15,7 @@ module.exports = function(options = {}) {
     },
     after: {
       all: [
-        content.addMetadata('facets', ['HiddenInNavigation']),
+        //content.addMetadata('facets', ['HiddenInNavigation']),
         hooks.responder()
       ]
     }

@@ -48,24 +48,14 @@ class WorkspaceService {
 
   find(params) {
     params = params || { query: {} };
-    return this._getUserWorkspace(params);
+    return this._getUserWorkspace(params).then(workspace => {
+      return [workspace && workspace.data];
+    });
   }
 
-  // same as service paths.get
   get(id, params) {
     params = params || { query: {} };
-    const name = '/workspaces/' + path.join(id || '', params.__action || '');
-    params.query.path = name;
-    delete params.__action;
-
-    let type = params.query.type;
-    const basename = path.basename(name);
-    if (!type && basename.indexOf('-') > 0) {
-      type = fp.head(basename.split('-'));
-    }
-
-    let service = this.app.service(plural(type || 'document'));
-    return service.action('first').find(params);
+    return this._getUserWorkspace(params);
   }
 }
 
