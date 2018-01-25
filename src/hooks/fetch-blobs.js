@@ -7,7 +7,9 @@ import { DocTypes, Permissions } from '~/constants';
 const debug = makeDebug('playing:content-services:hooks:fetchBlobs');
 
 // check whether there is any folder children
-export default function fetchBlobs(options) {
+export default function fetchBlobs(options = {}) {
+  assert(options.xpath || options.xpaths, 'fetchBlobs need specified xpath(s)');
+
   return (hook) => {
     assert(hook.type === 'before', `fetchBlob must be used as a 'before' hook.`);
 
@@ -31,20 +33,27 @@ export default function fetchBlobs(options) {
 
     let promises = [];
 
-    if (hook.data.file) {
-      const getFileBlob = getFullBlob(hook.data.file).then(blob => {
-        debug('getFullBlob file', blob);
-        hook.data.file = blob;
-      });
-      promises.push(getFileBlob);
-    }
-    
-    if (hook.data.files) {
-      const getFilesBlob = Promise.all(hook.data.files.map(file => getFullBlob(file)))
-        .then(blobs => {
-          debug('getFullBlob files', blobs);
-          hook.data.files = blobs;
+    if (options.xpaths) {
+      const file = fp.dotPath(options.xpath, hook.data);
+      if (file) {
+        const getFileBlob = getFullBlob(file).then(blob => {
+          debug('getFullBlob', options.xpath, blob);
+          hook.data = fp.assocDotPath(options.xpath, blob, hook.data);
         });
+        promises.push(getFileBlob);
+      }
+    }
+
+    if (options.xpaths) {
+      const files = fp.dotPath(options.xpaths, hook.data);
+      if (files && Array.isArray(files)) {
+        const getFilesBlob = Promise.all(files.map(file => getFullBlob(file)))
+          .then(blobs => {
+            debug('getFullBlob', options.xpaths, blobs);
+            hook.data = fp.assocDotPath(options.xpaths, blobs, hook.data);
+          });
+        promises.push(getFilesBlob);
+      }
     }
 
     return Promise.all(promises).then(results => {

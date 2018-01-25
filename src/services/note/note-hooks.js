@@ -21,7 +21,7 @@ module.exports = function(options = {}) {
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         content.computePath({ type: 'note' }),
-        content.fetchBlobs()
+        content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       update: [
         iff(isProvider('external'),
@@ -29,7 +29,7 @@ module.exports = function(options = {}) {
         hooks.depopulate('parent'),
         content.computePath({ type: 'note' }),
         hooks.discardPath('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
-        content.fetchBlobs()
+        content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       patch: [
         iff(isProvider('external'),
@@ -37,7 +37,7 @@ module.exports = function(options = {}) {
         hooks.depopulate('parent'),
         content.computePath({ type: 'note' }),
         hooks.discardPath('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
-        content.fetchBlobs()
+        content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ]
     },
     after: {

@@ -23,7 +23,7 @@ module.exports = function(options = {}) {
         hooks.defaultAcls('restrictToPublic', 'Read'),
         hooks.defaultAcls('inheriteParent', true),
         content.computePath(),
-        content.fetchBlobs()
+        content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       update: [
         iff(isProvider('external'),
@@ -31,7 +31,7 @@ module.exports = function(options = {}) {
         hooks.depopulate('parent'),
         content.computePath(),
         hooks.discardPath('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
-        content.fetchBlobs()
+        content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       patch: [
         iff(isProvider('external'),
@@ -39,7 +39,7 @@ module.exports = function(options = {}) {
         hooks.depopulate('parent'),
         content.computePath(),
         hooks.discardPath('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
-        content.fetchBlobs()
+        content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ]
     },
     after: {
