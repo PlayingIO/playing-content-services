@@ -33,7 +33,7 @@ export default function fetchBlobs(options = {}) {
 
     let promises = [];
 
-    if (options.xpaths) {
+    if (options.xpath) {
       const file = fp.dotPath(options.xpath, hook.data);
       if (file) {
         const getFileBlob = getFullBlob(file).then(blob => {
