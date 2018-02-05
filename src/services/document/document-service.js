@@ -85,7 +85,7 @@ class DocumentService extends Service {
     }
   }
 
-  _tagDocument(id, data, params, doc) {
+  _tag(id, data, params, doc) {
     assert(data.tags, 'data.tags not provided.');
 
     const svcTags = this.app.service('tags');
@@ -100,7 +100,7 @@ class DocumentService extends Service {
     ]).then(([docs, tags]) => docs);
   }
 
-  _untagDocument(id, data, params, doc) {
+  _untag(id, data, params, doc) {
     assert(data.tags, 'data.tags not provided.');
 
     let tags = fp.without(data.tags, doc.tags || []);
