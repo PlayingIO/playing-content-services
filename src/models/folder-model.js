@@ -2,7 +2,7 @@ import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
 
 const fields = {
-  color: { type: 'String' }
+  color: { type: String }
 };
 
 export default function model (app, name) {
