@@ -28,7 +28,7 @@ class DocumentService extends Service {
   }
 
   find(params) {
-    if (params.query.type && params.query.type !== 'document') {
+    if (typeof params.query.type === 'string' && params.query.type !== 'document') {
       return this.app.service(plural(params.query.type)).find(params);
     } else {
       return super.find(params);
