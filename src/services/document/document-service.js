@@ -28,8 +28,9 @@ class DocumentService extends Service {
   }
 
   find(params) {
-    if (typeof params.query.type === 'string' && params.query.type !== 'document') {
-      return this.app.service(plural(params.query.type)).find(params);
+    let type = fp.dotPath('query.type', params);
+    if (fp.is(String, type) && type !== 'document') {
+      return this.app.service(plural(type)).find(params);
     } else {
       return super.find(params).then(result => {
         if (result && result.data && result.data.length > 0) {
@@ -56,8 +57,9 @@ class DocumentService extends Service {
   }
 
   get(id, params) {
-    if (typeof params.query.type === 'string' && params.query.type !== 'document') {
-      return this.app.service(plural(params.query.type)).get(params);
+    let type = fp.dotPath('query.type', params);
+    if (fp.is(String, type) && type !== 'document') {
+      return this.app.service(plural(type)).get(params);
     } else {
       return super.get(id, params).then(doc => {
         if (doc && doc.type && doc.type !== 'document') {
@@ -96,11 +98,13 @@ class DocumentService extends Service {
   }
 
   remove(id, params) {
-    if (params.query.type && params.query.type !== 'document') {
-      return this.app.service(plural(params.query.type)).remove(id, params);
+    let type = fp.dotPath('query.type', params);
+    if (fp.is(String, type) && type !== 'document') {
+      return this.app.service(plural(type)).remove(id, params);
     } else {
-      if (params && params.query.more) {
-        let more = [id].concat(params.query.more.split(','));
+      let more = params && fp.dotPath('query.more', params);
+      if (more) {
+        let more = [id].concat(more.split(','));
         delete params.query.more;
         return Promise.all(more.map(id => super.remove(id, params)));
       } else {
