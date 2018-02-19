@@ -1,6 +1,6 @@
 import assert from 'assert';
 import makeDebug from 'debug';
-import { Service, createService } from 'mostly-feathers-mongoose';
+import { Service, helpers, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 import path from 'path';
 import { plural } from 'pluralize';
@@ -28,14 +28,14 @@ class DocumentService extends Service {
   }
 
   find(params) {
-    let type = fp.dotPath('query.type', params);
+    const type = fp.dotPath('query.type', params);
     if (fp.is(String, type) && type !== 'document') {
       return this.app.service(plural(type)).find(params);
     } else {
       return super.find(params).then(result => {
         if (result && result.data && result.data.length > 0) {
-          let docsByType = fp.groupBy(fp.prop('type'), result.data);
-          let findByType = fp.mapObjIndexed((docs, type) => {
+          const docsByType = fp.groupBy(fp.prop('type'), result.data);
+          const findByType = fp.mapObjIndexed((docs, type) => {
             if (type === 'document') {
               return Promise.resolve(docs);
             } else {
@@ -43,10 +43,14 @@ class DocumentService extends Service {
               return this.app.service(plural(type)).find(params);
             }
           });
-          let promises = fp.values(findByType(docsByType));
+          const promises = fp.values(findByType(docsByType));
           return Promise.all(promises).then(docs => {
             result.data = fp.flatten(
               fp.map(doc => (doc && doc.data) || doc, docs));
+            const sort = params && fp.dotPath('query.$sort', params) || this.options.sort;
+            if (sort) {
+              result.data = helpers.sortWith(sort, result.data);
+            }
             return result;
           });
         } else {
@@ -57,13 +61,13 @@ class DocumentService extends Service {
   }
 
   get(id, params) {
-    let type = fp.dotPath('query.type', params);
+    const type = fp.dotPath('query.type', params);
     if (fp.is(String, type) && type !== 'document') {
       return this.app.service(plural(type)).get(params);
     } else {
       return super.get(id, params).then(doc => {
         if (doc && doc.type && doc.type !== 'document') {
-          let service = plural(doc.type || 'document');
+          const service = plural(doc.type || 'document');
           debug('proxy document get => ', service, doc.id);
           return this.app.service(service).get(doc.id, params);
         } else {
@@ -98,15 +102,15 @@ class DocumentService extends Service {
   }
 
   remove(id, params) {
-    let type = fp.dotPath('query.type', params);
+    const type = fp.dotPath('query.type', params);
     if (fp.is(String, type) && type !== 'document') {
       return this.app.service(plural(type)).remove(id, params);
     } else {
-      let more = params && fp.dotPath('query.more', params);
+      const more = params && fp.dotPath('query.more', params);
       if (more) {
-        let more = [id].concat(more.split(','));
+        const moreIds = [id].concat(more.split(','));
         delete params.query.more;
-        return Promise.all(more.map(id => super.remove(id, params)));
+        return Promise.all(moreIds.map(id => super.remove(id, params)));
       } else {
         return super.remove(id, params);
       }
