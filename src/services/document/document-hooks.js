@@ -48,10 +48,15 @@ module.exports = function(options = {}) {
         hooks.responder()
       ],
       find: [
-        hooks.populate('parent', { service: 'folders', fallThrough: ['headers'] }),
-        hooks.populate('creator', { service: 'users' }),
-        content.documentEnrichers(options),
-        content.presentDocument(options),
+        // only populate with document type to avoid duplicated process
+        iff(content.isDocumentType('document'),
+          hooks.populate('parent', { service: 'folders' })),
+        iff(content.isDocumentType('document'),
+          hooks.populate('creator', { service: 'users' })),
+        iff(content.isDocumentType('document'),
+          content.documentEnrichers(options)),
+        iff(content.isDocumentType('document'),
+          content.presentDocument(options)),
       ],
       get: [
         // only populate with document type to avoid duplicated process

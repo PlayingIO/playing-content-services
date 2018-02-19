@@ -31,20 +31,44 @@ class DocumentService extends Service {
     if (typeof params.query.type === 'string' && params.query.type !== 'document') {
       return this.app.service(plural(params.query.type)).find(params);
     } else {
-      return super.find(params);
+      return super.find(params).then(result => {
+        if (result && result.data && result.data.length > 0) {
+          let docsByType = fp.groupBy(fp.prop('type'), result.data);
+          let findByType = fp.mapObjIndexed((docs, type) => {
+            if (type === 'document') {
+              return Promise.resolve(docs);
+            } else {
+              params.query.id = { $in: fp.map(fp.prop('id'), docs) };
+              return this.app.service(plural(type)).find(params);
+            }
+          });
+          let promises = fp.values(findByType(docsByType));
+          return Promise.all(promises).then(docs => {
+            result.data = fp.flatten(
+              fp.map(doc => (doc && doc.data) || doc, docs));
+            return result;
+          });
+        } else {
+          return result;
+        }
+      });
     }
   }
 
   get(id, params) {
-    return super.get(id, params).then(doc => {
-      if (doc && doc.type && doc.type !== 'document') {
-        let service = plural(doc.type || 'document');
-        debug('proxy document get => ', service, doc.id);
-        return this.app.service(service).get(doc.id, params);
-      } else {
-        return doc;
-      }
-    });
+    if (typeof params.query.type === 'string' && params.query.type !== 'document') {
+      return this.app.service(plural(params.query.type)).get(params);
+    } else {
+      return super.get(id, params).then(doc => {
+        if (doc && doc.type && doc.type !== 'document') {
+          let service = plural(doc.type || 'document');
+          debug('proxy document get => ', service, doc.id);
+          return this.app.service(service).get(doc.id, params);
+        } else {
+          return doc;
+        }
+      });
+    }
   }
 
   create(data, params) {
