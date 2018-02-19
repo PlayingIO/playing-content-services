@@ -33,29 +33,7 @@ class DocumentService extends Service {
       return this.app.service(plural(type)).find(params);
     } else {
       return super.find(params).then(result => {
-        if (result && result.data && result.data.length > 0) {
-          const docsByType = fp.groupBy(fp.prop('type'), result.data);
-          const findByType = fp.mapObjIndexed((docs, type) => {
-            if (type === 'document') {
-              return Promise.resolve(docs);
-            } else {
-              params.query.id = { $in: fp.map(fp.prop('id'), docs) };
-              return this.app.service(plural(type)).find(params);
-            }
-          });
-          const promises = fp.values(findByType(docsByType));
-          return Promise.all(promises).then(docs => {
-            result.data = fp.flatten(
-              fp.map(doc => (doc && doc.data) || doc, docs));
-            const sort = params && fp.dotPath('query.$sort', params) || this.options.sort;
-            if (sort) {
-              result.data = helpers.sortWith(sort, result.data);
-            }
-            return result;
-          });
-        } else {
-          return result;
-        }
+        return helpers.discriminatedFind(this.app, 'document', result, params, this.options);
       });
     }
   }
@@ -66,13 +44,7 @@ class DocumentService extends Service {
       return this.app.service(plural(type)).get(params);
     } else {
       return super.get(id, params).then(doc => {
-        if (doc && doc.type && doc.type !== 'document') {
-          const service = plural(doc.type || 'document');
-          debug('proxy document get => ', service, doc.id);
-          return this.app.service(service).get(doc.id, params);
-        } else {
-          return doc;
-        }
+        return helpers.discriminatedGet(this.app, 'document', doc, params);
       });
     }
   }
