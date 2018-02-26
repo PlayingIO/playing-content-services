@@ -194,7 +194,7 @@ export default function documentEnrichers(options = {}) {
     let enrichers = hook.params.headers['enrichers-document'].split(',').map(e => e.trim());
     debug('enrichers-document %j', enrichers);
 
-    let results = [].concat(hook.result? hook.result.data || hook.result : []);
+    let results = [].concat(hook.result && hook.result.data || hook.result || []);
     let promises = [];
 
     results.forEach(doc => {
