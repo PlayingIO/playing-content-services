@@ -1,5 +1,8 @@
-import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
+
+const options = {
+  timestamps: true
+};
 
 const fields = {
   id: { type: String, required: true  }, // lowercase label
@@ -8,7 +11,7 @@ const fields = {
 
 export default function model (app, name) {
   const mongoose = app.get('mongoose');
-  const schema = new mongoose.Schema(fields);
+  const schema = new mongoose.Schema(fields, options);
   schema.plugin(timestamps);
   return mongoose.model(name, schema);
 }

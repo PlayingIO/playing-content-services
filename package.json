@@ -38,7 +38,6 @@
     "mime-types": "^2.1.17",
     "mongoose": "^4.11.1",
     "mongoose-random": "^0.1.1",
-    "mongoose-timestamp": "^0.6.0",
     "mongoose-unique-array": "^0.2.0",
     "nats": "^0.7.20",
     "pluralize": "^5.0.0",

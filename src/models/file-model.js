@@ -1,4 +1,3 @@
-import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
 import { blob } from './blob-schema';
 
