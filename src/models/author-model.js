@@ -1,5 +1,9 @@
 import { plugins } from 'mostly-feathers-mongoose';
 
+const options = {
+  timestamps: true
+};
+
 const fields = {
   id: { type: String, required: true  }, // lowercase label
   label: { type: String, required: true  }
@@ -7,8 +11,7 @@ const fields = {
 
 export default function model (app, name) {
   const mongoose = app.get('mongoose');
-  const schema = new mongoose.Schema(fields);
-  schema.plugin(timestamps);
+  const schema = new mongoose.Schema(fields, options);
   return mongoose.model(name, schema);
 }
 
