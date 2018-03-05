@@ -28,7 +28,7 @@ module.exports = function(options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         content.computePath({ type: 'folder', slug: true }),
-        hooks.discardPath('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
+        hooks.discardFields('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       patch: [
@@ -36,7 +36,7 @@ module.exports = function(options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         content.computePath({ type: 'folder', slug: true }),
-        hooks.discardPath('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
+        hooks.discardFields('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ]
     },
@@ -46,7 +46,7 @@ module.exports = function(options = {}) {
         hooks.populate('creator', { service: 'users' }),
         content.documentEnrichers(options),
         hooks.presentEntity(FolderEntity, options),
-        iff(isProvider('external'), hooks.discardPath('ACL')),
+        iff(isProvider('external'), hooks.discardFields('ACL')),
         hooks.responder()
       ],
       create: [
