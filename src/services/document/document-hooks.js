@@ -19,9 +19,6 @@ module.exports = function(options = {}) {
       create: [
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
-        hooks.defaultAcls('restrictToOwner', 'ReadWrite'),
-        hooks.defaultAcls('restrictToPublic', 'Read'),
-        hooks.defaultAcls('inheriteParent', true),
         content.computePath(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
@@ -54,6 +51,8 @@ module.exports = function(options = {}) {
         iff(content.isDocumentType('document'),
           hooks.populate('creator', { service: 'users' })),
         iff(content.isDocumentType('document'),
+          hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' })),
+        iff(content.isDocumentType('document'),
           content.documentEnrichers(options)),
         iff(content.isDocumentType('document'),
           content.presentDocument(options)),
@@ -64,6 +63,8 @@ module.exports = function(options = {}) {
           hooks.populate('parent', { service: 'folders' })),
         iff(content.isDocumentType('document'),
           hooks.populate('creator', { service: 'users' })),
+        iff(content.isDocumentType('document'),
+          hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' })),
         iff(content.isDocumentType('document'),
           content.documentEnrichers(options)),
         iff(content.isDocumentType('document'),

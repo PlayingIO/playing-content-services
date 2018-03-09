@@ -44,6 +44,7 @@ module.exports = function(options = {}) {
       all: [
         hooks.populate('parent', { service: 'folders', fallThrough: ['headers'] }),
         hooks.populate('creator', { service: 'users' }),
+        hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' }),
         content.documentEnrichers(options),
         hooks.presentEntity(FolderEntity, options),
         iff(isProvider('external'), hooks.discardFields('ACL')),
