@@ -188,15 +188,21 @@ function getSubtypes(hook, docs, options) {
   }, {}, docs));
 }
 
-function getTags(hook, doc, options) {
-  return Promise.resolve(doc.tags || []);
+function getTags(hook, docs, options) {
+  return Promise.resolve(fp.reduce((acc, doc) => {
+    acc[doc.id] = doc.tags || [];
+    return acc;
+  }, {}, docs));
 }
 
-function getThumbnail(hook, doc) {
+function getThumbnail(hook, docs) {
   const baseUrl = 'bower_components/playing-content-elements/images/icons/';
-  return Promise.resolve({
-    url: url.resolve(baseUrl, doc.type + '.png')
-  });
+  return Promise.resolve(fp.reduce((acc, doc) => {
+    acc[doc.id] = {
+      url: url.resolve(baseUrl, doc.type + '.png')
+    };
+    return acc;
+  }, {}, docs));
 }
 
 // Add document metadata according to request header
