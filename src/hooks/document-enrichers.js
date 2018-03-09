@@ -179,14 +179,13 @@ function getUserVisiblePermissions(hook, docs, options) {
   }, {}, docs));
 }
 
-function getSubtypes(hook, doc, options) {
+function getSubtypes(hook, docs, options) {
   const Types = options.DocTypes || DocTypes;
-  const subtypes = Types[doc.type] && Types[doc.type].subtypes;
-  let types = [];
-  if (subtypes) {
-    types = Object.values(fp.pick(subtypes, Types));
-  }
-  return Promise.resolve(types);
+  return Promise.resolve(fp.reduce((acc, doc) => {
+    const subtypes = Types[doc.type] && Types[doc.type].subtypes;
+    acc[doc.id] = subtypes? Object.values(fp.pick(subtypes, Types)) : [];
+    return acc;
+  }, {}, docs));
 }
 
 function getTags(hook, doc, options) {
