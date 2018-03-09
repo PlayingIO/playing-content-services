@@ -53,29 +53,26 @@ function getBreadcrumbs(hook, docs, options) {
   }, {}, docs);
 }
 
-function getCollections(hook, doc, options) {
+function getCollections(hook, docs, options) {
   const svcDocuments = hook.app.service('documents');
   const svcUserCollections = hook.app.service('user-collections');
-  if (!hook.params.user) return Promise.resolve();
+  if (!hook.params.user) return Promise.resolve({});
 
   return svcUserCollections.find({
     query: {
-      creator: hook.params.user.id,
-      document: doc.id,
-      category: 'collection'
+      user: hook.params.user.id,
+      document: { $in: fp.map(fp.prop('id'), docs) },
+      $select: 'collect,*'
     },
     paginate: false
-  }).then((results) => {
-    if (results) {
-      let collections = fp.map(fp.prop('parent'), results);
-      if (collections.length > 0) {
-        return svcDocuments.find({
-          query: { _id: { $in: collections } },
-          paginate: false
-        });
+  }).then(results => {
+    const documents = fp.groupBy(fp.prop('id'), results.data || results);
+    return fp.reduce((acc, doc) => {
+      if (documents[doc.id] && documents[doc.id].length > 0) {
+        acc[doc.id] = documents[doc.id][0].collect;
       }
-    }
-    return [];
+      return acc;
+    }, {}, docs);
   });
 }
 
