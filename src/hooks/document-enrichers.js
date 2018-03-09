@@ -76,18 +76,22 @@ function getCollections(hook, docs, options) {
   });
 }
 
-function getFavorites(hook, doc, options) {
+function getFavorites(hook, docs, options) {
   const svcUserFavorites = hook.app.service('user-favorites');
   if (!hook.params.user) return Promise.resolve();
   
   return svcUserFavorites.find({
     query: {
       user: hook.params.user.id,
-      document: doc.id
+      document: { $in: fp.map(fp.prop('id'), docs) },
     },
     paginate: false
   }).then((results) => {
-    return { isFavorite: results.length > 0 };
+    const documents = fp.groupBy(fp.prop('id'), results.data || results);
+    return fp.reduce((acc, doc) => {
+      acc[doc.id] = { isFavorite: documents[doc.id] && documents[doc.id].length > 0 || false };
+      return acc;
+    }, {}, docs);
   });
 }
 
@@ -256,6 +260,7 @@ export default function documentEnrichers(options = {}) {
             doc.metadata[enricher] = results[enricher][doc.id];
           }
         }
+        doc.metadata = fp.sortKeys(doc.metadata);
       });
       return hook;
     });
