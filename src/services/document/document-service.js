@@ -163,19 +163,20 @@ class DocumentService extends Service {
   }
 
   _addPermission(id, data, params, doc) {
-    assert(data.permission, 'data.permission is not provided');
-    assert(data.user, 'data.user is not provided');
-    
-    let ACL = Object.assign(doc.ACL || {}, {
-      [data.user]: {
-        creator: params.user.id,
-        permission: data.permission,
-        granted: true,
-        begin: data.begin,
-        end: data.end
-      }
+    assert(doc, 'target document is not exists.');
+    assert(data.action, 'data.action is not provided.');
+    assert(data.user, 'data.user is not provided.');
+
+    const svcPermissions = this.app.service('user-permissions');
+    return svcPermissions.create({
+      actions: [data.action],
+      subject: `${doc.type}:${doc.id}`,
+      user: data.user,
+      role: data.role,
+      creator: params.user.id,
+      begin: data.begin,
+      end: data.end
     });
-    return super.patch(doc.id, { ACL }, params);
   }
 
   _replacePermission(id, data, params, doc) {
@@ -183,11 +184,20 @@ class DocumentService extends Service {
   }
 
   _removePermission(id, data, params, doc) {
-    assert(data.permission, 'data.permission is not provided');
+    assert(doc, 'target document is not exists.');
+    assert(data.action, 'data.action is not provided');
     assert(data.user, 'data.user is not provided');
 
-    let ACL = fp.dissoc(data.user, doc.ACL || {});
-    return super.patch(doc.id, { ACL }, params);
+    const svcPermissions = this.app.service('user-permissions');
+    return svcPermissions.remove(null, {
+      query: {
+        actions: [data.action],
+        subject: `${doc.type}:${doc.id}`,
+        user: data.user,
+        role: data.role
+      },
+      $multi: true
+    });
   }
 
   _blockPermissionInheritance(id, data, params, doc) {
