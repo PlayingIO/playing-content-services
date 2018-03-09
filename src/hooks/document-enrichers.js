@@ -38,15 +38,19 @@ function hasFolderishChild(hook, docs, options) {
   });
 }
 
-function getBreadcrumbs(hook, doc, options) {
-  let breadcrumbs = [];
-  let parent = doc.parent;
-  while (parent && parent.path) {
-    let bread = fp.omit(['parent'], parent);
-    breadcrumbs = [bread, ...breadcrumbs];
-    parent = parent.parent;
-  }
-  return Promise.resolve(breadcrumbs);
+// assume that client use $select=parent.** with breadcumbs enrichment
+function getBreadcrumbs(hook, docs, options) {
+  return fp.reduce((acc, doc) => {
+    let breadcrumbs = [];
+    let parent = doc.parent;
+    while (parent && parent.path) {
+      let bread = fp.omit(['parent'], parent);
+      breadcrumbs = [bread, ...breadcrumbs];
+      parent = parent.parent;
+    }
+    acc[doc.id] = breadcrumbs;
+    return acc;
+  }, {}, docs);
 }
 
 function getCollections(hook, doc, options) {
