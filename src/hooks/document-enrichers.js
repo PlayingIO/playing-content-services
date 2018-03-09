@@ -158,19 +158,25 @@ function getAcls(hook, doc, options) {
     });
 }
 
-function getPermission(hook, doc, options) {
+function getPermission(hook, docs, options) {
   const Types = options.DocTypes || DocTypes;
-  const subtypes = Types[doc.type] && Types[doc.type].subtypes;
-  // TODO: user acls
-  let permissions = ['Everything', 'Read', 'Write', 'ReadWrite'];
-  if (subtypes) {
-    permissions = permissions.concat(['ReadChildren', 'AddChildren', 'RemoveChildren']);
-  }
-  return Promise.resolve(permissions);
+  return Promise.resolve(fp.reduce((acc, doc) => {
+    const subtypes = Types[doc.type] && Types[doc.type].subtypes;
+    // TODO: user acls
+    let permissions = ['Everything', 'Read', 'Write', 'ReadWrite'];
+    if (subtypes) {
+      permissions = permissions.concat(['ReadChildren', 'AddChildren', 'RemoveChildren']);
+    }
+    acc[doc.id] = permissions;
+    return acc;
+  }, {}, docs));
 }
 
-function getUserVisiblePermissions(hook, doc, options) {
-  return Promise.resolve(['Read', 'ReadWrite', 'Everything']);
+function getUserVisiblePermissions(hook, docs, options) {
+  return Promise.resolve(fp.reduce((acc, doc) => {
+    acc[doc.id] = ['Read', 'ReadWrite', 'Everything'];
+    return acc;
+  }, {}, docs));
 }
 
 function getSubtypes(hook, doc, options) {
