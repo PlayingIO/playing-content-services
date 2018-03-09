@@ -27,7 +27,7 @@ const fields = {
   lockedAt: { type: Date },                 // locked time
   nature: { type: String },                 // nature or genre of the resource
   parent: { type: 'ObjectId' },             // parent resource
-  path: { type: String, default: '/', unique: true },
+  path: { type: String, default: '/', unique: true }, // path to the document
   rights: [{ type: String }],               // information about rights held in and over the resource.
   source: { type: String },                 // related resource from which the described resource is derived.
   state: { type: String },                  // lifecycle of the document: project, approved, obsolete and deleted
