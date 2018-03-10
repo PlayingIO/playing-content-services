@@ -38,8 +38,24 @@ function hasFolderishChild(hook, docs, options) {
   });
 }
 
-// assume that client use $select=parent.** with breadcumbs enrichment
 function getBreadcrumbs(hook, docs, options) {
+  const svcDocuments = hook.app.service('documents');
+
+  const ancestors = fp.reject(fp.isNil, fp.flatMap(fp.prop('ancestors'), docs));
+  const getAncestors = ancestors.length > 0 && fp.hasNot('path', ancestors[0]) // whether already populated
+    ? svcDocuments.find({ query: { _id: { $in: ancestors } }, paginate: false})
+    : Promise.resolve(ancestors);
+  return getAncestors.then(results => {
+    const breads = fp.map(fp.pick(['id', 'path', 'title']), results.data || results);
+    return fp.reduce((acc, doc) => {
+      const breadcrumbs = fp.map(parent => {
+        return fp.find(fp.propEq('id', parent), breads);
+      }, doc.ancestors || []);
+      acc[doc.id] = breadcrumbs;
+      return acc;
+    }, {}, docs);
+  });
+  /*
   return fp.reduce((acc, doc) => {
     let breadcrumbs = [];
     let parent = doc.parent;
@@ -51,6 +67,7 @@ function getBreadcrumbs(hook, docs, options) {
     acc[doc.id] = breadcrumbs;
     return acc;
   }, {}, docs);
+  */
 }
 
 function getCollections(hook, docs, options) {
@@ -227,8 +244,8 @@ export default function documentEnrichers(options = {}) {
         case 'acls':
           promises.acls = getAcls(hook, documents, options);
           break;
-        case 'breadcrumb':
-          promises.breadcrumb = getBreadcrumbs(hook, documents, options);
+        case 'breadcrumbs':
+          promises.breadcrumbs = getBreadcrumbs(hook, documents, options);
           break;
         case 'collections':
           promises.collections = getCollections(hook, documents, options);
