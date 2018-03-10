@@ -8,7 +8,7 @@ import { getParentDocument } from '../helpers';
 const debug = makeDebug('playing:content-services:hooks:computeAncestors');
 
 // compute ancestors of current document
-export default function computeAncestors(options = { slug: false }) {
+export default function computeAncestors() {
   return (hook) => {
     const svcDocuments = hook.app.service('documents');
 

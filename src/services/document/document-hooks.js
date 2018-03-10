@@ -27,18 +27,18 @@ module.exports = function(options = {}) {
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
+        hooks.discardFields('id', 'metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.computePath(),
         content.computeAncestors(),
-        hooks.discardFields('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       patch: [
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
+        hooks.discardFields('id', 'metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.computePath(),
         content.computeAncestors(),
-        hooks.discardFields('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ]
     },
@@ -52,6 +52,8 @@ module.exports = function(options = {}) {
         iff(content.isDocumentType('document'),
           hooks.populate('parent', { service: 'folders' })),
         iff(content.isDocumentType('document'),
+          hooks.populate('ancestors', { service: 'folders' })),
+        iff(content.isDocumentType('document'),
           hooks.populate('creator', { service: 'users' })),
         iff(content.isDocumentType('document'),
           hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' })),
@@ -64,6 +66,8 @@ module.exports = function(options = {}) {
         // only populate with document type to avoid duplicated process
         iff(content.isDocumentType('document'),
           hooks.populate('parent', { service: 'folders' })),
+        iff(content.isDocumentType('document'),
+          hooks.populate('ancestors', { service: 'folders' })),
         iff(content.isDocumentType('document'),
           hooks.populate('creator', { service: 'users' })),
         iff(content.isDocumentType('document'),

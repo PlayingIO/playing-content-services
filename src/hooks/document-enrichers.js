@@ -55,19 +55,6 @@ function getBreadcrumbs(hook, docs, options) {
       return acc;
     }, {}, docs);
   });
-  /*
-  return fp.reduce((acc, doc) => {
-    let breadcrumbs = [];
-    let parent = doc.parent;
-    while (parent && parent.path) {
-      let bread = fp.omit(['parent'], parent);
-      breadcrumbs = [bread, ...breadcrumbs];
-      parent = parent.parent;
-    }
-    acc[doc.id] = breadcrumbs;
-    return acc;
-  }, {}, docs);
-  */
 }
 
 function getCollections(hook, docs, options) {

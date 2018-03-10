@@ -27,22 +27,25 @@ module.exports = function(options = {}) {
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
+        hooks.discardFields('id', 'metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.computePath({ type: 'folder', slug: true }),
-        hooks.discardFields('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
+        content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       patch: [
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
+        hooks.discardFields('id', 'metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.computePath({ type: 'folder', slug: true }),
-        hooks.discardFields('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
+        content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ]
     },
     after: {
       all: [
         hooks.populate('parent', { service: 'folders', fallThrough: ['headers'] }),
+        hooks.populate('ancestors', { service: 'folders', fallThrough: ['headers'] }),
         hooks.populate('creator', { service: 'users' }),
         hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' }),
         content.documentEnrichers(options),
