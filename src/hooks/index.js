@@ -1,4 +1,5 @@
 import addMetadata from './add-metadata';
+import computeAncestors from './compute-ancestors';
 import computePath from './compute-path';
 import documentEnrichers from './document-enrichers';
 import fetchBlobs from './fetch-blobs';
@@ -7,6 +8,7 @@ import presentDocument from './present-document';
 
 export {
   addMetadata,
+  computeAncestors,
   computePath,
   documentEnrichers,
   fetchBlobs,

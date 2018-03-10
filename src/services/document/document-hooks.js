@@ -20,6 +20,7 @@ module.exports = function(options = {}) {
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         content.computePath(),
+        content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       update: [
@@ -27,6 +28,7 @@ module.exports = function(options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         content.computePath(),
+        content.computeAncestors(),
         hooks.discardFields('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
@@ -35,6 +37,7 @@ module.exports = function(options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         content.computePath(),
+        content.computeAncestors(),
         hooks.discardFields('id', 'metadata', 'createdAt', 'updatedAt', 'destroyedAt'),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ]
