@@ -26,11 +26,14 @@ const fields = {
   locker: { type: 'ObjectId' },             // lock owner
   lockedAt: { type: Date },                 // locked time
   nature: { type: String },                 // nature or genre of the resource
+  ancestors: [{ type: 'ObjectId' }],        // array of ancestors resource
   parent: { type: 'ObjectId' },             // parent resource
   path: { type: String, default: '/', unique: true }, // path to the document
   rights: [{ type: String }],               // information about rights held in and over the resource.
   source: { type: String },                 // related resource from which the described resource is derived.
-  state: { type: String },                  // lifecycle of the document: project, approved, obsolete and deleted
+  state: { type: String, enum: [            // lifecycle of the document
+    'project', 'approved', 'obsolete', 'deleted'
+  ]},
   subjects: [{ type: String }],             // the topic of the resource
   tags: [{ type: String }],                 // the tags of the resource
   title: { type: String, required: true },  // name given to the resource
@@ -43,7 +46,9 @@ export default function model (app, name) {
   const schema = new mongoose.Schema(fields, options);
   schema.plugin(uniqueArray);
   schema.plugin(plugins.softDelete);
-  schema.plugin(plugins.acl);
+  schema.index({ parent: 1 });
+  schema.index({ path: 1 });
+  schema.index({ ancestors: 1 });
   return mongoose.model(name, schema);
 }
 
