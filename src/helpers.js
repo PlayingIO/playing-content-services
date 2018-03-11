@@ -11,8 +11,8 @@ export const getParentDocument = (app, id, doc) => {
   if (id) {
     const svcDocuments = app.service(plural(doc && doc.type || 'document'));
     return svcDocuments.get(id, {
-      query: { $select: 'parent' }
-    }).then(doc => doc && doc.parent);    
+      query: { $select: 'parent,*' }
+    }).then(doc => doc && doc.parent);
   }
   // get by the parent id
   if (doc.parent) {
