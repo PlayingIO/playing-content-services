@@ -1,3 +1,4 @@
+import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
 import path from 'path';
@@ -8,10 +9,14 @@ const debug = makeDebug('playing:content-services:hooks:computePath');
 // compute current path by parent
 export default function computePath(options = { slug: false }) {
   return (hook) => {
-    const svcDocuments = hook.app.service('documents');
+    assert(hook.type === 'before', `computePath must be used as a 'before' hook.`);
 
-    // get parent or root document
-    return getParentDocument(hook.data.path, hook.data.parent).then(parent => {
+    // skip update/patch if not changing parent with both parent and path
+    if (hook.method === 'update' || hook.method === 'patch') {
+      if (!(hook.data.parent && hook.data.path)) return hook;
+    }
+    // get new parent or root document (if creating)
+    return getParentDocument(hook.app, null, hook.data).then(parent => {
       if (parent && parent.path) {
         hook.data.parent = parent.id;
         // generate new type-name or use the existing name
