@@ -45,17 +45,25 @@ function getBreadcrumbs(hook, docs, options) {
   const ancestors = fp.reject(fp.isNil, fp.flatMap(doc => {
     return fp.map(parent => {
       ancestorRready &= fp.has('type', parent);
-      return fp.has('type', parent)? parent : fp.tail(fp.split(':', parent));
+      return fp.has('type', parent)? parent : null;
     }, doc.ancestors || []);
   }, docs));
-  const getAncestors = ancestors.length > 0 && !ancestorRready
-    ? svcDocuments.find({ query: { _id: { $in: ancestors } }, paginate: false})
-    : Promise.resolve(ancestors);
-  return getAncestors.then(results => {
-    const breads = fp.map(fp.pick(['id', 'path', 'title']), results.data || results);
+  const ancestorIds = fp.reject(fp.isNil, fp.flatMap(doc => {
+    return fp.map(parent => {
+      return fp.has('type', parent)? null : helpers.getId(parent);
+    }, doc.ancestors || []);
+  }, docs));
+  const getAncestors = () => ancestorIds.length > 0
+    ? svcDocuments.find({ query: { _id: { $in: ancestorIds } }, paginate: false})
+    : Promise.resolve([]);
+  return getAncestors().then(results => {
+    const breads = fp.map(
+      fp.pick(['id', 'path', 'title']),
+      fp.concat(ancestors, results.data || results)
+    );
     return fp.reduce((acc, doc) => {
       const breadcrumbs = fp.map(parent => {
-        return fp.find(fp.propEq('id', parent), breads);
+        return fp.find(fp.propEq('id', helpers.getId(parent)), breads);
       }, doc.ancestors || []);
       acc[doc.id] = breadcrumbs;
       return acc;
@@ -117,9 +125,7 @@ function getPermisionStatus(ace) {
 
 function getAces(app, docs) {
   const svcPermissions = app.service('user-permissions');
-  const typedIds = fp.map(doc => {
-    return doc.type + ':' + doc.id;
-  }, docs);
+  const typedIds = fp.map(helpers.typedId, docs);
   return svcPermissions.find({
     query: {
       subject: { $in: typedIds },
@@ -129,17 +135,14 @@ function getAces(app, docs) {
     const permissions = fp.map(permit => {
       return fp.assoc('status', getPermisionStatus(permit), permit);
     }, results.data || results);
-    return fp.groupBy(permit => fp.tail(fp.split(':', permit.subject)), permissions);
+    return fp.groupBy(permit => helpers.getId(permit.subject), permissions);
   });
 }
 
 function getParentAces(app, docs) {
   const svcPermissions = app.service('user-permissions');
   const typedIds = fp.flatMap(doc => {
-    return fp.map(parent => {
-      // whether already populated
-      return parent.type? parent.type + ':' + parent.id : parent;
-    }, doc.ancestors || []);
+    return fp.map(helpers.typedId, doc.ancestors || []);
   }, docs);
   return svcPermissions.find({
     query: {
@@ -153,7 +156,7 @@ function getParentAces(app, docs) {
     return fp.reduce((arr, doc) => {
       for (let i = (doc.ancestors || []).length - 1; i >= 0; i--) {
         if (doc.ancestors[i]) {
-          const subject = doc.ancestors[i].type? doc.ancestors[i].type + ':' + doc.ancestors[i].id : doc.ancestors[i];
+          const subject = helpers.typedId(doc.ancestors[i]);
           const parentAces = fp.filter(fp.propEq('subject', subject), permissions);
           if (parentAces.length > 0) {
             arr[doc.id] = parentAces;
