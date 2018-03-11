@@ -26,7 +26,7 @@ const fields = {
   locker: { type: 'ObjectId' },             // lock owner
   lockedAt: { type: Date },                 // locked time
   nature: { type: String },                 // nature or genre of the resource
-  ancestors: [{ type: 'ObjectId' }],        // array of ancestors resource
+  ancestors: [{ type: 'String' }],          // array of typed ids of ancestors
   parent: { type: 'ObjectId' },             // parent resource
   path: { type: String, default: '/', unique: true }, // path to the document
   rights: [{ type: String }],               // information about rights held in and over the resource.
