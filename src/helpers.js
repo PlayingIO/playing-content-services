@@ -1,28 +1,41 @@
 import fp from 'mostly-func';
+import path from 'path';
+import { plural } from 'pluralize';
 import shortid from 'shortid';
 import slug from 'limax';
 
 // get parent or root or top workspaces document
-export const getParentDocument = (app, path, parent) => {
-  const svcDocuments = app.service('documents');
+export const getParentDocument = (app, id, doc) => {
   let parentQuery = Promise.resolve();
-  if (parent) {
-    parentQuery = () => svcDocuments.get(parent);
-  } else if (path !== '/' && path !== '/workspaces') {
-    if (path.startsWith('/workspaces')) {
-      parentQuery = svcDocuments.action('first').find({ query: { path : '/workspaces' } });
+  // get by id and type
+  if (id) {
+    const svcDocuments = app.service(plural(doc && doc.type || 'document'));
+    return svcDocuments.get(id, {
+      query: { $select: 'parent' }
+    }).then(doc => doc && doc.parent);    
+  }
+  // get by the parent id
+  if (doc.parent) {
+    const svcDocuments = app.service('documents');
+    return svcDocuments.get(doc.parent);
+  }
+  // get the root folder or workspaces root
+  if (doc.path && doc.path !== '/' && doc.path !== '/workspaces') {
+    const svcFolder = app.service('folders');
+    if (doc.path.startsWith('/workspaces')) {
+      return svcFolder.action('first').find({ query: { path : '/workspaces' } });
     } else {
-      parentQuery = svcDocuments.action('first').find({ query: { path : '/' } });
+      return svcFolder.action('first').find({ query: { path : '/' } });
     }
   }
-  return parentQuery;
+  return Promise.resolve();
 };
 
 // generate a short typed name for a document
-export const shortname = (type, path, title) => {
+export const shortname = (type, existing, title) => {
   let name = type + '-' + shortid.generate();
-  if (path) {
-    name = path.basename(path); // existing short name
+  if (existing) {
+    name = path.basename(existing); // existing short name
   } else if (title) {
     name = type + '-' + slug(title, { tone: false });
   }
