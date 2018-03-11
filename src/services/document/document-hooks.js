@@ -52,7 +52,7 @@ module.exports = function(options = {}) {
         iff(content.isDocumentType('document'),
           hooks.populate('parent', { service: 'folders' })),
         iff(content.isDocumentType('document'),
-          hooks.populate('ancestors'), // with typed id
+          hooks.populate('ancestors')), // with typed id
         iff(content.isDocumentType('document'),
           hooks.populate('creator', { service: 'users' })),
         iff(content.isDocumentType('document'),
@@ -67,7 +67,7 @@ module.exports = function(options = {}) {
         iff(content.isDocumentType('document'),
           hooks.populate('parent', { service: 'folders' })),
         iff(content.isDocumentType('document'),
-          hooks.populate('ancestors'), // with typed id
+          hooks.populate('ancestors')), // with typed id
         iff(content.isDocumentType('document'),
           hooks.populate('creator', { service: 'users' })),
         iff(content.isDocumentType('document'),

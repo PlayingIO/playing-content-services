@@ -41,8 +41,14 @@ function hasFolderishChild(hook, docs, options) {
 function getBreadcrumbs(hook, docs, options) {
   const svcDocuments = hook.app.service('documents');
 
-  const ancestors = fp.reject(fp.isNil, fp.flatMap(fp.prop('ancestors'), docs));
-  const getAncestors = ancestors.length > 0 && fp.hasNot('path', ancestors[0]) // whether already populated
+  let ancestorRready = true; // whether already populated
+  const ancestors = fp.reject(fp.isNil, fp.flatMap(doc => {
+    return fp.map(parent => {
+      ancestorRready &= fp.has('type', parent);
+      return fp.has('type', parent)? parent : fp.tail(fp.split(':', parent));
+    }, doc.ancestors || []);
+  }, docs));
+  const getAncestors = ancestors.length > 0 && !ancestorRready
     ? svcDocuments.find({ query: { _id: { $in: ancestors } }, paginate: false})
     : Promise.resolve(ancestors);
   return getAncestors.then(results => {
@@ -131,6 +137,7 @@ function getParentAces(app, docs) {
   const svcPermissions = app.service('user-permissions');
   const typedIds = fp.flatMap(doc => {
     return fp.map(parent => {
+      // whether already populated
       return parent.type? parent.type + ':' + parent.id : parent;
     }, doc.ancestors || []);
   }, docs);
@@ -165,7 +172,7 @@ function getAcls(hook, docs, options) {
     const aces = fp.reduce((acc, doc) => {
       acc[doc.id] = acc[doc.id] || [];
       if (localAces[doc.id] && localAces[doc.id].length > 0) {
-        acc[doc.id].push({ 'local': localAces[doc.id] });
+        acc[doc.id].push({ name: 'local', aces: localAces[doc.id] });
       } else {
         inheritedDocs.push(doc);
       }
@@ -175,7 +182,7 @@ function getAcls(hook, docs, options) {
       return fp.reduce((acc, doc) => {
         acc[doc.id] = acc[doc.id] || [];
         if (inheritedAces[doc.id] && inheritedAces[doc.id].length > 0) {
-          acc[doc.id].push({ 'inherited': inheritedAces[doc.id] });
+          acc[doc.id].push({ name: 'inherited', aces: inheritedAces[doc.id] });
         }
         return acc;
       }, aces, docs);
