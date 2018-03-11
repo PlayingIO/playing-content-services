@@ -109,57 +109,47 @@ function getPermisionStatus(ace) {
   return 'effective';
 }
 
-function getAces(app, document) {
-  const svcDocuments = app.service('documents');
-  const svcUserGroups = app.service('user-groups');
+function getAces(app, docs) {
+  const svcPermissions = app.service('user-permissions');
 
-  const getDocument = document.title
-    ? Promise.resolve(document)
-    : svcDocuments.get(document);
-  return getDocument.then((doc) => {
-    if (!(doc && doc.ACL)) return null;
-    
-    let findUsers = Promise.resolve([]);
-    let keys = fp.reject(fp.equals('*'), Object.keys(doc.ACL));
-    const creators = fp.reject(fp.isNil, fp.map(fp.prop('creator'), Object.values(doc.ACL)));
-    keys = keys.concat(creators);
-    if (keys.length > 0) {
-      findUsers = svcUserGroups.find({ query: {
-        _id: { $in: keys }
-      }});
+  const typedIds = fp.map(doc => {
+    return doc.type + ':' + doc.id;
+  }, docs);
+  return svcPermissions.find({
+    query: {
+      subject: { $in: typedIds },
+      $select: 'user,creator,*' // populate user/creator
     }
-    return findUsers.then(users => {
-      const aces = fp.map(key => {
-        const ace = doc.ACL[key];
-        return Object.assign({}, ace, {
-          status: getPermisionStatus(ace),
-          creator: ace.creator? fp.findById(ace.creator, users) : null,
-          user: fp.findById(key, users)
-        });
-      }, Object.keys(doc.ACL));
-      return aces;
-    });
+  }).then(results => {
+    const permissions = fp.map(permit => {
+      return fp.assoc('status', getPermisionStatus(permit), permit);
+    }, results.data || results);
+    return fp.groupBy(permit => fp.tail(fp.split(':', permit.subject)), permissions);
   });
 }
 
-function getAcls(hook, doc, options) {
-  if (!(doc && doc.ACL)) return Promise.resolve(null);
+function getAcls(hook, docs, options) {
 
-  const inherited = doc.ACL['*'] && doc.ACL['*'].inherited === true;
-  const getLocalAces = getAces(hook.app, doc);
-  const getInheritedAces = doc.parent? getAces(hook.app, doc.parent) : Promise.resolve(null);
-
-  return Promise.all([getLocalAces, getInheritedAces])
-    .then(([localAces, inheritedAces]) => {
-      let acls = [];
-      // local permissions
-      if (localAces) acls.push({ name: 'local', aces: localAces });
-      // inherited permissions
-      if (inherited) {
-        acls.push({ name: 'inherited', aces: inheritedAces || []});
+  return getAces(hook.app, docs).then(localAces => {
+    return fp.reduce((acc, doc) => {
+      if (localAces[doc.id] && localAces[doc.id].length > 0) {
+        acc[doc.id] = { 'local': localAces[doc.id] };
       }
-      return acls;
-    });
+      return acc;
+    }, {}, docs);
+  });
+
+  // return Promise.all([getLocalAces, getInheritedAces])
+  //   .then(([localAces, inheritedAces]) => {
+  //     let acls = [];
+  //     // local permissions
+  //     if (localAces) acls.push({ name: 'local', aces: localAces });
+  //     // inherited permissions
+  //     if (inherited) {
+  //       acls.push({ name: 'inherited', aces: inheritedAces || []});
+  //     }
+  //     return acls;
+  //   });
 }
 
 function getPermission(hook, docs, options) {
@@ -216,7 +206,7 @@ export default function documentEnrichers(options = {}) {
 
     // If no enrichers-document header then skip this hook
     if (!(hook.params.headers && hook.params.headers['enrichers-document'])) {
-      debug('Skip documentEnrichers without headers', hook.params);
+      debug('Skip documentEnrichers without headers', hook.params.query);
       return hook;
     }
 
