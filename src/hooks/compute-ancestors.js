@@ -15,8 +15,9 @@ export default function computeAncestors() {
     // get parent or root document
     return getParentDocument(hook.data.path, hook.data.parent).then(parent => {
       if (parent && parent.ancestors) {
-        // join the parent ancestors (against parent changing)
-        hook.data.ancestors = fp.concat(parent.ancestors, parent.id);
+        // join the parent ancestors typed id (against parent changing)
+        const typedId = (parent.type || 'document') + ':' + parent.id;
+        hook.data.ancestors = fp.concat(parent.ancestors, typedId);
       } else {
         debug('Parent ancestors undefined', parent);
         throw new Error('Parent ancestors undefined');
