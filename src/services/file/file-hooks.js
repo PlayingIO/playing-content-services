@@ -45,7 +45,7 @@ module.exports = function(options = {}) {
     after: {
       all: [
         hooks.populate('parent', { service: 'folders', fallThrough: ['headers'] }),
-        hooks.populate('ancestors', { service: 'folders', fallThrough: ['headers'] }),
+        hooks.populate('ancestors'), // with typed id
         hooks.populate('creator', { service: 'users' }),
         content.documentEnrichers(options),
         hooks.presentEntity(FileEntity, options),

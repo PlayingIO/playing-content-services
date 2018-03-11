@@ -45,7 +45,7 @@ module.exports = function(options = {}) {
     after: {
       all: [
         hooks.populate('parent', { service: 'folders', fallThrough: ['headers'] }),
-        hooks.populate('ancestors', { service: 'folders', fallThrough: ['headers'] }),
+        hooks.populate('ancestors'), // with typed id
         hooks.populate('creator', { service: 'users' }),
         hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' }),
         content.documentEnrichers(options),
