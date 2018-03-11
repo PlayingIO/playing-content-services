@@ -111,7 +111,6 @@ function getPermisionStatus(ace) {
 
 function getAces(app, docs) {
   const svcPermissions = app.service('user-permissions');
-
   const typedIds = fp.map(doc => {
     return doc.type + ':' + doc.id;
   }, docs);
@@ -128,28 +127,60 @@ function getAces(app, docs) {
   });
 }
 
-function getAcls(hook, docs, options) {
+function getParentAces(app, docs) {
+  const svcPermissions = app.service('user-permissions');
+  const typedIds = fp.flatMap(doc => {
+    return fp.map(parent => {
+      return parent.type? parent.type + ':' + parent.id : parent;
+    }, doc.ancestors || []);
+  }, docs);
+  return svcPermissions.find({
+    query: {
+      subject: { $in: typedIds },
+      $select: 'user,creator,*' // populate user/creator
+    }
+  }).then(results => {
+    const permissions = fp.map(permit => {
+      return fp.assoc('status', getPermisionStatus(permit), permit);
+    }, results.data || results);
+    return fp.reduce((arr, doc) => {
+      for (let i = (doc.ancestors || []).length - 1; i >= 0; i--) {
+        if (doc.ancestors[i]) {
+          const subject = doc.ancestors[i].type? doc.ancestors[i].type + ':' + doc.ancestors[i].id : doc.ancestors[i];
+          const parentAces = fp.filter(fp.propEq('subject', subject), permissions);
+          if (parentAces.length > 0) {
+            arr[doc.id] = parentAces;
+            break;
+          }
+        }
+      }
+      return arr;
+    }, {}, docs);
+  });
+}
 
+function getAcls(hook, docs, options) {
   return getAces(hook.app, docs).then(localAces => {
-    return fp.reduce((acc, doc) => {
+    let inheritedDocs = [];
+    const aces = fp.reduce((acc, doc) => {
+      acc[doc.id] = acc[doc.id] || [];
       if (localAces[doc.id] && localAces[doc.id].length > 0) {
-        acc[doc.id] = { 'local': localAces[doc.id] };
+        acc[doc.id].push({ 'local': localAces[doc.id] });
+      } else {
+        inheritedDocs.push(doc);
       }
       return acc;
     }, {}, docs);
+    return getParentAces(hook.app, inheritedDocs).then(inheritedAces => {
+      return fp.reduce((acc, doc) => {
+        acc[doc.id] = acc[doc.id] || [];
+        if (inheritedAces[doc.id] && inheritedAces[doc.id].length > 0) {
+          acc[doc.id].push({ 'inherited': inheritedAces[doc.id] });
+        }
+        return acc;
+      }, aces, docs);
+    });
   });
-
-  // return Promise.all([getLocalAces, getInheritedAces])
-  //   .then(([localAces, inheritedAces]) => {
-  //     let acls = [];
-  //     // local permissions
-  //     if (localAces) acls.push({ name: 'local', aces: localAces });
-  //     // inherited permissions
-  //     if (inherited) {
-  //       acls.push({ name: 'inherited', aces: inheritedAces || []});
-  //     }
-  //     return acls;
-  //   });
 }
 
 function getPermission(hook, docs, options) {
