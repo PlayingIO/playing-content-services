@@ -15,6 +15,7 @@ export default function computePath(options = { slug: false }) {
     if (hook.method === 'update' || hook.method === 'patch') {
       if (!(hook.data.parent && hook.data.path)) return hook;
     }
+
     // get new parent or root document (if creating)
     return getParentDocument(hook.app, null, hook.data).then(parent => {
       if (parent && parent.path) {
