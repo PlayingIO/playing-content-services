@@ -81,7 +81,7 @@ export const getParentAces = (app, docs, select = 'user,creator,*') => {
     return fp.map(helpers.typedId, doc.ancestors || []);
   }, docs);
   const ancestorIds = fp.flatMap(doc => fp.prop('ancestors', doc), docs);
-  
+
   const getParentPermissions = (ids) => ids.length > 0?
     svcPermissions.find({
       query: { subject: { $in: ids }, $select:  select },
@@ -111,7 +111,7 @@ export const getParentAces = (app, docs, select = 'user,creator,*') => {
             arr[doc.id] = arr[doc.id].concat(aces);
           }
           // continue to get inherited permissions or not
-          if (!ancestor.inherited) break;
+          if (!ancestor || !ancestor.inherited) break;
         }
       }
       return arr;
