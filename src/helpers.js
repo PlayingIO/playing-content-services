@@ -75,28 +75,43 @@ export const getAces = (app, docs, select = 'user,creator,*') => {
 };
 
 export const getParentAces = (app, docs, select = 'user,creator,*') => {
+  const svcDocuments = app.service('user-documents');
   const svcPermissions = app.service('user-permissions');
   const typedIds = fp.flatMap(doc => {
     return fp.map(helpers.typedId, doc.ancestors || []);
   }, docs);
-  return svcPermissions.find({
-    query: {
-      subject: { $in: typedIds },
-      $select:  select
-    }
-  }).then(results => {
+  const ancestorIds = fp.flatMap(doc => fp.prop('ancestors', doc), docs);
+  
+  const getParentPermissions = (ids) => ids.length > 0?
+    svcPermissions.find({
+      query: { subject: { $in: ids }, $select:  select },
+      paginate: false
+    }) : Promise.resolve([]);
+  const getAncestors = (ids) => ids.length > 0?
+    helpers.findWithTypedIds(app, ids) : Promise.resolve([]);
+  
+  return Promise.all([
+    getParentPermissions(typedIds),
+    getAncestors(ancestorIds),
+  ]).then(([permits, ancestors]) => {
     const permissions = fp.map(permit => {
       return fp.assoc('status', getPermisionStatus(permit), permit);
-    }, results.data || results);
+    }, permits.data || permits);
     return fp.reduce((arr, doc) => {
+      arr[doc.id] = [];
       for (let i = (doc.ancestors || []).length - 1; i >= 0; i--) {
         if (doc.ancestors[i]) {
-          const subject = helpers.typedId(doc.ancestors[i]);
-          const parentAces = fp.filter(fp.propEq('subject', subject), permissions);
-          if (parentAces.length > 0) {
-            arr[doc.id] = parentAces;
-            break;
+          const ancestor = fp.find(
+            fp.propEq('id', helpers.getId(doc.ancestors[i])), ancestors);
+          const ancestorAces = fp.filter(
+            fp.propEq('subject', helpers.typedId(doc.ancestors[i])), permissions);
+          if (ancestorAces.length > 0) {
+            // subject change to current doc
+            const aces = fp.map(fp.assoc('subject', helpers.typedId(doc)), ancestorAces);
+            arr[doc.id] = arr[doc.id].concat(aces);
           }
+          // continue to get inherited permissions or not
+          if (!ancestor.inherited) break;
         }
       }
       return arr;
