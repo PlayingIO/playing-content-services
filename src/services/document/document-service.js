@@ -166,12 +166,12 @@ class DocumentService extends Service {
 
   _addPermission(id, data, params, doc) {
     assert(doc, 'target document is not exists.');
-    assert(data.action, 'data.action is not provided.');
+    assert(data.actions, 'data.actions is not provided.');
     assert(data.user, 'data.user is not provided.');
 
     const svcPermissions = this.app.service('user-permissions');
     return svcPermissions.create({
-      actions: [data.action],
+      actions: fp.is(Array, data.actions)? data.actions : [data.actions],
       subject: `${doc.type}:${doc.id}`,
       user: data.user,
       role: data.role,
@@ -182,18 +182,30 @@ class DocumentService extends Service {
   }
 
   _replacePermission(id, data, params, doc) {
-    return this.addPermission(id, data, params, doc);
+    assert(doc, 'target document is not exists.');
+    assert(data.ace, 'data.id is not provided.');
+    assert(data.actions, 'data.action is not provided.');
+    assert(data.user, 'data.user is not provided.');
+
+    const svcPermissions = this.app.service('user-permissions');
+    return svcPermissions.patch(data.ace, {
+      actions: fp.is(Array, data.actions)? data.actions : [data.actions],
+      user: data.user,
+      role: data.role,
+      begin: data.begin,
+      end: data.end
+    });
   }
 
   _removePermission(id, data, params, doc) {
     assert(doc, 'target document is not exists.');
-    assert(data.action, 'data.action is not provided');
+    assert(data.actions, 'data.actions is not provided');
     assert(data.user, 'data.user is not provided');
 
     const svcPermissions = this.app.service('user-permissions');
     return svcPermissions.remove(null, {
       query: {
-        actions: [data.action],
+        actions: fp.is(Array, data.actions)? data.actions : [data.actions],
         subject: `${doc.type}:${doc.id}`,
         user: data.user,
         role: data.role
