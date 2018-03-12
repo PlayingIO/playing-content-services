@@ -114,26 +114,25 @@ function getFavorites(hook, docs, options) {
 }
 
 function getAcls(hook, docs, options) {
-  return getAces(hook.app, docs).then(localAces => {
-    let inheritedDocs = [];
+  const inheritedDocs = fp.filter(fp.propEq('inherited', true), docs);
+  return Promise.all([
+    getAces(hook.app, docs),
+    getParentAces(hook.app, inheritedDocs)
+  ]).then(([localAces, inheritedAces]) => {
     const aces = fp.reduce((acc, doc) => {
       acc[doc.id] = acc[doc.id] || [];
-      if (localAces[doc.id] && localAces[doc.id].length > 0) {
+      if (localAces && localAces[doc.id] && localAces[doc.id].length > 0) {
         acc[doc.id].push({ name: 'local', aces: localAces[doc.id] });
-      } else {
-        inheritedDocs.push(doc);
       }
       return acc;
     }, {}, docs);
-    return getParentAces(hook.app, inheritedDocs).then(inheritedAces => {
-      return fp.reduce((acc, doc) => {
-        acc[doc.id] = acc[doc.id] || [];
-        if (inheritedAces[doc.id] && inheritedAces[doc.id].length > 0) {
-          acc[doc.id].push({ name: 'inherited', aces: inheritedAces[doc.id] });
-        }
-        return acc;
-      }, aces, docs);
-    });
+    return fp.reduce((acc, doc) => {
+      acc[doc.id] = acc[doc.id] || [];
+      if (inheritedAces && inheritedAces[doc.id] && inheritedAces[doc.id].length > 0) {
+        acc[doc.id].push({ name: 'inherited', aces: inheritedAces[doc.id] });
+      }
+      return acc;
+    }, aces, docs);
   });
 }
 
