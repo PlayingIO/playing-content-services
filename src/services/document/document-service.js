@@ -205,6 +205,7 @@ class DocumentService extends Service {
   _blockPermissionInheritance(id, data, params, doc) {
     assert(doc, 'target document is not exists.');
 
+    // copy inherited permissions
     const svcPermissions = this.app.service('user-permissions');
     return getParentAces(this.app, [doc], '*').then(inheritedAces => {
       if (inheritedAces && inheritedAces[doc.id]) {
@@ -214,19 +215,14 @@ class DocumentService extends Service {
           return svcPermissions.create(ace);
         }, inheritedAces[doc.id]));
       }
+    }).then(results => {
+      return super.patch(id, { inherited: false }, params);
     });
   }
 
   _unblockPermissionInheritance(id, data, params, doc) {
     assert(doc, 'target document is not exists.');
-
-    const svcPermissions = this.app.service('user-permissions');
-    return svcPermissions.remove(null, {
-      query: {
-        subject: `${doc.type}:${doc.id}`
-      },
-      $multi: true
-    });
+    return super.patch(id, { inherited: true }, params);
   }
 }
 
