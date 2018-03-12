@@ -58,13 +58,13 @@ export const getPermisionStatus = (ace) => {
   return 'effective';
 };
 
-export const getAces = (app, docs) => {
+export const getAces = (app, docs, select = 'user,creator,*') => {
   const svcPermissions = app.service('user-permissions');
   const typedIds = fp.map(helpers.typedId, docs);
   return svcPermissions.find({
     query: {
       subject: { $in: typedIds },
-      $select: 'user,creator,*' // populate user/creator
+      $select: select
     }
   }).then(results => {
     const permissions = fp.map(permit => {
@@ -74,7 +74,7 @@ export const getAces = (app, docs) => {
   });
 };
 
-export const getParentAces = (app, docs) => {
+export const getParentAces = (app, docs, select = 'user,creator,*') => {
   const svcPermissions = app.service('user-permissions');
   const typedIds = fp.flatMap(doc => {
     return fp.map(helpers.typedId, doc.ancestors || []);
@@ -82,7 +82,7 @@ export const getParentAces = (app, docs) => {
   return svcPermissions.find({
     query: {
       subject: { $in: typedIds },
-      $select: 'user,creator,*' // populate user/creator
+      $select:  select
     }
   }).then(results => {
     const permissions = fp.map(permit => {

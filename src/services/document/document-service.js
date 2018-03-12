@@ -4,9 +4,11 @@ import { Service, helpers, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 import path from 'path';
 import { plural } from 'pluralize';
-import DocumentModel from '~/models/document-model';
+
 import defaultHooks from './document-hooks';
 import { subDocumentEvents } from './document-events';
+import { getParentAces } from '../../helpers';
+import DocumentModel from '../../models/document-model';
 
 const debug = makeDebug('playing:content-services:documents');
 
@@ -201,21 +203,30 @@ class DocumentService extends Service {
   }
 
   _blockPermissionInheritance(id, data, params, doc) {
-    let ACL = Object.assign(doc.ACL || {}, {
-      '*': {
-        inherited: false
+    assert(doc, 'target document is not exists.');
+
+    const svcPermissions = this.app.service('user-permissions');
+    return getParentAces(this.app, [doc], '*').then(inheritedAces => {
+      if (inheritedAces && inheritedAces[doc.id]) {
+        return Promise.all(fp.map(ace => {
+          ace.subject = `${doc.type}:${doc.id}`;
+          ace.creator = params.user.id;
+          return svcPermissions.create(ace);
+        }, inheritedAces[doc.id]));
       }
     });
-    return super.patch(doc.id, { ACL }, params);
   }
 
   _unblockPermissionInheritance(id, data, params, doc) {
-    let ACL = Object.assign(doc.ACL || {}, {
-      '*': {
-        inherited: true
-      }
+    assert(doc, 'target document is not exists.');
+
+    const svcPermissions = this.app.service('user-permissions');
+    return svcPermissions.remove(null, {
+      query: {
+        subject: `${doc.type}:${doc.id}`
+      },
+      $multi: true
     });
-    return super.patch(doc.id, { ACL }, params);
   }
 }
 
