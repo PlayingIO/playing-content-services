@@ -199,19 +199,10 @@ class DocumentService extends Service {
 
   _removePermission(id, data, params, doc) {
     assert(doc, 'target document is not exists.');
-    assert(data.actions, 'data.actions is not provided');
-    assert(data.user, 'data.user is not provided');
+    assert(data.ace, 'data.ace is not provided');
 
     const svcPermissions = this.app.service('user-permissions');
-    return svcPermissions.remove(null, {
-      query: {
-        actions: fp.is(Array, data.actions)? data.actions : [data.actions],
-        subject: `${doc.type}:${doc.id}`,
-        user: data.user,
-        role: data.role
-      },
-      $multi: true
-    });
+    return svcPermissions.remove(data.ace);
   }
 
   _blockPermissionInheritance(id, data, params, doc) {
