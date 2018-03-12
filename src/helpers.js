@@ -1,3 +1,5 @@
+import dateFn from 'date-fns';
+import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 import path from 'path';
 import { plural } from 'pluralize';
@@ -44,6 +46,62 @@ export const shortname = (type, existing, title) => {
     name = type + '-' + name;
   }
   return name;
+};
+
+export const getPermisionStatus = (ace) => {
+  const now = new Date();
+  if (ace.begin || ace.end) {
+    if (ace.begin && dateFn.isBefore(now, ace.begin)) return 'pending';
+    if (ace.begin && ace.end && dateFn.isWithinRange(now, ace.start, ace.end)) return 'effective';
+    if (ace.end && dateFn.isAfter(now, ace.end)) return 'archived';
+  }
+  return 'effective';
+};
+
+export const getAces = (app, docs) => {
+  const svcPermissions = app.service('user-permissions');
+  const typedIds = fp.map(helpers.typedId, docs);
+  return svcPermissions.find({
+    query: {
+      subject: { $in: typedIds },
+      $select: 'user,creator,*' // populate user/creator
+    }
+  }).then(results => {
+    const permissions = fp.map(permit => {
+      return fp.assoc('status', getPermisionStatus(permit), permit);
+    }, results.data || results);
+    return fp.groupBy(permit => helpers.getId(permit.subject), permissions);
+  });
+};
+
+export const getParentAces = (app, docs) => {
+  const svcPermissions = app.service('user-permissions');
+  const typedIds = fp.flatMap(doc => {
+    return fp.map(helpers.typedId, doc.ancestors || []);
+  }, docs);
+  return svcPermissions.find({
+    query: {
+      subject: { $in: typedIds },
+      $select: 'user,creator,*' // populate user/creator
+    }
+  }).then(results => {
+    const permissions = fp.map(permit => {
+      return fp.assoc('status', getPermisionStatus(permit), permit);
+    }, results.data || results);
+    return fp.reduce((arr, doc) => {
+      for (let i = (doc.ancestors || []).length - 1; i >= 0; i--) {
+        if (doc.ancestors[i]) {
+          const subject = helpers.typedId(doc.ancestors[i]);
+          const parentAces = fp.filter(fp.propEq('subject', subject), permissions);
+          if (parentAces.length > 0) {
+            arr[doc.id] = parentAces;
+            break;
+          }
+        }
+      }
+      return arr;
+    }, {}, docs);
+  });
 };
 
 export default {};

@@ -1,12 +1,12 @@
 import assert from 'assert';
-import dateF from 'date-fns';
 import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 import makeDebug from 'debug';
 import path from 'path';
 import url from 'url';
 
-import { DocTypes, Permissions } from '~/constants';
+import { DocTypes, Permissions } from '../constants';
+import { getAces, getParentAces } from '../helpers';
 
 const debug = makeDebug('playing:content-services:hooks:documentEnrichers');
 
@@ -109,62 +109,6 @@ function getFavorites(hook, docs, options) {
     return fp.reduce((acc, doc) => {
       acc[doc.id] = { isFavorite: documents[doc.id] && documents[doc.id].length > 0 || false };
       return acc;
-    }, {}, docs);
-  });
-}
-
-function getPermisionStatus(ace) {
-  const now = new Date();
-  if (ace.begin || ace.end) {
-    if (ace.begin && dateF.isBefore(now, ace.begin)) return 'pending';
-    if (ace.begin && ace.end && dateF.isWithinRange(now, ace.start, ace.end)) return 'effective';
-    if (ace.end && dateF.isAfter(now, ace.end)) return 'archived';
-  }
-  return 'effective';
-}
-
-function getAces(app, docs) {
-  const svcPermissions = app.service('user-permissions');
-  const typedIds = fp.map(helpers.typedId, docs);
-  return svcPermissions.find({
-    query: {
-      subject: { $in: typedIds },
-      $select: 'user,creator,*' // populate user/creator
-    }
-  }).then(results => {
-    const permissions = fp.map(permit => {
-      return fp.assoc('status', getPermisionStatus(permit), permit);
-    }, results.data || results);
-    return fp.groupBy(permit => helpers.getId(permit.subject), permissions);
-  });
-}
-
-function getParentAces(app, docs) {
-  const svcPermissions = app.service('user-permissions');
-  const typedIds = fp.flatMap(doc => {
-    return fp.map(helpers.typedId, doc.ancestors || []);
-  }, docs);
-  return svcPermissions.find({
-    query: {
-      subject: { $in: typedIds },
-      $select: 'user,creator,*' // populate user/creator
-    }
-  }).then(results => {
-    const permissions = fp.map(permit => {
-      return fp.assoc('status', getPermisionStatus(permit), permit);
-    }, results.data || results);
-    return fp.reduce((arr, doc) => {
-      for (let i = (doc.ancestors || []).length - 1; i >= 0; i--) {
-        if (doc.ancestors[i]) {
-          const subject = helpers.typedId(doc.ancestors[i]);
-          const parentAces = fp.filter(fp.propEq('subject', subject), permissions);
-          if (parentAces.length > 0) {
-            arr[doc.id] = parentAces;
-            break;
-          }
-        }
-      }
-      return arr;
     }, {}, docs);
   });
 }

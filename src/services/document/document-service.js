@@ -119,7 +119,7 @@ class DocumentService extends Service {
     const copyDoc = (id) => {
       return this.get(id).then((doc) => {
         let service = plural(doc.type || 'document');
-        let clone = fp.omit(['id', 'metadata', 'parent', 'path', 'createdAt', 'updatedAt', 'destroyedAt'], doc);
+        let clone = fp.omit(['id', 'metadata', 'parent', 'path', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'], doc);
         clone.parent = target.id;
         return this.app.service(service).create(clone);
       });
