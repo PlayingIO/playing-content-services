@@ -29,9 +29,9 @@ class DocumentService extends Service {
     subDocumentEvents(this.app, this.options);
   }
 
-  find(params) {
+  find(params = {}) {
     const type = fp.dotPath('query.type', params);
-    if (fp.is(String, type) && type !== 'document') {
+    if (type && fp.is(String, type)) {
       return this.app.service(plural(type)).find(params);
     } else {
       return super.find(params).then(result => {
@@ -40,10 +40,10 @@ class DocumentService extends Service {
     }
   }
 
-  get(id, params) {
+  get(id, params = {}) {
     const type = fp.dotPath('query.type', params);
-    if (fp.is(String, type) && type !== 'document') {
-      return this.app.service(plural(type)).get(params);
+    if (type && fp.is(String, type)) {
+      return this.app.service(plural(type)).get(id, params);
     } else {
       return super.get(id, params).then(doc => {
         return helpers.discriminatedGet(this.app, 'document', doc, params);
@@ -51,33 +51,33 @@ class DocumentService extends Service {
     }
   }
 
-  create(data, params) {
-    if (data.type && data.type !== 'document') {
+  create(data, params = {}) {
+    if (data.type && fp.is(String, data.type)) {
       return this.app.service(plural(data.type)).create(data, params);
     } else {
       return super.create(data, params);
     }
   }
 
-  update(id, data, params) {
-    if (data.type && data.type !== 'document') {
+  update(id, data, params = {}) {
+    if (data.type && fp.is(String, data.type)) {
       return this.app.service(plural(data.type)).update(id, data, params);
     } else {
       return super.update(id, data, params);
     }
   }
 
-  patch(id, data, params) {
-    if (data.type && data.type !== 'document') {
+  patch(id, data, params = {}) {
+    if (data.type && fp.is(String, data.type)) {
       return this.app.service(plural(data.type)).patch(id, data, params);
     } else {
       return super.patch(id, data, params);
     }
   }
 
-  remove(id, params) {
+  remove(id, params = {}) {
     const type = fp.dotPath('query.type', params);
-    if (fp.is(String, type) && type !== 'document') {
+    if (type && fp.is(String, type)) {
       return this.app.service(plural(type)).remove(id, params);
     } else {
       const more = params && fp.dotPath('query.more', params);
