@@ -1,5 +1,4 @@
 import { iff, isProvider } from 'feathers-hooks-common';
-import { hooks as auth } from 'feathers-authentication';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
 import * as content from '~/hooks';
@@ -8,7 +7,8 @@ module.exports = function(options = {}) {
   return {
     before: {
       all: [
-        auth.authenticate('jwt')
+        hooks.authenticate('jwt', { $select: 'permissions,groups.group.permissions,*' }),
+        hooks.authorize('document')
       ],
       get: [
         // queryWithCurrentUser({ idField: 'id', as: 'creator' })
