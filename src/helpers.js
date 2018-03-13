@@ -1,4 +1,3 @@
-import dateFn from 'date-fns';
 import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 import path from 'path';
@@ -48,16 +47,6 @@ export const shortname = (type, existing, title) => {
   return name;
 };
 
-export const getPermisionStatus = (ace) => {
-  const now = new Date();
-  if (ace.begin || ace.end) {
-    if (ace.begin && dateFn.isBefore(now, ace.begin)) return 'pending';
-    if (ace.begin && ace.end && dateFn.isWithinRange(now, ace.start, ace.end)) return 'effective';
-    if (ace.end && dateFn.isAfter(now, ace.end)) return 'archived';
-  }
-  return 'effective';
-};
-
 export const getAces = (app, docs, select = 'user,creator,*') => {
   const svcPermissions = app.service('user-permissions');
   const typedIds = fp.map(helpers.typedId, docs);
@@ -67,10 +56,7 @@ export const getAces = (app, docs, select = 'user,creator,*') => {
       $select: select
     }
   }).then(results => {
-    const permissions = fp.map(permit => {
-      return fp.assoc('status', getPermisionStatus(permit), permit);
-    }, results.data || results);
-    return fp.groupBy(permit => helpers.getId(permit.subject), permissions);
+    return fp.groupBy(permit => helpers.getId(permit.subject), results.data || results);
   });
 };
 
@@ -94,9 +80,7 @@ export const getParentAces = (app, docs, select = 'user,creator,*') => {
     getParentPermissions(typedIds),
     getAncestors(ancestorIds),
   ]).then(([permits, ancestors]) => {
-    const permissions = fp.map(permit => {
-      return fp.assoc('status', getPermisionStatus(permit), permit);
-    }, permits.data || permits);
+    const permissions = permits.data || permits;
     return fp.reduce((arr, doc) => {
       arr[doc.id] = [];
       for (let i = (doc.ancestors || []).length - 1; i >= 0; i--) {
