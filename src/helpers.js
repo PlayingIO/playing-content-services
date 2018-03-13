@@ -63,22 +63,21 @@ export const getAces = (app, docs, select = 'user,creator,*') => {
 export const getParentAces = (app, docs, select = 'user,creator,*') => {
   const svcDocuments = app.service('user-documents');
   const svcPermissions = app.service('user-permissions');
-  const typedIds = fp.flatMap(doc => {
+  const typedIds = fp.uniq(fp.flatMap(doc => {
     return fp.map(helpers.typedId, doc.ancestors || []);
-  }, docs);
-  const ancestorIds = fp.flatMap(doc => fp.prop('ancestors', doc), docs);
+  }, docs));
 
-  const getParentPermissions = (ids) => ids.length > 0?
+  const getAncestorPermissions = (ids) => ids.length > 0?
     svcPermissions.find({
-      query: { subject: { $in: ids }, $select:  select },
+      query: { subject: { $in: ids }, $select: select },
       paginate: false
     }) : Promise.resolve([]);
   const getAncestors = (ids) => ids.length > 0?
     helpers.findWithTypedIds(app, ids) : Promise.resolve([]);
   
   return Promise.all([
-    getParentPermissions(typedIds),
-    getAncestors(ancestorIds),
+    getAncestorPermissions(typedIds),
+    getAncestors(typedIds),
   ]).then(([permits, ancestors]) => {
     const permissions = permits.data || permits;
     return fp.reduce((arr, doc) => {
