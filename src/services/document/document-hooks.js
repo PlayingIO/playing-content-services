@@ -4,10 +4,13 @@ import { hooks } from 'mostly-feathers-mongoose';
 import * as content from '~/hooks';
 
 module.exports = function(options = {}) {
+  const authOptions = Object.assign({}, options, {
+    permissionField: 'permissions,groups.group.permissions,*'
+  });
   return {
     before: {
       all: [
-        hooks.authenticate('jwt', { $select: 'permissions,groups.group.permissions,*' }),
+        hooks.authenticate('jwt', authOptions),
         hooks.authorize('document')
       ],
       get: [
