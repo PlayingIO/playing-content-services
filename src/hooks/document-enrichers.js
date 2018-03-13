@@ -188,13 +188,17 @@ export default function documentEnrichers(options = {}) {
   return (hook) => {
     assert(hook.type === 'after', `documentEnrichers must be used as a 'after' hook.`);
 
-    // If no enrichers-document header then skip this hook
-    if (!(hook.params.headers && hook.params.headers['enrichers-document'])) {
+    const documentEnrichers = hook.params &&
+      (hook.params.headers && hook.params.headers['enrichers-document']) ||
+      (hook.params.query && hook.params.query.$enrichers);
+
+      // If no enrichers-document header then skip this hook
+    if (!documentEnrichers) {
       debug('Skip documentEnrichers without headers', hook.params.query);
       return hook;
     }
 
-    const enrichers = fp.map(fp.trim, hook.params.headers['enrichers-document'].split(','));
+    const enrichers = fp.map(fp.trim, fp.split(',', documentEnrichers));
     debug('enrichers-document %j', enrichers);
 
     let documents = helpers.getHookDataAsArray(hook);
