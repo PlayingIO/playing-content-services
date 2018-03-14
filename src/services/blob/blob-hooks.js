@@ -1,4 +1,3 @@
-import { hooks as auth } from 'feathers-authentication';
 import { hooks } from 'mostly-feathers-mongoose';
 import BatchEntity from '~/entities/batch-entity';
 import BlobEntity from '~/entities/blob-entity';
@@ -30,7 +29,7 @@ module.exports = function(options = {}) {
   return {
     before: {
       all: [
-        auth.authenticate('jwt')
+        hooks.authenticate('jwt', options)
       ],
       create: [
       ],
