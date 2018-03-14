@@ -1,7 +1,10 @@
 import { iff, isProvider } from 'feathers-hooks-common';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
+import { cacheMap } from 'mostly-utils-common';
 import * as content from '~/hooks';
+
+const cache = cacheMap({ max: 100 });
 
 module.exports = function(options = {}) {
   const authOptions = Object.assign({}, options, {
@@ -11,7 +14,8 @@ module.exports = function(options = {}) {
     before: {
       all: [
         hooks.authenticate('jwt', authOptions),
-        hooks.authorize('document')
+        hooks.authorize('document'),
+        hooks.cache(cache)
       ],
       get: [
         // queryWithCurrentUser({ idField: 'id', as: 'creator' })
@@ -47,6 +51,7 @@ module.exports = function(options = {}) {
     },
     after: {
       all: [
+        hooks.cache(cache),
         iff(isProvider('external'), hooks.discardFields('ACL')),
         hooks.responder()
       ],
