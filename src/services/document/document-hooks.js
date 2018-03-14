@@ -51,39 +51,21 @@ module.exports = function(options = {}) {
     },
     after: {
       all: [
+        // only populate with document type to avoid duplicated process
+        iff(content.isDocumentType('document'),
+          hooks.populate('parent', { service: 'folders' })),
+        iff(content.isDocumentType('document'),
+          hooks.populate('ancestors')), // with typed id
+        iff(content.isDocumentType('document'),
+          hooks.populate('creator', { service: 'users' })),
+        iff(content.isDocumentType('document'),
+          hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' })),
+        iff(content.isDocumentType('document'),
+          content.documentEnrichers(options)),
         hooks.cache(cache),
-        iff(isProvider('external'), hooks.discardFields('ACL')),
+        iff(content.isDocumentType('document'),
+          content.presentDocument(options)),
         hooks.responder()
-      ],
-      find: [
-        // only populate with document type to avoid duplicated process
-        iff(content.isDocumentType('document'),
-          hooks.populate('parent', { service: 'folders' })),
-        iff(content.isDocumentType('document'),
-          hooks.populate('ancestors')), // with typed id
-        iff(content.isDocumentType('document'),
-          hooks.populate('creator', { service: 'users' })),
-        iff(content.isDocumentType('document'),
-          hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' })),
-        iff(content.isDocumentType('document'),
-          content.documentEnrichers(options)),
-        iff(content.isDocumentType('document'),
-          content.presentDocument(options)),
-      ],
-      get: [
-        // only populate with document type to avoid duplicated process
-        iff(content.isDocumentType('document'),
-          hooks.populate('parent', { service: 'folders' })),
-        iff(content.isDocumentType('document'),
-          hooks.populate('ancestors')), // with typed id
-        iff(content.isDocumentType('document'),
-          hooks.populate('creator', { service: 'users' })),
-        iff(content.isDocumentType('document'),
-          hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' })),
-        iff(content.isDocumentType('document'),
-          content.documentEnrichers(options)),
-        iff(content.isDocumentType('document'),
-          content.presentDocument(options)),
       ],
       create: [
         iff(content.isDocumentType('document'),
