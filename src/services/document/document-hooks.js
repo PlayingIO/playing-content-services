@@ -7,13 +7,10 @@ import * as content from '~/hooks';
 const cache = cacheMap({ max: 100 });
 
 module.exports = function(options = {}) {
-  const authOptions = Object.assign({}, options, {
-    permissionField: 'permissions,groups.group.permissions,*'
-  });
   return {
     before: {
       all: [
-        hooks.authenticate('jwt', authOptions),
+        hooks.authenticate('jwt', options),
         hooks.authorize('document'),
         hooks.cache(cache)
       ],

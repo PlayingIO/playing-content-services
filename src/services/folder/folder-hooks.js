@@ -50,7 +50,6 @@ module.exports = function(options = {}) {
         hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' }),
         content.documentEnrichers(options),
         hooks.presentEntity(FolderEntity, options),
-        iff(isProvider('external'), hooks.discardFields('ACL')),
         hooks.responder()
       ],
       create: [
