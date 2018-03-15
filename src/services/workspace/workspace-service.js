@@ -47,14 +47,14 @@ class WorkspaceService {
   }
 
   find(params) {
-    params = params || { query: {} };
+    params = fp.assign({ query: {} }, params);
     return this._getUserWorkspace(params).then(workspace => {
       return [workspace && workspace.data];
     });
   }
 
   get(id, params) {
-    params = params || { query: {} };
+    params = fp.assign({ query: {} }, params);
     return this._getUserWorkspace(params);
   }
 }
