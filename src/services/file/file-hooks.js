@@ -1,6 +1,8 @@
 import { iff, isProvider } from 'feathers-hooks-common';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
+import { cache } from 'mostly-feathers-cache';
+
 import FileEntity from '~/entities/file-entity';
 import * as content from '~/hooks';
 
@@ -8,7 +10,8 @@ module.exports = function(options = {}) {
   return {
     before: {
       all: [
-        hooks.authenticate('jwt', options)
+        hooks.authenticate('jwt', options),
+        cache(options.cache)
       ],
       get: [
         // queryWithCurrentUser({ idField: 'id', as: 'creator' })
@@ -47,6 +50,7 @@ module.exports = function(options = {}) {
         hooks.populate('ancestors'), // with typed id
         hooks.populate('creator', { service: 'users' }),
         content.documentEnrichers(options),
+        cache(options.cache),
         hooks.presentEntity(FileEntity, options),
         hooks.responder()
       ],
