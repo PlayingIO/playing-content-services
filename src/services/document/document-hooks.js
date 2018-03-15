@@ -1,10 +1,8 @@
 import { iff, isProvider } from 'feathers-hooks-common';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
-import { cacheMap } from 'mostly-utils-common';
+import { cache } from 'mostly-feathers-cache';
 import * as content from '~/hooks';
-
-const cache = cacheMap({ max: 100 });
 
 module.exports = function(options = {}) {
   return {
@@ -12,7 +10,7 @@ module.exports = function(options = {}) {
       all: [
         hooks.authenticate('jwt', options),
         hooks.authorize('document'),
-        hooks.cache(cache)
+        cache(options.cache)
       ],
       get: [
         // queryWithCurrentUser({ idField: 'id', as: 'creator' })
@@ -59,7 +57,7 @@ module.exports = function(options = {}) {
           hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' })),
         iff(content.isDocumentType('document'),
           content.documentEnrichers(options)),
-        hooks.cache(cache),
+        cache(options.cache),
         iff(content.isDocumentType('document'),
           content.presentDocument(options)),
         hooks.responder()

@@ -1,19 +1,17 @@
 import { existsByDot, iff, isProvider } from 'feathers-hooks-common';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
-import { cacheMap } from 'mostly-utils-common';
+import { cache } from 'mostly-feathers-cache';
 
 import FolderEntity from '~/entities/folder-entity';
 import * as content from '~/hooks';
-
-const cache = cacheMap({ max: 100 });
 
 module.exports = function(options = {}) {
   return {
     before: {
       all: [
         hooks.authenticate('jwt', options),
-        hooks.cache(cache)
+        cache(options.cache)
       ],
       get: [
         // queryWithCurrentUser({ idField: 'id', as: 'creator' })
@@ -53,7 +51,7 @@ module.exports = function(options = {}) {
         hooks.populate('creator', { service: 'users' }),
         hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' }),
         content.documentEnrichers(options),
-        hooks.cache(cache),
+        cache(options.cache),
         hooks.presentEntity(FolderEntity, options),
         hooks.responder()
       ],
