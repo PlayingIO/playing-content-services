@@ -48,17 +48,29 @@ function getBreadcrumbs(hook, docs, options) {
       return fp.has('type', parent)? parent : null;
     }, doc.ancestors || []);
   }, docs));
+
   const ancestorIds = fp.reject(fp.isNil, fp.flatMap(doc => {
     return fp.map(parent => {
       return fp.has('type', parent)? null : helpers.getId(parent);
     }, doc.ancestors || []);
   }, docs));
-  const getAncestors = () => ancestorIds.length > 0
-    ? svcDocuments.find({ query: { _id: { $in: ancestorIds } }, paginate: false})
-    : Promise.resolve([]);
+
+  const getAncestors = () => {
+    if (ancestorIds.length > 0) {
+      // with document creating permission/subtypes in current breadcumb
+      return svcDocuments.find({
+        query: { _id: { $in: ancestorIds } },
+        headers: { 'enrichers-document': 'permissions,subtypes' },
+        paginate: false
+      });
+    } else {
+      return Promise.resolve();
+    }
+  };
+
   return getAncestors().then(results => {
     const breads = fp.map(
-      fp.pick(['id', 'path', 'title']),
+      fp.pick(['id', 'path', 'title', 'metadata']),
       fp.concat(ancestors, results.data || results)
     );
     return fp.reduce((acc, doc) => {
@@ -189,8 +201,7 @@ export default function documentEnrichers(options = {}) {
     assert(hook.type === 'after', `documentEnrichers must be used as a 'after' hook.`);
 
     const documentEnrichers = hook.params &&
-      (hook.params.headers && hook.params.headers['enrichers-document']) ||
-      (hook.params.query && hook.params.query.$enrichers);
+      (hook.params.headers && hook.params.headers['enrichers-document']);
 
       // If no enrichers-document header then skip this hook
     if (!documentEnrichers) {
