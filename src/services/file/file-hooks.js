@@ -11,7 +11,7 @@ module.exports = function(options = {}) {
     before: {
       all: [
         hooks.authenticate('jwt', options.auth),
-        cache(options.cache)
+        cache(options.cache, { headers: ['enrichers-document'] })
       ],
       get: [
         // queryWithCurrentUser({ idField: 'id', as: 'creator' })
@@ -50,7 +50,7 @@ module.exports = function(options = {}) {
         hooks.populate('ancestors'), // with typed id
         hooks.populate('creator', { service: 'users' }),
         content.documentEnrichers(options),
-        cache(options.cache),
+        cache(options.cache, { headers: ['enrichers-document'] }),
         hooks.presentEntity(FileEntity, options),
         hooks.responder()
       ],

@@ -10,7 +10,7 @@ module.exports = function(options = {}) {
       all: [
         hooks.authenticate('jwt', options.auth),
         hooks.authorize('document'),
-        cache(options.cache)
+        cache(options.cache, { headers: ['enrichers-document'] })
       ],
       get: [
         // queryWithCurrentUser({ idField: 'id', as: 'creator' })
@@ -57,7 +57,7 @@ module.exports = function(options = {}) {
           hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' })),
         iff(content.isDocumentType('document'),
           content.documentEnrichers(options)),
-        cache(options.cache),
+        cache(options.cache, { headers: ['enrichers-document'] }),
         iff(content.isDocumentType('document'),
           content.presentDocument(options)),
         hooks.responder()

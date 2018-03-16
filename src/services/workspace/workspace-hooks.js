@@ -12,13 +12,13 @@ module.exports = function(options = {}) {
         hooks.authenticate('jwt', options.auth),
         iff(isProvider('external'),
           queryWithCurrentUser({ idField: 'id', as: 'creator' })),
-        cache(options.cache)
+        cache(options.cache, { headers: ['enrichers-document'] })
       ]
     },
     after: {
       all: [
         //content.addMetadata('facets', ['HiddenInNavigation']),
-        cache(options.cache),
+        cache(options.cache, { headers: ['enrichers-document'] }),
         hooks.responder()
       ]
     }

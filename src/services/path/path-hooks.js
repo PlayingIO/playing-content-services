@@ -6,12 +6,12 @@ module.exports = function(options = {}) {
     before: {
       all: [
         hooks.authenticate('jwt', options.auth),
-        cache(options.cache)
+        cache(options.cache, { headers: ['enrichers-document'] })
       ]
     },
     after: {
       all: [
-        cache(options.cache),
+        cache(options.cache, { headers: ['enrichers-document'] }),
         hooks.responder()
       ]
     }
