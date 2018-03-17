@@ -1,4 +1,6 @@
 import { hooks } from 'mostly-feathers-mongoose';
+import { cache } from 'mostly-feathers-cache';
+
 import BatchEntity from '~/entities/batch-entity';
 import BlobEntity from '~/entities/blob-entity';
 
@@ -29,7 +31,8 @@ module.exports = function(options = {}) {
   return {
     before: {
       all: [
-        hooks.authenticate('jwt', options.auth)
+        hooks.authenticate('jwt', options.auth),
+        cache(options.cache)
       ],
       create: [
       ],
@@ -40,6 +43,7 @@ module.exports = function(options = {}) {
     },
     after: {
       all: [
+        cache(options.cache),
         presentEntity(options),
         hooks.responder()
       ]
