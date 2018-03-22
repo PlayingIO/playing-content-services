@@ -16,11 +16,11 @@ const defaultEntities = {
 };
 
 // presentEntity by document type
-export default function presentDocument(options = {}) {
+export default function presentDocument (options = {}) {
   const entities = Object.assign(defaultEntities, options.entities);
 
   return (hook) => {
-    const presentEntity = function(doc) {
+    const presentEntity = function (doc) {
       options.provider = hook.params.provider;
 
       if (doc.type && entities[doc.type]) {
@@ -34,7 +34,7 @@ export default function presentDocument(options = {}) {
       }
     };
 
-    const presentData = function(data) {
+    const presentData = function (data) {
       if (Array.isArray(data)) {
         return data.map(presentEntity);
       } else {

@@ -9,7 +9,7 @@ import { getParentDocument } from '../helpers';
 const debug = makeDebug('playing:content-services:hooks:computeAncestors');
 
 // compute ancestors of current document
-export default function computeAncestors() {
+export default function computeAncestors () {
   return (hook) => {
     assert(hook.type === 'before', `computeAncestors must be used as a 'before' hook.`);
 

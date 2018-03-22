@@ -1,6 +1,6 @@
 import fp from 'mostly-func';
 
-export default function isDocumentType(type) {
+export default function isDocumentType (type) {
   return (hook) => {
     if (hook.type === 'before') {
       return hook.params.type === type;

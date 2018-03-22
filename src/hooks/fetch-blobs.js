@@ -7,7 +7,7 @@ import { DocTypes, Permissions } from '~/constants';
 const debug = makeDebug('playing:content-services:hooks:fetchBlobs');
 
 // check whether there is any folder children
-export default function fetchBlobs(options = {}) {
+export default function fetchBlobs (options = {}) {
   assert(options.xpath || options.xpaths, 'fetchBlobs need specified xpath(s)');
 
   return (hook) => {
@@ -20,7 +20,7 @@ export default function fetchBlobs(options = {}) {
  
     const svcBlobs = hook.app.service('blobs');
 
-    function getFullBlob(file) {
+    function getFullBlob (file) {
       // fetch only file is not fulfilled
       if (file && file.batch && !fp.isNil(file.index) && !(file.key || file.url)) {
         return svcBlobs.get(file.batch).then(batch => {

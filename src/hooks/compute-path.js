@@ -7,7 +7,7 @@ import { getParentDocument, shortname } from '../helpers';
 const debug = makeDebug('playing:content-services:hooks:computePath');
 
 // compute current path by parent
-export default function computePath(options = { slug: false }) {
+export default function computePath (options = { slug: false }) {
   return (hook) => {
     assert(hook.type === 'before', `computePath must be used as a 'before' hook.`);
 
