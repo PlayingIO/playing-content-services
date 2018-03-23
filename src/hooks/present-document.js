@@ -1,10 +1,10 @@
 import makeDebug from 'debug';
 import fp from 'mostly-func';
 
-import DocumentEntity from '~/entities/document-entity';
-import FolderEntity from '~/entities/folder-entity';
-import FileEntity from '~/entities/file-entity';
-import NoteEntity from '~/entities/note-entity';
+import DocumentEntity from '~/entities/document.entity';
+import FolderEntity from '~/entities/folder.entity';
+import FileEntity from '~/entities/file.entity';
+import NoteEntity from '~/entities/note.entity';
 
 const debug = makeDebug('playing:content-services:hooks:presentDocument');
 

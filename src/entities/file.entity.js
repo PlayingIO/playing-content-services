@@ -1,7 +1,8 @@
 import Entity from 'mostly-entity';
 import fp from 'mostly-func';
+
 import { DocTypes } from '~/constants';
-import BlobEntity from './blob-entity';
+import BlobEntity from './blob.entity';
 
 const FileEntity = new Entity('File', {
   file: { using: BlobEntity },

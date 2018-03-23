@@ -1,14 +1,15 @@
 import Entity from 'mostly-entity';
 import fp from 'mostly-func';
-import { DocTypes } from '~/constants';
-import BlobEntity from './blob-entity';
 
-const NoteEntity = new Entity('Note', {
+import { DocTypes } from '~/constants';
+import BlobEntity from './blob.entity';
+
+const DocumentEntity = new Entity('Document', {
   file: { using: BlobEntity },
   files: { using: BlobEntity },
 });
 
-NoteEntity.expose('metadata', (obj, options) => {
+DocumentEntity.expose('metadata', (obj, options) => {
   obj.metadata = obj.metadata || {};
   
   const Types = options.DocTypes || DocTypes;
@@ -21,6 +22,6 @@ NoteEntity.expose('metadata', (obj, options) => {
   return fp.sortKeys(obj.metadata);
 });
 
-NoteEntity.excepts('destroyedAt');
+DocumentEntity.excepts('destroyedAt');
 
-export default NoteEntity.asImmutable();
+export default DocumentEntity.asImmutable();
