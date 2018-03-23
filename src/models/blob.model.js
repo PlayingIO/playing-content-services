@@ -1,5 +1,5 @@
 import { plugins } from 'mostly-feathers-mongoose';
-import { blob } from './blob-schema';
+import { blob } from './blob.schema';
 
 const options = {
   timestamps: true
