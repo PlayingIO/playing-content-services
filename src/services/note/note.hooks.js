@@ -3,7 +3,7 @@ import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authenticat
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import NoteEntity from '~/entities/note-entity';
+import NoteEntity from '~/entities/note.entity';
 import * as content from '~/hooks';
 
 export default function (options = {}) {
@@ -59,4 +59,4 @@ export default function (options = {}) {
       ]
     }
   };
-};
+}

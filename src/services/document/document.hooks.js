@@ -1,9 +1,8 @@
-import { existsByDot, iff, isProvider } from 'feathers-hooks-common';
+import { iff, isProvider } from 'feathers-hooks-common';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import FolderEntity from '~/entities/folder-entity';
 import * as content from '~/hooks';
 
 export default function (options = {}) {
@@ -11,6 +10,7 @@ export default function (options = {}) {
     before: {
       all: [
         hooks.authenticate('jwt', options.auth),
+        hooks.authorize('document'),
         cache(options.cache, { headers: ['enrichers-document'] })
       ],
       get: [
@@ -22,7 +22,8 @@ export default function (options = {}) {
       create: [
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
-        content.computePath({ type: 'folder', slug: true }),
+        content.computePath(),
+        content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       update: [
@@ -30,7 +31,7 @@ export default function (options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         hooks.discardFields('id', 'metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
-        content.computePath({ type: 'folder', slug: true }),
+        content.computePath(),
         content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
@@ -39,25 +40,33 @@ export default function (options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         hooks.discardFields('id', 'metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
-        content.computePath({ type: 'folder', slug: true }),
+        content.computePath(),
         content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ]
     },
     after: {
       all: [
-        hooks.populate('parent', { service: 'folders', fallThrough: ['headers'] }),
-        hooks.populate('ancestors'), // with typed id
-        hooks.populate('creator', { service: 'users' }),
-        hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' }),
-        content.documentEnrichers(options),
+        // only populate with document type to avoid duplicated process
+        iff(content.isDocumentType('document'),
+          hooks.populate('parent', { service: 'folders' })),
+        iff(content.isDocumentType('document'),
+          hooks.populate('ancestors')), // with typed id
+        iff(content.isDocumentType('document'),
+          hooks.populate('creator', { service: 'users' })),
+        iff(content.isDocumentType('document'),
+          hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' })),
+        iff(content.isDocumentType('document'),
+          content.documentEnrichers(options)),
         cache(options.cache, { headers: ['enrichers-document'] }),
-        hooks.presentEntity(FolderEntity, options),
+        iff(content.isDocumentType('document'),
+          content.presentDocument(options)),
         hooks.responder()
       ],
       create: [
-        hooks.publishEvent('document.create', { prefix: 'playing' })
+        iff(content.isDocumentType('document'),
+          hooks.publishEvent('document.create', { prefix: 'playing' }))
       ]
     }
   };
-};
+}

@@ -1,12 +1,14 @@
 import { Service, createService } from 'mostly-feathers-mongoose';
-import NoteModel from '~/models/note-model';
-import defaultHooks from './note-hooks';
+
+import TagModel from '~/models/tag.model';
+import defaultHooks from './tag.hooks';
 
 const defaultOptions = {
-  name: 'notes'
+  id: 'id',
+  name: 'tags'
 };
 
-class NoteService extends Service {
+class TagService extends Service {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);
@@ -19,8 +21,8 @@ class NoteService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'note' }, options);
-  return createService(app, NoteService, NoteModel, options);
+  options = Object.assign({ ModelName: 'tag' }, options);
+  return createService(app, TagService, TagModel, options);
 }
 
-init.Service = NoteService;
+init.Service = TagService;

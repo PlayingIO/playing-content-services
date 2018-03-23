@@ -1,8 +1,8 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import BatchEntity from '~/entities/batch-entity';
-import BlobEntity from '~/entities/blob-entity';
+import BatchEntity from '~/entities/batch.entity';
+import BlobEntity from '~/entities/blob.entity';
 
 const presentBlob = (options = {}) => {
   return (hook) => {
@@ -49,4 +49,4 @@ export default function (options = {}) {
       ]
     }
   };
-};
+}

@@ -2,6 +2,8 @@ import { iff, isProvider } from 'feathers-hooks-common';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
+
+import FileEntity from '~/entities/file.entity';
 import * as content from '~/hooks';
 
 export default function (options = {}) {
@@ -9,7 +11,6 @@ export default function (options = {}) {
     before: {
       all: [
         hooks.authenticate('jwt', options.auth),
-        hooks.authorize('document'),
         cache(options.cache, { headers: ['enrichers-document'] })
       ],
       get: [
@@ -21,8 +22,7 @@ export default function (options = {}) {
       create: [
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
-        content.computePath(),
-        content.computeAncestors(),
+        content.computePath({ type: 'file' }),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       update: [
@@ -30,7 +30,7 @@ export default function (options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         hooks.discardFields('id', 'metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
-        content.computePath(),
+        content.computePath({ type: 'file' }),
         content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
@@ -39,32 +39,23 @@ export default function (options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         hooks.discardFields('id', 'metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
-        content.computePath(),
+        content.computePath({ type: 'file' }),
         content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ]
     },
     after: {
       all: [
-        // only populate with document type to avoid duplicated process
-        iff(content.isDocumentType('document'),
-          hooks.populate('parent', { service: 'folders' })),
-        iff(content.isDocumentType('document'),
-          hooks.populate('ancestors')), // with typed id
-        iff(content.isDocumentType('document'),
-          hooks.populate('creator', { service: 'users' })),
-        iff(content.isDocumentType('document'),
-          hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' })),
-        iff(content.isDocumentType('document'),
-          content.documentEnrichers(options)),
+        hooks.populate('parent', { service: 'folders', fallThrough: ['headers'] }),
+        hooks.populate('ancestors'), // with typed id
+        hooks.populate('creator', { service: 'users' }),
+        content.documentEnrichers(options),
         cache(options.cache, { headers: ['enrichers-document'] }),
-        iff(content.isDocumentType('document'),
-          content.presentDocument(options)),
+        hooks.presentEntity(FileEntity, options),
         hooks.responder()
       ],
       create: [
-        iff(content.isDocumentType('document'),
-          hooks.publishEvent('document.create', { prefix: 'playing' }))
+        hooks.publishEvent('document.create', { prefix: 'playing' })
       ]
     }
   };

@@ -1,7 +1,7 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import TagEntity from '~/entities/tag-entity';
+import AuthorEntity from '~/entities/author.entity';
 
 export default function (options = {}) {
   return {
@@ -14,9 +14,9 @@ export default function (options = {}) {
     after: {
       all: [
         cache(options.cache),
-        hooks.presentEntity(TagEntity, options),
+        hooks.presentEntity(AuthorEntity, options),
         hooks.responder()
       ]
     }
   };
-};
+}

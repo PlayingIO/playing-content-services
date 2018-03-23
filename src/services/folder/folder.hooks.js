@@ -1,9 +1,9 @@
-import { iff, isProvider } from 'feathers-hooks-common';
+import { existsByDot, iff, isProvider } from 'feathers-hooks-common';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import FileEntity from '~/entities/file-entity';
+import FolderEntity from '~/entities/folder.entity';
 import * as content from '~/hooks';
 
 export default function (options = {}) {
@@ -22,7 +22,7 @@ export default function (options = {}) {
       create: [
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
-        content.computePath({ type: 'file' }),
+        content.computePath({ type: 'folder', slug: true }),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       update: [
@@ -30,7 +30,7 @@ export default function (options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         hooks.discardFields('id', 'metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
-        content.computePath({ type: 'file' }),
+        content.computePath({ type: 'folder', slug: true }),
         content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
@@ -39,7 +39,7 @@ export default function (options = {}) {
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         hooks.depopulate('parent'),
         hooks.discardFields('id', 'metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
-        content.computePath({ type: 'file' }),
+        content.computePath({ type: 'folder', slug: true }),
         content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ]
@@ -49,9 +49,10 @@ export default function (options = {}) {
         hooks.populate('parent', { service: 'folders', fallThrough: ['headers'] }),
         hooks.populate('ancestors'), // with typed id
         hooks.populate('creator', { service: 'users' }),
+        hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' }),
         content.documentEnrichers(options),
         cache(options.cache, { headers: ['enrichers-document'] }),
-        hooks.presentEntity(FileEntity, options),
+        hooks.presentEntity(FolderEntity, options),
         hooks.responder()
       ],
       create: [
@@ -59,4 +60,4 @@ export default function (options = {}) {
       ]
     }
   };
-};
+}

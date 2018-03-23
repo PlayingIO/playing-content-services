@@ -1,12 +1,13 @@
 import { Service, createService } from 'mostly-feathers-mongoose';
-import FileModel from '~/models/file-model';
-import defaultHooks from './file-hooks';
+
+import NoteModel from '~/models/note.model';
+import defaultHooks from './note.hooks';
 
 const defaultOptions = {
-  name: 'files'
+  name: 'notes'
 };
 
-class FileService extends Service {
+class NoteService extends Service {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);
@@ -19,8 +20,8 @@ class FileService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'file' }, options);
-  return createService(app, FileService, FileModel, options);
+  options = Object.assign({ ModelName: 'note' }, options);
+  return createService(app, NoteService, NoteModel, options);
 }
 
-init.Service = FileService;
+init.Service = NoteService;

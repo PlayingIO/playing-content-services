@@ -9,8 +9,8 @@ import fp from 'mostly-func';
 import request from 'request';
 import stream from 'stream';
 
-import BlobModel from '~/models/blob-model';
-import defaultHooks from './blob-hooks';
+import BlobModel from '~/models/blob.model';
+import defaultHooks from './blob.hooks';
 import { fromBuffer, bufferToHash } from './util';
 
 const debug = makeDebug('playing:content-services:blobs');

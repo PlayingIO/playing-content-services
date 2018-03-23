@@ -4,7 +4,7 @@ import fp from 'mostly-func';
 import path from 'path';
 import { plural } from 'pluralize';
 
-import defaultHooks from './workspace-hooks';
+import defaultHooks from './workspace.hooks';
 
 const debug = makeDebug('playing:content-services:workspaces');
 

@@ -3,7 +3,7 @@ import fp from 'mostly-func';
 import path from 'path';
 import { plural } from 'pluralize';
 
-import defaultHooks from './path-hooks';
+import defaultHooks from './path.hooks';
 
 const debug = makeDebug('playing:content-services:paths');
 

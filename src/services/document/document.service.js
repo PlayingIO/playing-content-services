@@ -5,10 +5,10 @@ import fp from 'mostly-func';
 import path from 'path';
 import { plural } from 'pluralize';
 
-import defaultHooks from './document-hooks';
-import defaultEvents from './document-events';
+import defaultHooks from './document.hooks';
+import defaultEvents from './document.events';
+import DocumentModel from '../../models/document.model';
 import { getParentAces } from '../../helpers';
-import DocumentModel from '../../models/document-model';
 
 const debug = makeDebug('playing:content-services:documents');
 
