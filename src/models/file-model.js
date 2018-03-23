@@ -4,7 +4,7 @@ import { blob } from './blob-schema';
 const fields = {
 };
 
-export default function model(app, name) {
+export default function model (app, name) {
   const mongoose = app.get('mongoose');
   const DocumentModel = mongoose.model('document');
   const schema = new mongoose.Schema(fields);

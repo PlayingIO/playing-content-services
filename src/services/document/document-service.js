@@ -17,19 +17,19 @@ const defaultOptions = {
 };
 
 class DocumentService extends Service {
-  constructor(options) {
+  constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);
   }
 
-  setup(app) {
+  setup (app) {
     super.setup(app);
     this.options.entities = app.get('entities');
     this.hooks(defaultHooks(this.options));
     subDocumentEvents(this.app, this.options);
   }
 
-  find(params = {}) {
+  find (params = {}) {
     const type = fp.dotPath('query.type', params);
     if (type && fp.is(String, type)) {
       return this.app.service(plural(type)).find(params);
@@ -40,7 +40,7 @@ class DocumentService extends Service {
     }
   }
 
-  get(id, params = {}) {
+  get (id, params = {}) {
     const type = fp.dotPath('query.type', params);
     if (type && fp.is(String, type)) {
       return this.app.service(plural(type)).get(id, params);
@@ -51,7 +51,7 @@ class DocumentService extends Service {
     }
   }
 
-  create(data, params = {}) {
+  create (data, params = {}) {
     if (data.type && fp.is(String, data.type)) {
       return this.app.service(plural(data.type)).create(data, params);
     } else {
@@ -59,7 +59,7 @@ class DocumentService extends Service {
     }
   }
 
-  update(id, data, params = {}) {
+  update (id, data, params = {}) {
     if (data.type && fp.is(String, data.type)) {
       return this.app.service(plural(data.type)).update(id, data, params);
     } else {
@@ -67,7 +67,7 @@ class DocumentService extends Service {
     }
   }
 
-  patch(id, data, params = {}) {
+  patch (id, data, params = {}) {
     if (data.type && fp.is(String, data.type)) {
       return this.app.service(plural(data.type)).patch(id, data, params);
     } else {
@@ -75,7 +75,7 @@ class DocumentService extends Service {
     }
   }
 
-  remove(id, params = {}) {
+  remove (id, params = {}) {
     const type = fp.dotPath('query.type', params);
     if (type && fp.is(String, type)) {
       return this.app.service(plural(type)).remove(id, params);
@@ -91,7 +91,7 @@ class DocumentService extends Service {
     }
   }
 
-  _tag(id, data, params, doc) {
+  _tag (id, data, params, doc) {
     assert(data.tags, 'data.tags not provided.');
 
     const svcTags = this.app.service('tags');
@@ -106,14 +106,14 @@ class DocumentService extends Service {
     ]).then(([docs, tags]) => docs);
   }
 
-  _untag(id, data, params, doc) {
+  _untag (id, data, params, doc) {
     assert(data.tags, 'data.tags not provided.');
 
     let tags = fp.without(data.tags, doc.tags || []);
     return super.patch(doc.id, { tags }, params);
   }
 
-  _copyDocument(id, data, params, target) {
+  _copyDocument (id, data, params, target) {
     assert(data.documents, 'data.documents not provided.');
     assert(data.target, 'data.target not provided.');
     debug('copyDocument target', target.id, data.documents);
@@ -130,7 +130,7 @@ class DocumentService extends Service {
     return Promise.all(data.documents.map(copyDoc));
   }
 
-  _moveDocument(id, data, params, target) {
+  _moveDocument (id, data, params, target) {
     assert(data.documents, 'data.documents not provided.');
     assert(data.target, 'data.target not provided.');
     debug('moveDocument target', target.id, data.documents);
@@ -150,21 +150,21 @@ class DocumentService extends Service {
     return Promise.all(data.documents.map(moveDoc));
   }
 
-  _lockDocument(id, data, params, doc) {
+  _lockDocument (id, data, params, doc) {
     return super.patch(doc.id, {
       locker: data.creator,
       lockedAt: new Date()
     });
   }
 
-  _unlockDocument(id, data, params, doc) {
+  _unlockDocument (id, data, params, doc) {
     return super.patch(doc.id, {
       locker: null,
       lockedAt: null
     });
   }
 
-  _addPermission(id, data, params, doc) {
+  _addPermission (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
     assert(data.actions, 'data.actions is not provided.');
     assert(data.user, 'data.user is not provided.');
@@ -181,7 +181,7 @@ class DocumentService extends Service {
     });
   }
 
-  _replacePermission(id, data, params, doc) {
+  _replacePermission (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
     assert(data.ace, 'data.id is not provided.');
     assert(data.actions, 'data.action is not provided.');
@@ -197,7 +197,7 @@ class DocumentService extends Service {
     });
   }
 
-  _removePermission(id, data, params, doc) {
+  _removePermission (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
     assert(data.ace, 'data.ace is not provided');
 
@@ -205,7 +205,7 @@ class DocumentService extends Service {
     return svcPermissions.remove(data.ace);
   }
 
-  _blockPermissionInheritance(id, data, params, doc) {
+  _blockPermissionInheritance (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
 
     // copy inherited permissions
@@ -223,7 +223,7 @@ class DocumentService extends Service {
     });
   }
 
-  _unblockPermissionInheritance(id, data, params, doc) {
+  _unblockPermissionInheritance (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
 
     // remove copied permissions
@@ -249,7 +249,7 @@ class DocumentService extends Service {
   }
 }
 
-export default function init(app, options) {
+export default function init (app, options) {
   options = Object.assign({ ModelName: 'document' }, options);
   return createService(app, DocumentService, DocumentModel, options);
 }

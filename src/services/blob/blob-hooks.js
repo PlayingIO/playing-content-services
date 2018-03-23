@@ -4,7 +4,7 @@ import { cache } from 'mostly-feathers-cache';
 import BatchEntity from '~/entities/batch-entity';
 import BlobEntity from '~/entities/blob-entity';
 
-const presentEntity = (options = {}) => {
+const presentBlob = (options = {}) => {
   return (hook) => {
     options.provider = hook.params.provider;
 
@@ -27,7 +27,7 @@ const presentEntity = (options = {}) => {
   };
 };
 
-module.exports = function(options = {}) {
+module.exports = function (options = {}) {
   return {
     before: {
       all: [
@@ -44,7 +44,7 @@ module.exports = function(options = {}) {
     after: {
       all: [
         cache(options.cache),
-        presentEntity(options),
+        presentBlob(options),
         hooks.responder()
       ]
     }

@@ -1,7 +1,7 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-module.exports = function(options = {}) {
+module.exports = function (options = {}) {
   return {
     before: {
       all: [

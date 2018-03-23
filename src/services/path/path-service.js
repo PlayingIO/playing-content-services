@@ -13,18 +13,18 @@ const defaultOptions = {
 
 // Path proxy service to documents
 class PathService {
-  constructor(options) {
+  constructor (options) {
     this.options = Object.assign({}, defaultOptions, options);
     this.name = options.name;
     this.options = options;
   }
 
-  setup(app) {
+  setup (app) {
     this.app = app;
     this.hooks(defaultHooks(this.options));
   }
 
-  find(params) {
+  find (params) {
     params = fp.assign({ query: {} }, params);
     params.query.path = '/';
 
@@ -32,7 +32,7 @@ class PathService {
     return svcFolders.action('first').find(params);
   }
 
-  get(id, params) {
+  get (id, params) {
     params = fp.assign({ query: {} }, params);
     const name = '/' + path.join(id || '', params.__action || '');
     params.query.path = name;

@@ -14,18 +14,18 @@ const defaultOptions = {
 
 // user personal workspace folder
 class WorkspaceService {
-  constructor(options) {
+  constructor (options) {
     this.options = Object.assign({}, defaultOptions, options);
     this.name = options.name;
     this.options = options;
   }
 
-  setup(app) {
+  setup (app) {
     this.app = app;
     this.hooks(defaultHooks(this.options));
   }
 
-  _getUserWorkspace(params) {
+  _getUserWorkspace (params) {
     assert(params.query.creator, 'params.query.creator not provided');
     const workspace = '/workspaces/folder-' + params.user.username;
     params.query.path = workspace;
@@ -46,14 +46,14 @@ class WorkspaceService {
     });
   }
 
-  find(params) {
+  find (params) {
     params = fp.assign({ query: {} }, params);
     return this._getUserWorkspace(params).then(workspace => {
       return [workspace && workspace.data];
     });
   }
 
-  get(id, params) {
+  get (id, params) {
     params = fp.assign({ query: {} }, params);
     return this._getUserWorkspace(params);
   }

@@ -2,7 +2,6 @@ import assert from 'assert';
 import crypto from 'crypto';
 import from from 'from2';
 
-// TODO publish to npm as `from2-buffer`
 // create a stream from a buffer
 // buffer -> stream
 export function fromBuffer (buffer) {

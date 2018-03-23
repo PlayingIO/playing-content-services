@@ -20,14 +20,14 @@ const defaultOptions = {
 };
 
 class BlobService extends Service {
-  constructor(options) {
+  constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     assert(options.blobs, 'BlobService blobs option required');
 
     super(options);
   }
 
-  setup(app) {
+  setup (app) {
     super.setup(app);
     this.storage = app.get('storage');
     if (!this.storage) {
@@ -36,7 +36,7 @@ class BlobService extends Service {
     this.hooks(defaultHooks(this.options));
   }
 
-  get(id, params) {
+  get (id, params) {
     let [batchId, index] = id.split('.');
     debug('get', batchId, index);
 
@@ -59,7 +59,7 @@ class BlobService extends Service {
     }
   }
 
-  _readBlob(blob, bucket) {
+  _readBlob (blob, bucket) {
     return new Promise((resolve, reject) => {
       this.storage.createReadStream(blob)
       .on('error', reject)
@@ -69,7 +69,7 @@ class BlobService extends Service {
     });
   }
 
-  _getBlob(batchId, index) {
+  _getBlob (batchId, index) {
     return super.get(batchId).then(result => {
       if (!result) throw new Error('Blob batch id not exists');
       const batch = result.data || result;
@@ -79,11 +79,11 @@ class BlobService extends Service {
     }).then(transform);
   }
 
-  create(data, params) {
+  create (data, params) {
     return super.create(data, params);
   }
 
-  update(id, data, params) {
+  update (id, data, params) {
     debug('update', id, data, params);
     assert(params.file, 'params file not provided.');
 
@@ -96,7 +96,7 @@ class BlobService extends Service {
       if (file.url) {
         const req = request.defaults({ encoding: null });
         return new Promise((resolve, reject) => {
-          req.get(file.url, function(err, res, buffer) {
+          req.get(file.url, function (err, res, buffer) {
             if (err) return reject(err);
             return resolve(buffer);
           });
@@ -156,7 +156,7 @@ class BlobService extends Service {
     .then(updateBlobs);
   }
 
-  patch(id, data, params) {
+  patch (id, data, params) {
     return super.update(id, data, params);
   }
 
@@ -180,7 +180,7 @@ class BlobService extends Service {
     }
   }
 
-  _attachOnDocument(id, data, params, original) {
+  _attachOnDocument (id, data, params, original) {
     assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
     assert(data.context && data.context.documentType, 'context.documentType not provided.');
 
@@ -199,7 +199,7 @@ class BlobService extends Service {
     });
   }
 
-  _removeFromDocument(id, data, params, orignal) {
+  _removeFromDocument (id, data, params, orignal) {
     assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
     assert(data.context && data.context.documentType, 'context.documentType not provided.');
     assert(data.xpath, 'data.xpath not provided.');
@@ -222,7 +222,7 @@ class BlobService extends Service {
   }
 }
 
-export default function init(app, options) {
+export default function init (app, options) {
   options = Object.assign({ ModelName: 'blob' }, options);
   return createService(app, BlobService, BlobModel, options);
 }

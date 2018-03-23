@@ -2,7 +2,7 @@ import makeDebug from 'debug';
 
 const debug = makeDebug('playing:content-services:documents:events');
 
-const createActivity = function(app, document, verb, message) {
+const createActivity = function (app, document, verb, message) {
   const svcFeeds = app.service('feeds');
   const svcActivities = app.service('activities');
   if (!document.creator) return; // skip feeds without actor
@@ -24,7 +24,7 @@ const createActivity = function(app, document, verb, message) {
 };
 
 // subscribe to document.create events
-export function subDocumentEvents(app, options) {
+export function subDocumentEvents (app, options) {
   app.trans.add({
     pubsub$: true,
     topic: 'playing.events',

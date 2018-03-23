@@ -3,7 +3,7 @@ import { cache } from 'mostly-feathers-cache';
 
 import TagEntity from '~/entities/tag-entity';
 
-module.exports = function(options = {}) {
+module.exports = function (options = {}) {
   return {
     before: {
       all: [
