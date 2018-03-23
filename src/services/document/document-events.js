@@ -9,7 +9,7 @@ const createActivity = async function (app, document, verb, message) {
 
   const feed = await svcFeeds.get(`${document.type}:${document.id}`);
   if (feed) {
-    return svcActivities.create({
+    await svcActivities.create({
       feed: feed.id,
       actor: `user:${document.creator}`,
       verb: verb,
