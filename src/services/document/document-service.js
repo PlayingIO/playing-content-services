@@ -6,7 +6,7 @@ import path from 'path';
 import { plural } from 'pluralize';
 
 import defaultHooks from './document-hooks';
-import { subDocumentEvents } from './document-events';
+import defaultEvents from './document-events';
 import { getParentAces } from '../../helpers';
 import DocumentModel from '../../models/document-model';
 
@@ -26,7 +26,7 @@ class DocumentService extends Service {
     super.setup(app);
     this.options.entities = app.get('entities');
     this.hooks(defaultHooks(this.options));
-    subDocumentEvents(this.app, this.options);
+    defaultEvents(this.app, this.options);
   }
 
   find (params = {}) {
