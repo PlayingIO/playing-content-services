@@ -27,7 +27,7 @@ const presentBlob = (options = {}) => {
   };
 };
 
-module.exports = function (options = {}) {
+export default function (options = {}) {
   return {
     before: {
       all: [

@@ -3,7 +3,7 @@ import { cache } from 'mostly-feathers-cache';
 
 import AuthorEntity from '~/entities/author-entity';
 
-module.exports = function (options = {}) {
+export default function (options = {}) {
   return {
     before: {
       all: [

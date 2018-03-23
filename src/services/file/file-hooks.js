@@ -6,7 +6,7 @@ import { cache } from 'mostly-feathers-cache';
 import FileEntity from '~/entities/file-entity';
 import * as content from '~/hooks';
 
-module.exports = function (options = {}) {
+export default function (options = {}) {
   return {
     before: {
       all: [

@@ -4,7 +4,7 @@ import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 import * as content from '~/hooks';
 
-module.exports = function (options = {}) {
+export default function (options = {}) {
   return {
     before: {
       all: [
@@ -68,4 +68,4 @@ module.exports = function (options = {}) {
       ]
     }
   };
-};
+}
