@@ -2,7 +2,6 @@ import assert from 'assert';
 import concat from 'concat-stream';
 import { getBase64DataURI, parseDataURI } from 'dauria';
 import makeDebug from 'debug';
-import errors from 'feathers-errors';
 import mimeTypes from 'mime-types';
 import { Service, createService, transform } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
