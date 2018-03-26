@@ -52,7 +52,7 @@ export default function (options = {}) {
         hooks.assoc('permissions', { service: 'user-permissions', field: 'subject', typeField: 'type' }),
         content.documentEnrichers(options),
         cache(options.cache, { headers: ['enrichers-document'] }),
-        hooks.presentEntity(FolderEntity, options),
+        hooks.presentEntity(FolderEntity, options.entities),
         hooks.responder()
       ],
       create: [

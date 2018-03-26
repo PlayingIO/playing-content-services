@@ -51,7 +51,7 @@ export default function (options = {}) {
         hooks.populate('creator', { service: 'users' }),
         content.documentEnrichers(options),
         cache(options.cache, { headers: ['enrichers-document'] }),
-        hooks.presentEntity(NoteEntity, options),
+        hooks.presentEntity(NoteEntity, options.entities),
         hooks.responder()
       ],
       create: [
