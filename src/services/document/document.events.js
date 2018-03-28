@@ -24,7 +24,6 @@ const createActivity = async function (app, document, verb, message) {
 // subscribe to document.create events
 export default function (app, options) {
   app.trans.add({
-    pubsub$: true,
     topic: 'playing.events',
     cmd: 'document.created'
   }, (resp) => {
