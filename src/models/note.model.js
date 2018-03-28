@@ -1,6 +1,6 @@
-import { plugins } from 'mostly-feathers-mongoose';
-import { blob } from './blob.schema';
-
+/**
+ * Note document
+ */
 const fields = {
   content: { type: String, default: '' },
   mimetype: { type: String }

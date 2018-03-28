@@ -1,6 +1,6 @@
-import { plugins } from 'mostly-feathers-mongoose';
-import { blob } from './blob.schema';
-
+/**
+ * File document
+ */
 const fields = {
 };
 

@@ -1,9 +1,10 @@
-import { plugins } from 'mostly-feathers-mongoose';
-
 const options = {
   timestamps: true
 };
 
+/**
+ * Tags
+ */
 const fields = {
   id: { type: String, required: true  }, // lowercase label
   label: { type: String, required: true  }

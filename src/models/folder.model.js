@@ -1,5 +1,6 @@
-import { plugins } from 'mostly-feathers-mongoose';
-
+/**
+ * Folder document
+ */
 const fields = {
   color: { type: String }
 };

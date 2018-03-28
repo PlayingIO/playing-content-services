@@ -5,6 +5,9 @@ const options = {
   timestamps: true
 };
 
+/**
+ * Blob
+ */
 const fields = {
   blobs: [blob],
 };
