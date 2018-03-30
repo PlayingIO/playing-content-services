@@ -1,6 +1,6 @@
 import DocTypes from './doc-types';
 import Permissions from './permissions';
 
-export default {
+export {
   DocTypes, Permissions
 };

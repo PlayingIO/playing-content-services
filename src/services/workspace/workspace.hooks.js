@@ -3,7 +3,7 @@ import { iff, isProvider } from 'feathers-hooks-common';
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import * as content from '~/hooks';
+import * as content from '../../hooks';
 
 export default function (options = {}) {
   return {

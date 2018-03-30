@@ -1,7 +1,7 @@
 import Entity from 'mostly-entity';
 import fp from 'mostly-func';
 
-import { DocTypes } from '~/constants';
+import { DocTypes } from '../constants';
 import BlobEntity from './blob.entity';
 
 const FolderEntity = new Entity('Folder', {

@@ -13,7 +13,7 @@ const defaultOptions = {
 };
 
 // user personal workspace folder
-class WorkspaceService {
+export class WorkspaceService {
   constructor (options) {
     this.options = Object.assign({}, defaultOptions, options);
     this.name = this.options.name;

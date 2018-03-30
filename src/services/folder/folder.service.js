@@ -1,14 +1,14 @@
 import assert from 'assert';
 import { Service, createService } from 'mostly-feathers-mongoose';
 
-import FolderModel from '~/models/folder.model';
+import FolderModel from '../../models/folder.model';
 import defaultHooks from './folder.hooks';
 
 const defaultOptions = {
   name: 'folders'
 };
 
-class FolderService extends Service {
+export class FolderService extends Service {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);

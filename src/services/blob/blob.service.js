@@ -1,14 +1,14 @@
 import assert from 'assert';
 import concat from 'concat-stream';
-import { getBase64DataURI, parseDataURI } from 'dauria';
+import dauria from 'dauria';
 import makeDebug from 'debug';
 import mimeTypes from 'mime-types';
-import { Service, createService, transform } from 'mostly-feathers-mongoose';
+import { Service, createService, helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 import request from 'request';
 import stream from 'stream';
 
-import BlobModel from '~/models/blob.model';
+import BlobModel from '../../models/blob.model';
 import defaultHooks from './blob.hooks';
 import { fromBuffer, bufferToHash } from './util';
 
@@ -18,7 +18,7 @@ const defaultOptions = {
   name: 'blobs',
 };
 
-class BlobService extends Service {
+export class BlobService extends Service {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     assert(options.blobs, 'BlobService blobs option required');
@@ -42,7 +42,7 @@ class BlobService extends Service {
     const readBlob = (blob) => {
       debug('readBlob', blob);
       return this._readBlob(blob).then(buffer => {
-        blob.file = getBase64DataURI(buffer, blob.mimetype);
+        blob.file = dauria.getBase64DataURI(buffer, blob.mimetype);
       });
     };
 
@@ -52,7 +52,7 @@ class BlobService extends Service {
     } else {
       return super.get(id, params).then(result => {
         debug('getBatch', result);
-        result.blobs = transform(result.blobs);
+        result.blobs = helpers.transform(result.blobs);
         return result;
       });
     }

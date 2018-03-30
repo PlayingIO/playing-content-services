@@ -13,4 +13,4 @@ const blob = {
   width: { type: Number },
 };
 
-export default { blob };
+export { blob };

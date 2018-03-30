@@ -1,7 +1,7 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import TagEntity from '~/entities/tag.entity';
+import TagEntity from '../../entities/tag.entity';
 
 export default function (options = {}) {
   return {

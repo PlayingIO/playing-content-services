@@ -2,7 +2,7 @@ import assert from 'assert';
 import fp from 'mostly-func';
 import makeDebug from 'debug';
 
-import { DocTypes, Permissions } from '~/constants';
+import { DocTypes, Permissions } from '../constants';
 
 const debug = makeDebug('playing:content-services:hooks:fetchBlobs');
 

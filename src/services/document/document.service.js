@@ -16,7 +16,7 @@ const defaultOptions = {
   name: 'documents'
 };
 
-class DocumentService extends Service {
+export class DocumentService extends Service {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);

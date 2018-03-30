@@ -1,6 +1,6 @@
 import { Service, createService } from 'mostly-feathers-mongoose';
 
-import TagModel from '~/models/tag.model';
+import TagModel from '../../models/tag.model';
 import defaultHooks from './tag.hooks';
 
 const defaultOptions = {
@@ -8,7 +8,7 @@ const defaultOptions = {
   name: 'tags'
 };
 
-class TagService extends Service {
+export class TagService extends Service {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);
