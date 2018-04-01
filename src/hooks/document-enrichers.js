@@ -1,4 +1,5 @@
 import assert from 'assert';
+import Promise from 'bluebird';
 import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 import makeDebug from 'debug';
