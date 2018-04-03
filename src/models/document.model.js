@@ -37,6 +37,7 @@ const fields = {
   ]},
   subjects: [{ type: String }],                // the topic of the resource
   tags: [{ type: String }],                    // the tags of the resource
+  type: { type: String, default: 'document' }, // discriminator key
   title: { type: String, required: true },     // name given to the resource
   valid: { type: Date },                       // start date of validity of a resource
   version: { type: Number },                   // version of the resource
