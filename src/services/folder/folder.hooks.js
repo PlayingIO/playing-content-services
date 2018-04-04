@@ -56,7 +56,7 @@ export default function (options = {}) {
         hooks.responder()
       ],
       create: [
-        hooks.publishEvent('document.created', { prefix: 'playing' })
+        hooks.publishEvent('document.create', { prefix: 'playing' })
       ]
     }
   };

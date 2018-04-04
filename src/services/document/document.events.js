@@ -25,12 +25,12 @@ const createActivity = async function (app, document, verb, message) {
 export default function (app, options) {
   app.trans.add({
     topic: 'playing.events',
-    cmd: 'document.created'
+    cmd: 'document.create'
   }, (resp) => {
     const document = resp.event;
     if (document && document.type) {
       debug('document.create event', document.type, document.id);
-      createActivity(app, document, 'document.created', 'created the document');
+      createActivity(app, document, 'document.create', 'created the document');
     }
   });
 }
