@@ -1,4 +1,3 @@
-import { omit } from 'lodash';
 import Entity from 'mostly-entity';
 
 import BlobEntity from './blob.entity';
