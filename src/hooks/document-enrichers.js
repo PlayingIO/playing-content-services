@@ -28,7 +28,8 @@ function hasFolderishChild (hook, docs, options) {
     : Promise.resolve([]);
 
   return getParents.then(results => {
-    const childrens = fp.groupBy(child => String(child.parent), results.data || results);
+    results = results? results.data || results : [];
+    const childrens = fp.groupBy(child => String(child.parent), results);
     return fp.reduce((acc, doc) => {
       const folderishChildren = fp.filter(child => {
         return fp.contains('Folderish', Types[child.type] && Types[child.type].facets || []);
@@ -70,9 +71,10 @@ function getBreadcrumbs (hook, docs, options) {
   };
 
   return getAncestors().then(results => {
+    results = results? results.data || results : [];
     const breads = fp.map(
       fp.pick(['id', 'path', 'title', 'metadata']),
-      fp.concat(ancestors, results.data || results)
+      fp.concat(ancestors, results)
     );
     return fp.reduce((acc, doc) => {
       const breadcrumbs = fp.map(parent => {
@@ -97,7 +99,8 @@ function getCollections (hook, docs, options) {
     },
     paginate: false
   }).then(results => {
-    const documents = fp.groupBy(fp.prop('id'), results.data || results);
+    results = results? results.data || results : [];
+    const documents = fp.groupBy(fp.prop('id'), results);
     return fp.reduce((acc, doc) => {
       if (documents[doc.id] && documents[doc.id].length > 0) {
         acc[doc.id] = documents[doc.id][0].collect;
@@ -118,7 +121,8 @@ function getFavorites (hook, docs, options) {
     },
     paginate: false
   }).then((results) => {
-    const documents = fp.groupBy(fp.prop('id'), results.data || results);
+    results = results? results.data || results : [];
+    const documents = fp.groupBy(fp.prop('id'));
     return fp.reduce((acc, doc) => {
       acc[doc.id] = { isFavorite: documents[doc.id] && documents[doc.id].length > 0 || false };
       return acc;
