@@ -65,7 +65,7 @@ export default function (options = {}) {
       ],
       create: [
         iff(content.isDocumentType('document'),
-          hooks.publishEvent('document.create', { prefix: 'playing' }))
+          content.documentNotifier('document.create'))
       ]
     }
   };
