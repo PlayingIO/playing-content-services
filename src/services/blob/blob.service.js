@@ -75,7 +75,7 @@ export class BlobService extends Service {
       const blobs = batch.blobs || [];
       if (index >= blobs.length) throw new Error('Blob index out of range of the batch');
       return blobs[index];
-    }).then(transform);
+    }).then(helpers.transform);
   }
 
   create (data, params) {
