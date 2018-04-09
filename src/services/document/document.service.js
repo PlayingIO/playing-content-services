@@ -89,7 +89,7 @@ export class DocumentService extends Service {
     }
   }
 
-  _tag (id, data, params, doc) {
+  tag (id, data, params, doc) {
     assert(data.tags, 'data.tags not provided.');
 
     const svcTags = this.app.service('tags');
@@ -104,14 +104,14 @@ export class DocumentService extends Service {
     ]).then(([docs, tags]) => docs);
   }
 
-  _untag (id, data, params, doc) {
+  untag (id, data, params, doc) {
     assert(data.tags, 'data.tags not provided.');
 
     let tags = fp.without(data.tags, doc.tags || []);
     return super.patch(doc.id, { tags }, params);
   }
 
-  _copyDocument (id, data, params, target) {
+  copyDocument (id, data, params, target) {
     assert(data.documents, 'data.documents not provided.');
     assert(data.target, 'data.target not provided.');
     debug('copyDocument target', target.id, data.documents);
@@ -128,7 +128,7 @@ export class DocumentService extends Service {
     return Promise.all(data.documents.map(copyDoc));
   }
 
-  _moveDocument (id, data, params, target) {
+  moveDocument (id, data, params, target) {
     assert(data.documents, 'data.documents not provided.');
     assert(data.target, 'data.target not provided.');
     debug('moveDocument target', target.id, data.documents);
@@ -148,21 +148,21 @@ export class DocumentService extends Service {
     return Promise.all(data.documents.map(moveDoc));
   }
 
-  _lockDocument (id, data, params, doc) {
+  lockDocument (id, data, params, doc) {
     return super.patch(doc.id, {
       locker: data.creator,
       lockedAt: new Date()
     });
   }
 
-  _unlockDocument (id, data, params, doc) {
+  unlockDocument (id, data, params, doc) {
     return super.patch(doc.id, {
       locker: null,
       lockedAt: null
     });
   }
 
-  _addPermission (id, data, params, doc) {
+  addPermission (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
     assert(data.actions, 'data.actions is not provided.');
     assert(data.user, 'data.user is not provided.');
@@ -179,7 +179,7 @@ export class DocumentService extends Service {
     });
   }
 
-  _replacePermission (id, data, params, doc) {
+  replacePermission (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
     assert(data.ace, 'data.id is not provided.');
     assert(data.actions, 'data.action is not provided.');
@@ -195,7 +195,7 @@ export class DocumentService extends Service {
     });
   }
 
-  _removePermission (id, data, params, doc) {
+  removePermission (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
     assert(data.ace, 'data.ace is not provided');
 
@@ -203,7 +203,7 @@ export class DocumentService extends Service {
     return svcPermissions.remove(data.ace);
   }
 
-  _blockPermissionInheritance (id, data, params, doc) {
+  blockPermissionInheritance (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
 
     // copy inherited permissions
@@ -221,7 +221,7 @@ export class DocumentService extends Service {
     });
   }
 
-  _unblockPermissionInheritance (id, data, params, doc) {
+  unblockPermissionInheritance (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
 
     // remove copied permissions
