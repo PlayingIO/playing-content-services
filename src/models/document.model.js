@@ -1,4 +1,3 @@
-import uniqueArray from 'mongoose-unique-array';
 import { plugins } from 'mostly-feathers-mongoose';
 import { blob } from './blob.schema';
 
@@ -46,7 +45,6 @@ const fields = {
 export default function model (app, name) {
   const mongoose = app.get('mongoose');
   const schema = new mongoose.Schema(fields, options);
-  schema.plugin(uniqueArray);
   schema.plugin(plugins.softDelete);
   schema.index({ parent: 1 });
   schema.index({ path: 1 });
