@@ -11,7 +11,7 @@ export default function (options = {}) {
     before: {
       all: [
         hooks.authenticate('jwt', options.auth),
-        authorize('document', { ancestors: { service: 'documents' } }),
+        authorize('document', { ancestors: { field: 'ancestors', service: 'documents' } }),
         cache(options.cache, { headers: ['enrichers-document'] })
       ],
       get: [
