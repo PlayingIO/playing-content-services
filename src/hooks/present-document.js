@@ -1,19 +1,9 @@
 import makeDebug from 'debug';
 import fp from 'mostly-func';
 
-import DocumentEntity from '../entities/document.entity';
-import FolderEntity from '../entities/folder.entity';
-import FileEntity from '../entities/file.entity';
-import NoteEntity from '../entities/note.entity';
+import defaultEntities from '../entities';
 
 const debug = makeDebug('playing:content-services:hooks:presentDocument');
-
-const defaultEntities = {
-  document: DocumentEntity,
-  folder: FolderEntity,
-  file: FileEntity,
-  note: NoteEntity
-};
 
 // presentEntity by document type
 export default function presentDocument (options = {}) {
@@ -30,7 +20,7 @@ export default function presentDocument (options = {}) {
         debug('WARNING: ' + doc.type + ' type entity not found in');
         debug('  options  =>', options);
         debug('  document =>', doc);
-        return DocumentEntity.parse(doc, options);
+        return entities.document.parse(doc, options);
       }
     };
 
