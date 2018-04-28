@@ -13,9 +13,9 @@ export default function presentDocument (options = {}) {
     const presentEntity = function (doc) {
       options.provider = hook.params.provider;
 
-      if (doc.type && entities[doc.type]) {
+      if (doc.type && entities[fp.camelCase(doc.type)]) {
         debug('present ' + doc.type + ' type entity', doc.id);
-        return entities[doc.type].parse(doc, options);
+        return entities[fp.camelCase(doc.type)].parse(doc, options);
       } else {
         debug('WARNING: ' + doc.type + ' type entity not found in');
         debug('  options  =>', options);
