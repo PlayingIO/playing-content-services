@@ -4,7 +4,7 @@ import fp from 'mostly-func';
 import slug from 'limax';
 import path from 'path';
 import shortid from 'shortid';
-import { getParentDocument } from '../helpers';
+import { getParentDocument, isRootFolder } from '../helpers';
 
 const debug = makeDebug('playing:content-services:hooks:computeAncestors');
 
@@ -25,8 +25,10 @@ export default function computeAncestors () {
         const typedId = (parent.type || 'document') + ':' + parent.id;
         hook.data.ancestors = fp.concat(parent.ancestors, [typedId]);
       } else {
-        debug('Parent ancestors undefined', parent);
-        throw new Error('Parent ancestors undefined');
+        if (!isRootFolder(hook.data.path)) {
+          debug('Parent ancestors undefined', parent);
+          throw new Error('Parent ancestors undefined');
+        }
       }
       return hook;
     });

@@ -2,7 +2,7 @@ import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
 import path from 'path';
-import { getParentDocument, shortname } from '../helpers';
+import { getParentDocument, isRootFolder, shortname } from '../helpers';
 
 const debug = makeDebug('playing:content-services:hooks:computePath');
 
@@ -27,8 +27,10 @@ export default function computePath (options = { slug: false }) {
         // join the parent path (against parent changing)
         hook.data.path = path.join(parent.path, name);
       } else {
-        debug('Parent path undefined', parent);
-        throw new Error('Parent path undefined');
+        if (!isRootFolder(hook.data.path)) {
+          debug('Parent path undefined', parent);
+          throw new Error('Parent path undefined');
+        }
       }
       return hook;
     });
