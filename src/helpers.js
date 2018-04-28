@@ -5,6 +5,10 @@ import { plural } from 'pluralize';
 import shortid from 'shortid';
 import slug from 'limax';
 
+export const isRootFolder = (path) => {
+  return fp.contains(path, ['/', '/workspaces']);
+};
+
 // get parent or root or top workspaces document
 export const getParentDocument = (app, id, doc) => {
   let parentQuery = Promise.resolve();
@@ -21,7 +25,7 @@ export const getParentDocument = (app, id, doc) => {
     return svcDocuments.get(doc.parent);
   }
   // get the root folder or workspaces root
-  if (doc.path && doc.path !== '/' && doc.path !== '/workspaces') {
+  if (!isRootFolder(doc.path)) {
     const svcFolder = app.service('folders');
     if (doc.path.startsWith('/workspaces')) {
       return svcFolder.action('first').find({ query: { path : '/workspaces' } });
