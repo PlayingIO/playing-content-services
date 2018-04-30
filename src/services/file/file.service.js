@@ -9,7 +9,7 @@ const defaultOptions = {
 
 export class FileService extends Service {
   constructor (options) {
-    options = Object.assign({}, defaultOptions, options);
+    options = fp.assign(defaultOptions, options);
     super(options);
   }
 
@@ -20,7 +20,7 @@ export class FileService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'file' }, options);
+  options = fp.assign({ ModelName: 'file' }, options);
   return createService(app, FileService, FileModel, options);
 }
 

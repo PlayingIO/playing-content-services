@@ -17,7 +17,7 @@ const defaultOptions = {
 
 export class DocumentService extends Service {
   constructor (options) {
-    options = Object.assign({}, defaultOptions, options);
+    options = fp.assign(defaultOptions, options);
     super(options);
   }
 
@@ -248,7 +248,7 @@ export class DocumentService extends Service {
 }
 
 export default function init (app, options) {
-  options = Object.assign({ ModelName: 'document' }, options);
+  options = fp.assign({ ModelName: 'document' }, options);
   return createService(app, DocumentService, DocumentModel, options);
 }
 

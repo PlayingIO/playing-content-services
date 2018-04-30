@@ -10,7 +10,7 @@ const defaultOptions = {
 
 export class TagService extends Service {
   constructor (options) {
-    options = Object.assign({}, defaultOptions, options);
+    options = fp.assign(defaultOptions, options);
     super(options);
   }
 
@@ -21,7 +21,7 @@ export class TagService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'tag' }, options);
+  options = fp.assign({ ModelName: 'tag' }, options);
   return createService(app, TagService, TagModel, options);
 }
 

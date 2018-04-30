@@ -10,7 +10,7 @@ const defaultOptions = {
 
 export class FolderService extends Service {
   constructor (options) {
-    options = Object.assign({}, defaultOptions, options);
+    options = fp.assign(defaultOptions, options);
     super(options);
   }
 
@@ -47,7 +47,7 @@ export class FolderService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'folder' }, options);
+  options = fp.assign({ ModelName: 'folder' }, options);
   return createService(app, FolderService, FolderModel, options);
 }
 

@@ -20,7 +20,7 @@ const defaultOptions = {
 
 export class BlobService extends Service {
   constructor (options) {
-    options = Object.assign({}, defaultOptions, options);
+    options = fp.assign(defaultOptions, options);
     assert(options.blobs, 'BlobService blobs option required');
 
     super(options);
@@ -222,7 +222,7 @@ export class BlobService extends Service {
 }
 
 export default function init (app, options) {
-  options = Object.assign({ ModelName: 'blob' }, options);
+  options = fp.assign({ ModelName: 'blob' }, options);
   return createService(app, BlobService, BlobModel, options);
 }
 
