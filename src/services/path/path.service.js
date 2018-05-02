@@ -33,9 +33,9 @@ export class PathService {
 
   get (id, params) {
     params = fp.assign({ query: {} }, params);
-    const name = '/' + path.join(id || '', params.__action || '');
+    const name = '/' + path.join(id || '', params.action || '');
     params.query.path = name;
-    delete params.__action;
+    delete params.action;
 
     let type = params.query.type;
     const basename = path.basename(name);
