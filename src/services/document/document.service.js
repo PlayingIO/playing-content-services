@@ -169,7 +169,7 @@ export class DocumentService extends Service {
 
     const svcPermissions = this.app.service('user-permissions');
     return svcPermissions.create({
-      actions: fp.is(Array, data.actions)? data.actions : [data.actions],
+      actions: fp.asArray(data.actions),
       subject: `${doc.type}:${doc.id}`,
       user: data.user,
       role: data.role,
@@ -187,7 +187,7 @@ export class DocumentService extends Service {
 
     const svcPermissions = this.app.service('user-permissions');
     return svcPermissions.patch(data.ace, {
-      actions: fp.is(Array, data.actions)? data.actions : [data.actions],
+      actions: fp.asArray(data.actions),
       user: data.user,
       role: data.role,
       begin: data.begin,
