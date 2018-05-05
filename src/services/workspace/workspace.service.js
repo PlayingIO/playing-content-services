@@ -32,7 +32,7 @@ export class WorkspaceService {
     const svcFolders = this.app.service('folders');
     return svcFolders.action('first').find(params).then((result) => {
       // create own workspace if not exists
-      if (result && result.data) {
+      if (result) {
         return result;
       } else {
         return svcFolders.create({
