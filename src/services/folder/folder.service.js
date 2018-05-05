@@ -1,5 +1,6 @@
 import assert from 'assert';
 import { Service, createService } from 'mostly-feathers-mongoose';
+import fp from 'mostly-func';
 
 import FolderModel from '../../models/folder.model';
 import defaultHooks from './folder.hooks';

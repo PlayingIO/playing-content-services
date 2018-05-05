@@ -1,4 +1,5 @@
 import { Service, createService } from 'mostly-feathers-mongoose';
+import fp from 'mostly-func';
 
 import TagModel from '../../models/tag.model';
 import defaultHooks from './tag.hooks';
