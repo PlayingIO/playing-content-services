@@ -28,9 +28,9 @@ export const getParentDocument = (app, id, doc) => {
   if (!isRootFolder(doc.path)) {
     const svcFolder = app.service('folders');
     if (doc.path.startsWith('/workspaces')) {
-      return svcFolder.action('first').find({ query: { path : '/workspaces' } });
+      return svcFolder.get(null, { query: { path : '/workspaces' } });
     } else {
-      return svcFolder.action('first').find({ query: { path : '/' } });
+      return svcFolder.get(null, { query: { path : '/' } });
     }
   }
   return Promise.resolve();

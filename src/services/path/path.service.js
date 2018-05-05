@@ -28,7 +28,7 @@ export class PathService {
     params.query.path = '/';
 
     const svcFolders = this.app.service('folders');
-    return svcFolders.action('first').find(params);
+    return svcFolders.get(null, params);
   }
 
   get (id, params) {
@@ -44,7 +44,7 @@ export class PathService {
     }
 
     let service = this.app.service(plural(type || 'document'));
-    return service.action('first').find(params);
+    return service.get(null, params);
   }
 }
 

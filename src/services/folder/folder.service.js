@@ -20,7 +20,7 @@ export class FolderService extends Service {
     this.hooks(defaultHooks(this.options));
 
     // root folder
-    this.action('first').find({ query: {
+    this.get(null, { query: {
       path: '/'
     }}).then(result => {
       if (!result) {
@@ -33,7 +33,7 @@ export class FolderService extends Service {
     }).catch(console.error);
 
     // workspaces folder
-    this.action('first').find({ query: {
+    this.get(null, { query: {
       path: '/workspaces'
     }}).then(result => {
       if (!result) {
