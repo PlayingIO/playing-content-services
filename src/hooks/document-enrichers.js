@@ -94,7 +94,7 @@ function getCollections (hook, docs, options) {
   return svcUserCollections.find({
     query: {
       user: hook.params.user.id,
-      document: { $in: fp.map(fp.prop('id'), docs) },
+      subject: { $in: fp.map(fp.prop('id'), docs) },
       $select: 'collect,*'
     },
     paginate: false
