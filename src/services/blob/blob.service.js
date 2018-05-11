@@ -20,7 +20,7 @@ const defaultOptions = {
 
 export class BlobService extends Service {
   constructor (options) {
-    options = fp.assign(defaultOptions, options);
+    options = fp.assignAll(defaultOptions, options);
     assert(options.blobs, 'BlobService blobs option required');
 
     super(options);

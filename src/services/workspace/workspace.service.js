@@ -15,7 +15,7 @@ const defaultOptions = {
 // user personal workspace folder
 export class WorkspaceService {
   constructor (options) {
-    this.options = fp.assign(defaultOptions, options);
+    this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
   }
 

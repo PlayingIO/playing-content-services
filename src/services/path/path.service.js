@@ -14,7 +14,7 @@ const defaultOptions = {
 // Path proxy service to documents
 export class PathService {
   constructor (options) {
-    this.options = fp.assign(defaultOptions, options);
+    this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
   }
 

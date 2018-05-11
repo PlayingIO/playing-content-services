@@ -11,7 +11,7 @@ const defaultOptions = {
 
 export class TagService extends Service {
   constructor (options) {
-    options = fp.assign(defaultOptions, options);
+    options = fp.assignAll(defaultOptions, options);
     super(options);
   }
 
