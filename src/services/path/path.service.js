@@ -24,7 +24,7 @@ export class PathService {
   }
 
   find (params) {
-    params = fp.assign({ query: {} }, params);
+    params = { query: {}, ...params };
     params.query.path = '/';
 
     const svcFolders = this.app.service('folders');
@@ -32,7 +32,7 @@ export class PathService {
   }
 
   get (id, params) {
-    params = fp.assign({ query: {} }, params);
+    params = { query: {}, ...params };
     const name = '/' + path.join(id || '', params.action || '');
     params.query.path = name;
     delete params.action;

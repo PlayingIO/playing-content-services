@@ -46,14 +46,14 @@ export class WorkspaceService {
   }
 
   find (params) {
-    params = fp.assign({ query: {} }, params);
+    params = { query: {}, ...params };
     return this._getUserWorkspace(params).then(workspace => {
       return [workspace && workspace.data];
     });
   }
 
   get (id, params) {
-    params = fp.assign({ query: {} }, params);
+    params = { query: {}, ...params };
     return this._getUserWorkspace(params);
   }
 }
