@@ -248,7 +248,7 @@ export class DocumentService extends Service {
 }
 
 export default function init (app, options) {
-  options = fp.assign({ ModelName: 'document' }, options);
+  options = { ModelName: 'document', ...options };
   return createService(app, DocumentService, DocumentModel, options);
 }
 

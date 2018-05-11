@@ -22,7 +22,7 @@ export class AuthorService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = fp.assign({ ModelName: 'author' }, options);
+  options = { ModelName: 'author', ...options };
   return createService(app, AuthorService, AuthorModel, options);
 }
 

@@ -21,7 +21,7 @@ export class NoteService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = fp.assign({ ModelName: 'note' }, options);
+  options = { ModelName: 'note', ...options };
   return createService(app, NoteService, NoteModel, options);
 }
 

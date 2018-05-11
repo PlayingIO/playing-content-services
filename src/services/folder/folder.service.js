@@ -48,7 +48,7 @@ export class FolderService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = fp.assign({ ModelName: 'folder' }, options);
+  options = { ModelName: 'folder', ...options };
   return createService(app, FolderService, FolderModel, options);
 }
 

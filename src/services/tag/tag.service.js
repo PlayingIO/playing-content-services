@@ -22,7 +22,7 @@ export class TagService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = fp.assign({ ModelName: 'tag' }, options);
+  options = { ModelName: 'tag', ...options };
   return createService(app, TagService, TagModel, options);
 }
 

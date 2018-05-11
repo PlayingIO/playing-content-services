@@ -222,7 +222,7 @@ export class BlobService extends Service {
 }
 
 export default function init (app, options) {
-  options = fp.assign({ ModelName: 'blob' }, options);
+  options = { ModelName: 'blob', ...options };
   return createService(app, BlobService, BlobModel, options);
 }
 

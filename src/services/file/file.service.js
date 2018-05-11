@@ -21,7 +21,7 @@ export class FileService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = fp.assign({ ModelName: 'file' }, options);
+  options = { ModelName: 'file', ...options };
   return createService(app, FileService, FileModel, options);
 }
 
