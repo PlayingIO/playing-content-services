@@ -117,7 +117,7 @@ function getFavorites (hook, docs, options) {
   return svcUserFavorites.find({
     query: {
       user: hook.params.user.id,
-      document: { $in: fp.map(fp.prop('id'), docs) },
+      subject: { $in: fp.map(fp.prop('id'), docs) },
     },
     paginate: false
   }).then((results) => {
