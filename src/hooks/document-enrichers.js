@@ -122,7 +122,7 @@ function getFavorites (hook, docs, options) {
     paginate: false
   }).then((results) => {
     results = results? results.data || results : [];
-    const documents = fp.groupBy(fp.prop('id'));
+    const documents = fp.groupBy(fp.prop('id'), results);
     return fp.reduce((acc, doc) => {
       acc[doc.id] = { isFavorite: documents[doc.id] && documents[doc.id].length > 0 || false };
       return acc;
