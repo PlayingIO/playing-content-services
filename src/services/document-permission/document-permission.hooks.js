@@ -7,6 +7,15 @@ export default function (options = {}) {
       all: [
         hooks.authenticate('jwt', options.auth),
         cache(options.cache)
+      ],
+      create: [
+        hooks.addRouteObject('target', { service: 'documents' })
+      ],
+      patch: [
+        hooks.addRouteObject('target', { service: 'documents' })
+      ],
+      remove: [
+        hooks.addRouteObject('target', { service: 'documents' })
       ]
     },
     after: {
