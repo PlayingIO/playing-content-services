@@ -88,19 +88,7 @@ export class DocumentService extends Service {
     }
   }
 
-  lockDocument (id, data, params, doc) {
-    return super.patch(doc.id, {
-      locker: data.creator,
-      lockedAt: new Date()
-    });
-  }
-
-  unlockDocument (id, data, params, doc) {
-    return super.patch(doc.id, {
-      locker: null,
-      lockedAt: null
-    });
-  }
+  
 
   addPermission (id, data, params, doc) {
     assert(doc, 'target document is not exists.');

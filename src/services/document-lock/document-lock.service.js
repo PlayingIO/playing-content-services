@@ -26,7 +26,7 @@ export class DocumentLockService {
   /**
    * Lock document
    */
-  create (data, params) {
+  async create (data, params) {
     const doc = params.document;
     assert(doc, 'document is not exists');
     const svcDocument = this.app.service(plural(doc.type));
@@ -39,7 +39,7 @@ export class DocumentLockService {
   /**
    * Unlock document
    */
-  remove (id, params) {
+  async remove (id, params) {
     const doc = params.document;
     assert(doc, 'document is not exists');
     const svcDocument = this.app.service(plural(doc.type));
