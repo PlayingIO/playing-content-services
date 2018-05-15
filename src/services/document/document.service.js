@@ -89,28 +89,6 @@ export class DocumentService extends Service {
     }
   }
 
-  tag (id, data, params, doc) {
-    assert(data.tags, 'data.tags not provided.');
-
-    const svcTags = this.app.service('tags');
-
-    let tags = fp.union(doc.tags || [], data.tags);
-    return Promise.all([
-      super.patch(doc.id, { tags }, params),
-      data.tags.map((tag) => svcTags.action('upsert').create({
-        id: tag.toLowerCase(),
-        label: tag
-      }))
-    ]).then(([docs, tags]) => docs);
-  }
-
-  untag (id, data, params, doc) {
-    assert(data.tags, 'data.tags not provided.');
-
-    let tags = fp.without(data.tags, doc.tags || []);
-    return super.patch(doc.id, { tags }, params);
-  }
-
   copyDocument (id, data, params, target) {
     assert(data.documents, 'data.documents not provided.');
     assert(data.target, 'data.target not provided.');
