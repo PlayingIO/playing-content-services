@@ -5,6 +5,7 @@ import documentEnrichers from './document-enrichers';
 import documentNotifier from './document-notifier';
 import fetchBlobs from './fetch-blobs';
 import isDocumentType from './is-document-type';
+import presentBlob from './present-blob';
 import presentDocument from './present-document';
 
 export {
@@ -15,5 +16,6 @@ export {
   documentNotifier,
   fetchBlobs,
   isDocumentType,
+  presentBlob,
   presentDocument
 };

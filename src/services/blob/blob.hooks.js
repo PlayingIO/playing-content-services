@@ -1,31 +1,8 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import BatchEntity from '../../entities/batch.entity';
-import BlobEntity from '../../entities/blob.entity';
+import { presentBlob } from '../../hooks';
 
-const presentBlob = (options = {}) => {
-  return (hook) => {
-    options.provider = hook.params.provider;
-
-    if (hook.result) {
-      if (hook.result.data) {
-        hook.result.data = hook.result.data.map(doc => {
-          return doc.blobs
-            ? BatchEntity.parse(doc, options)
-            : BlobEntity.parse(doc, options);
-        });
-      } else {
-        let doc = hook.result;
-        hook.result = doc.blobs
-          ? BatchEntity.parse(doc, options)
-          : BlobEntity.parse(doc, options);
-      }
-    }
-    
-    return hook;
-  };
-};
 
 export default function (options = {}) {
   return {
