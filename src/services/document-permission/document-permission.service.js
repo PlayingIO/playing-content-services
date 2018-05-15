@@ -83,6 +83,55 @@ export class DocumentPermissionService {
     const svcPermissions = this.app.service('user-permissions');
     return svcPermissions.remove(params.query.ace);
   }
+
+  /**
+   * Block document permission inheritance
+   */
+  async blockInheritance (id, data, params) {
+    const target = params.target;
+    assert(target, 'target document is not exists.');
+
+    // copy inherited permissions
+    const svcDocuments = this.app.service(plural(target.type));
+    const svcPermissions = this.app.service('user-permissions');
+    const inheritedAces = await getParentAces(this.app, [target], '*');
+    if (inheritedAces && inheritedAces[target.id]) {
+      await Promise.all(fp.map(ace => {
+        ace.subject = `${target.type}:${target.id}`;
+        ace.creator = params.user.id;
+        return svcPermissions.create(ace);
+      }, inheritedAces[target.id]));
+    }
+    return svcDocuments.patch(target.id, { inherited: false }, params);
+  }
+
+  /**
+   * Unblock document permission inheritance
+   */
+  async unblockInheritance (id, data, params) {
+    const target = params.target;
+    assert(target, 'target document is not exists.');
+
+    // remove copied permissions
+    const svcDocuments = this.app.service(plural(target.type));
+    const svcPermissions = this.app.service('user-permissions');
+    const inheritedAces = await getParentAces(this.app, [target], '*');
+    if (inheritedAces && inheritedAces[target.id]) {
+      await Promise.all(fp.map(ace => {
+        return svcPermissions.remove(null, {
+          query: {
+            actions: ace.actions,
+            subject: `${target.type}:${target.id}`,
+            user: ace.user,
+            role: ace.role,
+            creator: params.user.id
+          },
+          $multi: true
+        });
+      }, inheritedAces[target.id]));
+    }
+    return svcDocuments.patch(target.id, { inherited: true }, params);
+  }
 }
 
 export default function init (app, options, hooks) {
