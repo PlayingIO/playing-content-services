@@ -8,31 +8,31 @@ const debug = makeDebug('playing:content-services:hooks:computePath');
 
 // compute current path by parent
 export default function computePath (options = { slug: false }) {
-  return (hook) => {
-    assert(hook.type === 'before', `computePath must be used as a 'before' hook.`);
+  return (context) => {
+    assert(context.type === 'before', `computePath must be used as a 'before' hook.`);
 
     // skip update/patch if not changing parent with both parent and path
-    if (hook.method === 'update' || hook.method === 'patch') {
-      if (!(hook.data.parent && hook.data.path)) return hook;
+    if (context.method === 'update' || context.method === 'patch') {
+      if (!(context.data.parent && context.data.path)) return context;
     }
 
     // get new parent or root document (if creating)
-    return getParentDocument(hook.app, null, hook.data).then(parent => {
+    return getParentDocument(context.app, null, context.data).then(parent => {
       if (parent && parent.path) {
-        hook.data.parent = parent.id;
+        context.data.parent = parent.id;
         // generate new type-name or use the existing name
-        const type = hook.data.type || options.type || 'document';
-        const name = shortname(type, hook.data.path, options.slug && hook.data.title);
+        const type = context.data.type || options.type || 'document';
+        const name = shortname(type, context.data.path, options.slug && context.data.title);
         debug('compute parent path', parent.path, name);
         // join the parent path (against parent changing)
-        hook.data.path = path.join(parent.path, name);
+        context.data.path = path.join(parent.path, name);
       } else {
-        if (!isRootFolder(hook.data.path)) {
+        if (!isRootFolder(context.data.path)) {
           debug('Parent path undefined', parent);
           throw new Error('Parent path undefined');
         }
       }
-      return hook;
+      return context;
     });
   };
 }

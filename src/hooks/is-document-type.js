@@ -1,13 +1,13 @@
 import fp from 'mostly-func';
 
 export default function isDocumentType (type) {
-  return (hook) => {
-    if (hook.type === 'before') {
-      return hook.params.type === type;
+  return (context) => {
+    if (context.type === 'before') {
+      return context.params.type === type;
     }
 
-    if (hook.type === 'after') {
-      const result = hook.result && hook.result.data || hook.result;
+    if (context.type === 'after') {
+      const result = context.result && context.result.data || context.result;
       if (Array.isArray(result)) {
         return fp.reduce((acc, doc) =>
           acc && doc.type === type, true, result);

@@ -1,7 +1,7 @@
 import fp from 'mostly-func';
 
-import BatchEntity from '../../entities/batch.entity';
-import BlobEntity from '../../entities/blob.entity';
+import BatchEntity from '../entities/batch.entity';
+import BlobEntity from '../entities/blob.entity';
 
 export default function presentBlob (options = {}) {
   return (context) => {

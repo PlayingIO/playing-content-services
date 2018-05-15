@@ -9,9 +9,9 @@ const debug = makeDebug('playing:content-services:hooks:presentDocument');
 export default function presentDocument (options = {}) {
   const entities = Object.assign(defaultEntities, options.entities);
 
-  return (hook) => {
+  return (context) => {
     const presentEntity = function (doc) {
-      options.provider = hook.params.provider;
+      options.provider = context.params.provider;
 
       if (doc.type && entities[fp.camelCase(doc.type)]) {
         debug('present ' + doc.type + ' type entity', doc.id);
@@ -32,13 +32,13 @@ export default function presentDocument (options = {}) {
       }
     };
 
-    if (hook.result) {
-      if (hook.result.data) {
-        hook.result.data = presentData(hook.result.data);
+    if (context.result) {
+      if (context.result.data) {
+        context.result.data = presentData(context.result.data);
       } else {
-        hook.result = presentData(hook.result);
+        context.result = presentData(context.result);
       }
     }
-    return hook;
+    return context;
   };
 }

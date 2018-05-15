@@ -10,15 +10,15 @@ const debug = makeDebug('playing:content-services:hooks:fetchBlobs');
 export default function fetchBlobs (options = {}) {
   assert(options.xpath || options.xpaths, 'fetchBlobs need specified xpath(s)');
 
-  return (hook) => {
-    assert(hook.type === 'before', `fetchBlob must be used as a 'before' hook.`);
+  return (context) => {
+    assert(context.type === 'before', `fetchBlob must be used as a 'before' hook.`);
 
     // If it was an internal call then skip this hook
-    if (!hook.params.provider) {
-      return hook;
+    if (!context.params.provider) {
+      return context;
     }
  
-    const svcBlobs = hook.app.service('blobs');
+    const svcBlobs = context.app.service('blobs');
 
     function getFullBlob (file) {
       // fetch only file is not fulfilled
@@ -34,31 +34,31 @@ export default function fetchBlobs (options = {}) {
     let promises = [];
 
     if (options.xpath) {
-      const file = fp.dotPath(options.xpath, hook.data);
+      const file = fp.dotPath(options.xpath, context.data);
       if (file) {
         const getFileBlob = getFullBlob(file).then(blob => {
           debug('getFullBlob', options.xpath, blob);
-          hook.data = fp.assocDotPath(options.xpath, blob, hook.data);
+          context.data = fp.assocDotPath(options.xpath, blob, context.data);
         });
         promises.push(getFileBlob);
       }
     }
 
     if (options.xpaths) {
-      const files = fp.dotPath(options.xpaths, hook.data);
+      const files = fp.dotPath(options.xpaths, context.data);
       if (files && Array.isArray(files)) {
         const getFilesBlob = Promise.all(files.map(file => getFullBlob(file)))
           .then(blobs => {
             debug('getFullBlob', options.xpaths, blobs);
-            hook.data = fp.assocDotPath(options.xpaths, blobs, hook.data);
+            context.data = fp.assocDotPath(options.xpaths, blobs, context.data);
           });
         promises.push(getFilesBlob);
       }
     }
 
     return Promise.all(promises).then(results => {
-      debug('fetchBlob hook.data', hook.data, results);
-      return hook;
+      debug('fetchBlob hook.data', context.data, results);
+      return context;
     });
   };
 }

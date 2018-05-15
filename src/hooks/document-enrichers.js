@@ -202,43 +202,43 @@ function getThumbnail (hook, docs) {
 
 // Add document metadata according to request header
 export default function documentEnrichers (options = {}) {
-  return (hook) => {
-    assert(hook.type === 'after', `documentEnrichers must be used as a 'after' hook.`);
+  return (context) => {
+    assert(context.type === 'after', `documentEnrichers must be used as a 'after' hook.`);
 
-    const documentEnrichers = hook.params &&
-      (hook.params.headers && hook.params.headers['enrichers-document']);
+    const documentEnrichers = context.params &&
+      (context.params.headers && context.params.headers['enrichers-document']);
 
       // If no enrichers-document header then skip this hook
     if (!documentEnrichers) {
-      debug('Skip documentEnrichers without headers', hook.params.query);
-      return hook;
+      debug('Skip documentEnrichers without headers', context.params.query);
+      return context;
     }
 
     const enrichers = fp.map(fp.trim, fp.split(',', documentEnrichers));
     debug('enrichers-document %j', enrichers);
 
-    let documents = helpers.getHookDataAsArray(hook);
+    let documents = helpers.getHookDataAsArray(context);
     let promises = {};
     
     enrichers.forEach(enricher => {
       switch(enricher) {
         case 'acls':
-          promises.acls = getAcls(hook, documents, options);
+          promises.acls = getAcls(context, documents, options);
           break;
         case 'breadcrumbs':
-          promises.breadcrumbs = getBreadcrumbs(hook, documents, options);
+          promises.breadcrumbs = getBreadcrumbs(context, documents, options);
           break;
         case 'collections':
-          promises.collections = getCollections(hook, documents, options);
+          promises.collections = getCollections(context, documents, options);
           break;
         case 'favorites':
-          promises.favorites = getFavorites(hook, documents, options);
+          promises.favorites = getFavorites(context, documents, options);
           break;
         case 'hasFolderishChild':
-          promises.hasFolderishChild = hasFolderishChild(hook, documents, options);
+          promises.hasFolderishChild = hasFolderishChild(context, documents, options);
           break;
         case 'permissions':
-          promises.permissions = getPermission(hook, documents, options);
+          promises.permissions = getPermission(context, documents, options);
           break;
         case 'preview':
           promises.preview = Promise.resolve(null);
@@ -247,16 +247,16 @@ export default function documentEnrichers (options = {}) {
           promises.renditions = Promise.resolve(null);
           break;
         case 'subtypes':
-          promises.subtypes = getSubtypes(hook, documents, options);
+          promises.subtypes = getSubtypes(context, documents, options);
           break;
         case 'tags':
-          promises.tags = getTags(hook, documents, options);
+          promises.tags = getTags(context, documents, options);
           break;
         case 'thumbnail':
-          promises.thumbnail = getThumbnail(hook, documents, options);
+          promises.thumbnail = getThumbnail(context, documents, options);
           break;
         case 'userVisiblePermissions':
-          promises.userVisiblePermissions = getUserVisiblePermissions(hook, documents, options);
+          promises.userVisiblePermissions = getUserVisiblePermissions(context, documents, options);
           break;
       }
     });
@@ -271,7 +271,7 @@ export default function documentEnrichers (options = {}) {
         }
         doc.metadata = fp.sortKeys(doc.metadata);
       });
-      return hook;
+      return context;
     });
   };
 }
