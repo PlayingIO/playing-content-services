@@ -10,7 +10,7 @@ const debug = makeDebug('playing:content-services:hooks:computeAncestors');
 
 // compute ancestors of current document
 export default function computeAncestors () {
-  return (context) => {
+  return async (context) => {
     assert(context.type === 'before', `computeAncestors must be used as a 'before' hook.`);
 
     // skip update/patch if not changing parent with both parent and path
@@ -19,18 +19,17 @@ export default function computeAncestors () {
     }
 
     // get parent or root document
-    return getParentDocument(context.app, context.id, context.data).then(parent => {
-      if (parent && parent.ancestors) {
-        // join the parent ancestors typed id (against parent changing)
-        const typedId = (parent.type || 'document') + ':' + parent.id;
-        context.data.ancestors = fp.concat(parent.ancestors, [typedId]);
-      } else {
-        if (!isRootFolder(context.data.path)) {
-          debug('Parent ancestors undefined', parent);
-          throw new Error('Parent ancestors undefined');
-        }
+    const parent = await getParentDocument(context.app, context.id, context.data);
+    if (parent && parent.ancestors) {
+      // join the parent ancestors typed id (against parent changing)
+      const typedId = (parent.type || 'document') + ':' + parent.id;
+      context.data.ancestors = fp.concat(parent.ancestors, [typedId]);
+    } else {
+      if (!isRootFolder(context.data.path)) {
+        debug('Parent ancestors undefined', parent);
+        throw new Error('Parent ancestors undefined');
       }
-      return context;
-    });
+    }
+    return context;
   };
 }
