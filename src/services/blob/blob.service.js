@@ -179,7 +179,9 @@ export class BlobService extends Service {
     }
   }
 
-  attachOnDocument (id, data, params, original) {
+  attachOnDocument (id, data, params) {
+    const original = params.blob;
+    assert(original, 'blob is not exists');
     assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
     assert(data.context && data.context.documentType, 'context.documentType not provided.');
 
@@ -198,7 +200,9 @@ export class BlobService extends Service {
     });
   }
 
-  removeFromDocument (id, data, params, original) {
+  removeFromDocument (id, data, params) {
+    const original = params.blob;
+    assert(original, 'blob is not exists');
     assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
     assert(data.context && data.context.documentType, 'context.documentType not provided.');
     assert(data.xpath, 'data.xpath not provided.');

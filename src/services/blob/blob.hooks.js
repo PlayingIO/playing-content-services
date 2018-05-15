@@ -1,3 +1,4 @@
+import { iff, isProvider } from 'feathers-hooks-common';
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
@@ -16,6 +17,10 @@ export default function (options = {}) {
       update: [
       ],
       patch: [
+        iff(hooks.isAction('attachOnDocument'),
+          hooks.addRouteObject('blob', { service: 'blobs', field: 'id' })),
+        iff(hooks.isAction('removeFromDocument'),
+          hooks.addRouteObject('blob', { service: 'blobs', field: 'id' }))
       ]
     },
     after: {
