@@ -2,7 +2,6 @@ import assert from 'assert';
 import makeDebug from 'debug';
 import { Service, helpers, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
-import path from 'path';
 import { plural } from 'pluralize';
 
 import defaultHooks from './document.hooks';
@@ -87,43 +86,6 @@ export class DocumentService extends Service {
         return super.remove(id, params);
       }
     }
-  }
-
-  copyDocument (id, data, params, target) {
-    assert(data.documents, 'data.documents not provided.');
-    assert(data.target, 'data.target not provided.');
-    debug('copyDocument target', target.id, data.documents);
-
-    const copyDoc = (id) => {
-      return this.get(id).then((doc) => {
-        let service = plural(doc.type || 'document');
-        let clone = fp.omit(['id', 'metadata', 'parent', 'path', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'], doc);
-        clone.parent = target.id;
-        return this.app.service(service).create(clone);
-      });
-    };
-
-    return Promise.all(data.documents.map(copyDoc));
-  }
-
-  moveDocument (id, data, params, target) {
-    assert(data.documents, 'data.documents not provided.');
-    assert(data.target, 'data.target not provided.');
-    debug('moveDocument target', target.id, data.documents);
-
-    const moveDoc = (id) => {
-      return this.get(id).then((doc) => {
-        let service = plural(doc.type || 'document');
-        let data = {
-          parent: target.id,
-          path: path.resolve(target.path, path.basename(doc.path)),
-          type: doc.type
-        };
-        return this.app.service(service).patch(doc.id, data);
-      });
-    };
-
-    return Promise.all(data.documents.map(moveDoc));
   }
 
   lockDocument (id, data, params, doc) {
