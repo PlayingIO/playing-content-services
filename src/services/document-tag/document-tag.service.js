@@ -1,6 +1,7 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
+import { plural } from 'pluralize';
 
 import defaultHooks from './document-tag.hooks';
 
@@ -19,6 +20,37 @@ export class DocumentTagService {
   setup (app) {
     this.app = app;
     this.hooks(defaultHooks(this.options));
+  }
+
+  async create (data, params) {
+    const doc = params.document;
+    assert(doc, 'document is not exists');
+    assert(data.tags, 'data.tags is not provided.');
+
+    const svcTags = this.app.service('tags');
+    const svcDocuments = this.app.service(plural(doc.type));
+
+    return Promise.all([
+      svcDocuments.patch(doc.id, {
+        $addToSet: { tags: { $each: data.tags } }
+      }, params),
+      data.tags.map((tag) => svcTags.action('upsert').create({
+        id: tag.toLowerCase(),
+        label: tag
+      }))
+    ]).then(([docs, tags]) => tags);
+  }
+
+  async remove (id, params) {
+    const doc = params.document;
+    assert(doc, 'document is not exists');
+    assert(id || params.query.tags, 'data.tags not provided.');
+    const tags = fp.splitOrArray(id || params.query.tags);
+
+    const svcDocuments = this.app.service(plural(doc.type));
+    return svcDocuments.patch(doc.id, {
+      $pull: { tags: { $in: tags } }
+    }, params);
   }
 }
 
