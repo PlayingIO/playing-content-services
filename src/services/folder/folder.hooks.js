@@ -23,6 +23,7 @@ export default function (options = {}) {
         iff(isProvider('external'),
           associateCurrentUser({ idField: 'id', as: 'creator' })),
         content.computePath({ type: 'folder', slug: true }),
+        content.computeAncestors(),
         content.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       update: [
