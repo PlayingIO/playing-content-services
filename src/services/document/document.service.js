@@ -88,49 +88,6 @@ export class DocumentService extends Service {
     }
   }
 
-  
-
-  addPermission (id, data, params, doc) {
-    assert(doc, 'target document is not exists.');
-    assert(data.actions, 'data.actions is not provided.');
-    assert(data.user, 'data.user is not provided.');
-
-    const svcPermissions = this.app.service('user-permissions');
-    return svcPermissions.create({
-      actions: fp.asArray(data.actions),
-      subject: `${doc.type}:${doc.id}`,
-      user: data.user,
-      role: data.role,
-      creator: params.user.id,
-      begin: data.begin,
-      end: data.end
-    });
-  }
-
-  replacePermission (id, data, params, doc) {
-    assert(doc, 'target document is not exists.');
-    assert(data.ace, 'data.id is not provided.');
-    assert(data.actions, 'data.action is not provided.');
-    assert(data.user, 'data.user is not provided.');
-
-    const svcPermissions = this.app.service('user-permissions');
-    return svcPermissions.patch(data.ace, {
-      actions: fp.asArray(data.actions),
-      user: data.user,
-      role: data.role,
-      begin: data.begin,
-      end: data.end
-    });
-  }
-
-  removePermission (id, data, params, doc) {
-    assert(doc, 'target document is not exists.');
-    assert(data.ace, 'data.ace is not provided');
-
-    const svcPermissions = this.app.service('user-permissions');
-    return svcPermissions.remove(data.ace);
-  }
-
   blockPermissionInheritance (id, data, params, doc) {
     assert(doc, 'target document is not exists.');
 
