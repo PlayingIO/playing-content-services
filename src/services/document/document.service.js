@@ -6,7 +6,6 @@ import { plural } from 'pluralize';
 
 import defaultHooks from './document.hooks';
 import DocumentModel from '../../models/document.model';
-import { getParentAces } from '../../helpers';
 
 const debug = makeDebug('playing:content-services:documents');
 
@@ -86,49 +85,6 @@ export class DocumentService extends Service {
         return super.remove(id, params);
       }
     }
-  }
-
-  blockPermissionInheritance (id, data, params, doc) {
-    assert(doc, 'target document is not exists.');
-
-    // copy inherited permissions
-    const svcPermissions = this.app.service('user-permissions');
-    return getParentAces(this.app, [doc], '*').then(inheritedAces => {
-      if (inheritedAces && inheritedAces[doc.id]) {
-        return Promise.all(fp.map(ace => {
-          ace.subject = `${doc.type}:${doc.id}`;
-          ace.creator = params.user.id;
-          return svcPermissions.create(ace);
-        }, inheritedAces[doc.id]));
-      }
-    }).then(results => {
-      return super.patch(id, { inherited: false }, params);
-    });
-  }
-
-  unblockPermissionInheritance (id, data, params, doc) {
-    assert(doc, 'target document is not exists.');
-
-    // remove copied permissions
-    const svcPermissions = this.app.service('user-permissions');
-    return getParentAces(this.app, [doc], '*').then(inheritedAces => {
-      if (inheritedAces && inheritedAces[doc.id]) {
-        return Promise.all(fp.map(ace => {
-          return svcPermissions.remove(null, {
-            query: {
-              actions: ace.actions,
-              subject: `${doc.type}:${doc.id}`,
-              user: ace.user,
-              role: ace.role,
-              creator: params.user.id
-            },
-            $multi: true
-          });
-        }, inheritedAces[doc.id]));
-      }
-    }).then(results => {
-      return super.patch(id, { inherited: true }, params);
-    });
   }
 }
 
