@@ -63,7 +63,7 @@ export const getAces = (app, docs, select = 'user,creator,*') => {
   });
 };
 
-export const getParentAces = (app, docs, select = 'user,creator,*') => {
+export const getParentAces = async (app, docs, select = 'user,creator,*') => {
   const svcDocuments = app.service('user-documents');
   const svcPermissions = app.service('user-permissions');
   const typedIds = fp.uniq(fp.flatMap(doc => {
@@ -78,33 +78,32 @@ export const getParentAces = (app, docs, select = 'user,creator,*') => {
       paginate: false
     }) : Promise.resolve([]);
 
-  return Promise.all([
+  const [ancestors, permits] = Promise.all([
     getAncestors(typedIds),
     getAncestorPermissions(typedIds)
-  ]).then(([ancestors, permits]) => {
-    const permissions = permits.data || permits;
-    return fp.reduce((arr, doc) => {
-      if (!doc.ancestors) return arr;
-      arr[doc.id] = [];
-      // acnestor reverse loop to check inheritance
-      for (let i = doc.ancestors.length - 1; i >= 0; i--) {
-        const ancestor = fp.find(
-          fp.propEq('id', helpers.getId(doc.ancestors[i])), ancestors);
-        if (!ancestor) break;
+  ]);
+  const permissions = permits.data || permits;
+  return fp.reduce((arr, doc) => {
+    if (!doc.ancestors) return arr;
+    arr[doc.id] = [];
+    // acnestor reverse loop to check inheritance
+    for (let i = doc.ancestors.length - 1; i >= 0; i--) {
+      const ancestor = fp.find(
+        fp.propEq('id', helpers.getId(doc.ancestors[i])), ancestors);
+      if (!ancestor) break;
 
-        const ancestorAces = fp.filter(
-          fp.propEq('subject', helpers.typedId(doc.ancestors[i])), permissions);
-        if (ancestorAces.length > 0) {
-          // subject change to current doc
-          const aces = fp.map(fp.assoc('subject', helpers.typedId(doc)), ancestorAces);
-          arr[doc.id] = arr[doc.id].concat(aces);
-        }
-        // continue to next inherited
-        if (!ancestor.inherited) break;
+      const ancestorAces = fp.filter(
+        fp.propEq('subject', helpers.typedId(doc.ancestors[i])), permissions);
+      if (ancestorAces.length > 0) {
+        // subject change to current doc
+        const aces = fp.map(fp.assoc('subject', helpers.typedId(doc)), ancestorAces);
+        arr[doc.id] = arr[doc.id].concat(aces);
       }
-      return arr;
-    }, {}, docs);
-  });
+      // continue to next inherited
+      if (!ancestor.inherited) break;
+    }
+    return arr;
+  }, {}, docs);
 };
 
 export default {};
