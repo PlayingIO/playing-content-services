@@ -106,4 +106,14 @@ export const getParentAces = async (app, docs, select = 'user,creator,*') => {
   }, {}, docs);
 };
 
-export default {};
+// create a document activity
+export const createDocumentActivity = (context, document, custom) => {
+  const actor = helpers.getId(document.creator);
+  return {
+    actor: `user:${actor}`,
+    object: `${document.type}:${document.id}`,
+    foreignId: `${document.type}:${document.id}`,
+    time: new Date().toISOString(),
+    ...custom
+  };
+};
