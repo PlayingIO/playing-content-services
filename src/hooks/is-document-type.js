@@ -1,7 +1,7 @@
 import fp from 'mostly-func';
 
 export default function isDocumentType (type) {
-  return (context) => {
+  return async context => {
     if (context.type === 'before') {
       return context.params.type === type;
     }

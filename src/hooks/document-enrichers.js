@@ -12,7 +12,7 @@ import { getAces, getParentAces } from '../helpers';
 const debug = makeDebug('playing:content-services:hooks:documentEnrichers');
 
 // check whether there is any folder children
-function hasFolderishChild (hook, docs, options) {
+function hasFolderishChild (context, docs, options) {
   // only Folderish need to check hasFolderishChild
   const Types = options.DocTypes || DocTypes;
   const folders = fp.reduce((ids, doc) => {
@@ -22,7 +22,7 @@ function hasFolderishChild (hook, docs, options) {
     return ids;
   }, [], docs);
 
-  const svcFolders = hook.app.service('folders');
+  const svcFolders = context.app.service('folders');
   const getParents = folders.length > 0
     ? svcFolders.find({ query: { parent: { $in: folders } } })
     : Promise.resolve([]);
@@ -40,8 +40,8 @@ function hasFolderishChild (hook, docs, options) {
   });
 }
 
-function getBreadcrumbs (hook, docs, options) {
-  const svcDocuments = hook.app.service('documents');
+function getBreadcrumbs (context, docs, options) {
+  const svcDocuments = context.app.service('documents');
 
   let ancestorRready = true; // whether already populated
   const ancestors = fp.reject(fp.isNil, fp.flatMap(doc => {
@@ -86,14 +86,14 @@ function getBreadcrumbs (hook, docs, options) {
   });
 }
 
-function getCollections (hook, docs, options) {
-  const svcDocuments = hook.app.service('documents');
-  const svcUserCollections = hook.app.service('user-collections');
-  if (!hook.params.user) return Promise.resolve({});
+function getCollections (context, docs, options) {
+  const svcDocuments = context.app.service('documents');
+  const svcUserCollections = context.app.service('user-collections');
+  if (!context.params.user) return Promise.resolve({});
 
   return svcUserCollections.find({
     query: {
-      user: hook.params.user.id,
+      user: context.params.user.id,
       subject: { $in: fp.map(fp.prop('id'), docs) },
       $select: 'collect,*'
     },
@@ -110,13 +110,13 @@ function getCollections (hook, docs, options) {
   });
 }
 
-function getFavorites (hook, docs, options) {
-  const svcUserFavorites = hook.app.service('user-favorites');
-  if (!hook.params.user) return Promise.resolve();
+function getFavorites (context, docs, options) {
+  const svcUserFavorites = context.app.service('user-favorites');
+  if (!context.params.user) return Promise.resolve();
   
   return svcUserFavorites.find({
     query: {
-      user: hook.params.user.id,
+      user: context.params.user.id,
       subject: { $in: fp.map(fp.prop('id'), docs) },
     },
     paginate: false
@@ -130,11 +130,11 @@ function getFavorites (hook, docs, options) {
   });
 }
 
-function getAcls (hook, docs, options) {
+function getAcls (context, docs, options) {
   const inheritedDocs = fp.filter(fp.propEq('inherited', true), docs);
   return Promise.all([
-    getAces(hook.app, docs),
-    getParentAces(hook.app, inheritedDocs)
+    getAces(context.app, docs),
+    getParentAces(context.app, inheritedDocs)
   ]).then(([localAces, inheritedAces]) => {
     const aces = fp.reduce((acc, doc) => {
       acc[doc.id] = acc[doc.id] || [];
@@ -153,7 +153,7 @@ function getAcls (hook, docs, options) {
   });
 }
 
-function getPermission (hook, docs, options) {
+function getPermission (context, docs, options) {
   const Types = options.DocTypes || DocTypes;
   return Promise.resolve(fp.reduce((acc, doc) => {
     const subtypes = Types[doc.type] && Types[doc.type].subtypes;
@@ -167,14 +167,14 @@ function getPermission (hook, docs, options) {
   }, {}, docs));
 }
 
-function getUserVisiblePermissions (hook, docs, options) {
+function getUserVisiblePermissions (context, docs, options) {
   return Promise.resolve(fp.reduce((acc, doc) => {
     acc[doc.id] = ['Read', 'ReadWrite', 'Everything'];
     return acc;
   }, {}, docs));
 }
 
-function getSubtypes (hook, docs, options) {
+function getSubtypes (context, docs, options) {
   const Types = options.DocTypes || DocTypes;
   return Promise.resolve(fp.reduce((acc, doc) => {
     const subtypes = Types[doc.type] && Types[doc.type].subtypes;
@@ -183,14 +183,14 @@ function getSubtypes (hook, docs, options) {
   }, {}, docs));
 }
 
-function getTags (hook, docs, options) {
+function getTags (context, docs, options) {
   return Promise.resolve(fp.reduce((acc, doc) => {
     acc[doc.id] = doc.tags || [];
     return acc;
   }, {}, docs));
 }
 
-function getThumbnail (hook, docs) {
+function getThumbnail (context, docs) {
   const baseUrl = 'bower_components/playing-content-elements/images/icons/';
   return Promise.resolve(fp.reduce((acc, doc) => {
     acc[doc.id] = {
@@ -202,7 +202,7 @@ function getThumbnail (hook, docs) {
 
 // Add document metadata according to request header
 export default function documentEnrichers (options = {}) {
-  return (context) => {
+  return async context => {
     assert(context.type === 'after', `documentEnrichers must be used as a 'after' hook.`);
 
     const documentEnrichers = context.params &&

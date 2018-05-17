@@ -10,7 +10,7 @@ const debug = makeDebug('playing:content-services:hooks:computeAncestors');
 
 // compute ancestors of current document
 export default function computeAncestors () {
-  return async (context) => {
+  return async context => {
     assert(context.type === 'before', `computeAncestors must be used as a 'before' hook.`);
 
     // skip update/patch if not changing parent with both parent and path

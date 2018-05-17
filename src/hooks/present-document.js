@@ -9,7 +9,7 @@ const debug = makeDebug('playing:content-services:hooks:presentDocument');
 export default function presentDocument (options = {}) {
   const entities = Object.assign(defaultEntities, options.entities);
 
-  return (context) => {
+  return async context => {
     const presentEntity = function (doc) {
       options.provider = context.params.provider;
 

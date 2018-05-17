@@ -2,7 +2,7 @@ import { helpers } from 'mostly-feathers-mongoose';
 import { helpers as feeds } from 'playing-feed-services';
 
 export default function (event) {
-  return context => {
+  return async context => {
     const svcDocuments = context.app.service('documents');
 
     const createActivity = async function (document, verb, message) {

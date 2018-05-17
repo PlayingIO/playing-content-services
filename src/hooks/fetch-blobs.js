@@ -10,7 +10,7 @@ const debug = makeDebug('playing:content-services:hooks:fetchBlobs');
 export default function fetchBlobs (options = {}) {
   assert(options.xpath || options.xpaths, 'fetchBlobs need specified xpath(s)');
 
-  return (context) => {
+  return async context => {
     assert(context.type === 'before', `fetchBlob must be used as a 'before' hook.`);
 
     // If it was an internal call then skip this hook
@@ -56,9 +56,8 @@ export default function fetchBlobs (options = {}) {
       }
     }
 
-    return Promise.all(promises).then(results => {
-      debug('fetchBlob hook.data', context.data, results);
-      return context;
-    });
+    const results = await Promise.all(promises);
+    debug('fetchBlob hook.data', context.data, results);
+    return context;
   };
 }

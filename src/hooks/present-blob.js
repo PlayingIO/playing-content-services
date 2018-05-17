@@ -4,7 +4,7 @@ import BatchEntity from '../entities/batch.entity';
 import BlobEntity from '../entities/blob.entity';
 
 export default function presentBlob (options = {}) {
-  return (context) => {
+  return async context => {
     options.provider = context.params.provider;
 
     if (context.result) {
