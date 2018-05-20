@@ -78,7 +78,7 @@ export const getParentAces = async (app, docs, select = 'user,creator,*') => {
       paginate: false
     }) : Promise.resolve([]);
 
-  const [ancestors, permits] = Promise.all([
+  const [ancestors, permits] = await Promise.all([
     getAncestors(typedIds),
     getAncestorPermissions(typedIds)
   ]);
