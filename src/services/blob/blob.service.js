@@ -71,7 +71,7 @@ export class BlobService extends Service {
   _getBlob (batchId, index) {
     return super.get(batchId).then(result => {
       if (!result) throw new Error('Blob batch id not exists');
-      const batch = result.data || result;
+      const batch = fp.propOf('data', result);
       const blobs = batch.blobs || [];
       if (index >= blobs.length) throw new Error('Blob index out of range of the batch');
       return blobs[index];
@@ -111,7 +111,7 @@ export class BlobService extends Service {
     const getBatch = (id) => {
       return super.get(id).then(result => {
         if (!result) throw new Error('Blob batch id not exists');
-        return result.data || result;
+        return fp.propOf('data', result);
       });
     };
 

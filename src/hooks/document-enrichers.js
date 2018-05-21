@@ -28,7 +28,7 @@ function hasFolderishChild (context, docs, options) {
     : Promise.resolve([]);
 
   return getParents.then(results => {
-    results = results? results.data || results : [];
+    results = fp.propOf('data', results) || [];
     const childrens = fp.groupBy(child => String(child.parent), results);
     return fp.reduce((acc, doc) => {
       const folderishChildren = fp.filter(child => {
@@ -71,7 +71,7 @@ function getBreadcrumbs (context, docs, options) {
   };
 
   return getAncestors().then(results => {
-    results = results? results.data || results : [];
+    results = fp.propOf('data', results) || [];
     const breads = fp.map(
       fp.pick(['id', 'path', 'title', 'metadata']),
       fp.concat(ancestors, results)
@@ -99,7 +99,7 @@ function getCollections (context, docs, options) {
     },
     paginate: false
   }).then(results => {
-    results = results? results.data || results : [];
+    results = fp.propOf('data', results) || [];
     const documents = fp.groupBy(fp.prop('id'), results);
     return fp.reduce((acc, doc) => {
       if (documents[doc.id] && documents[doc.id].length > 0) {
@@ -121,7 +121,7 @@ function getFavorites (context, docs, options) {
     },
     paginate: false
   }).then((results) => {
-    results = results? results.data || results : [];
+    results = fp.propOf('data', results) || [];
     const documents = fp.groupBy(fp.prop('id'), results);
     return fp.reduce((acc, doc) => {
       acc[doc.id] = { isFavorite: documents[doc.id] && documents[doc.id].length > 0 || false };

@@ -59,7 +59,7 @@ export const getAces = (app, docs, select = 'user,creator,*') => {
       $select: select
     }
   }).then(results => {
-    return fp.groupBy(permit => helpers.getId(permit.subject), results.data || results);
+    return fp.groupBy(permit => helpers.getId(permit.subject), fp.propOf('data', results));
   });
 };
 
@@ -82,7 +82,7 @@ export const getParentAces = async (app, docs, select = 'user,creator,*') => {
     getAncestors(typedIds),
     getAncestorPermissions(typedIds)
   ]);
-  const permissions = permits.data || permits;
+  const permissions = fp.propOf('data', permits);
   return fp.reduce((arr, doc) => {
     if (!doc.ancestors) return arr;
     arr[doc.id] = [];

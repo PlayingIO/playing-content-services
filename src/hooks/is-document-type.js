@@ -7,7 +7,7 @@ export default function isDocumentType (type) {
     }
 
     if (context.type === 'after') {
-      const result = context.result && context.result.data || context.result;
+      const result = fp.propOf('data', context.result);
       if (Array.isArray(result)) {
         return fp.reduce((acc, doc) =>
           acc && doc.type === type, true, result);
