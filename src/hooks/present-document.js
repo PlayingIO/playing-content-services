@@ -25,15 +25,15 @@ export default function presentDocument (options = {}) {
     };
 
     const presentData = function (data) {
-      if (Array.isArray(data)) {
-        return data.map(presentEntity);
+      if (fp.isArray(data)) {
+        return fp.map(presentEntity, data);
       } else {
         return presentEntity(data);
       }
     };
 
     if (context.result) {
-      if (context.result.data) {
+      if (fp.hasProp('data', context.result)) {
         context.result.data = presentData(context.result.data);
       } else {
         context.result = presentData(context.result);
