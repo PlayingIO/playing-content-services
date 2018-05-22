@@ -7,6 +7,7 @@ import { createDocumentActivity } from '../helpers';
 
 const createDocument = (context) => {
   const document = helpers.getHookData(context);
+  if (!document) return;
   const actor = context.params.user.id;
   const custom = {
     actor: `user:${document.creator}`,
