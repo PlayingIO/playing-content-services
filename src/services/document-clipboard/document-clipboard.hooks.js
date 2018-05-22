@@ -9,7 +9,7 @@ export default function (options = {}) {
         cache(options.cache)
       ],
       patch: [
-        hooks.addRouteObject('target', { service: 'documents' })
+        hooks.addRouteObject('primary', { service: 'documents' })
       ]
     },
     after: {

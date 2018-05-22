@@ -27,7 +27,7 @@ export class DocumentPermissionService {
    * Add document permission
    */
   async create (data, params) {
-    const target = params.target;
+    const target = params.primary;
     assert(target, 'target document is not exists.');
     assert(data.actions, 'data.actions is not provided.');
     assert(data.user, 'data.user is not provided.');
@@ -56,7 +56,7 @@ export class DocumentPermissionService {
       return this.unblockInheritance(id, data, params);
     }
 
-    const target = params.target;
+    const target = params.primary;
     assert(target, 'target document is not exists.');
     assert(data.ace, 'data.id is not provided.');
     assert(data.actions, 'data.action is not provided.');
@@ -76,7 +76,7 @@ export class DocumentPermissionService {
    * Remove document permissions
    */
   async remove (id, params) {
-    const target = params.target;
+    const target = params.primary;
     assert(target, 'target document is not exists.');
     assert(params.query.ace, 'ace is not provided');
 
@@ -88,7 +88,7 @@ export class DocumentPermissionService {
    * Block document permission inheritance
    */
   async blockInheritance (id, data, params) {
-    const target = params.target;
+    const target = params.primary;
     assert(target, 'target document is not exists.');
 
     // copy inherited permissions
@@ -109,7 +109,7 @@ export class DocumentPermissionService {
    * Unblock document permission inheritance
    */
   async unblockInheritance (id, data, params) {
-    const target = params.target;
+    const target = params.primary;
     assert(target, 'target document is not exists.');
 
     // remove copied permissions

@@ -38,7 +38,7 @@ export class DocumentClipboardService {
    * Copy document as target document's children
    */
   async copyDocument (id, data, params) {
-    const target = params.target;
+    const target = params.primary;
     assert(target, 'target is not exists');
     assert(data.documents, 'data.documents is not provided.');
     assert(data.target, 'data.target is not provided.');
@@ -63,7 +63,7 @@ export class DocumentClipboardService {
    * Move document to target document's children
    */
   async moveDocument (id, data, params) {
-    const target = params.target;
+    const target = params.primary;
     assert(target, 'target is not exists');
     assert(data.documents, 'data.documents is not provided.');
     assert(data.target, 'data.target is not provided.');

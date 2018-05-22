@@ -23,7 +23,7 @@ export class DocumentTagService {
   }
 
   async create (data, params) {
-    const doc = params.document;
+    const doc = params.primary;
     assert(doc, 'document is not exists');
     assert(data.tags, 'data.tags is not provided.');
 
@@ -42,7 +42,7 @@ export class DocumentTagService {
   }
 
   async remove (id, params) {
-    const doc = params.document;
+    const doc = params.primary;
     assert(doc, 'document is not exists');
     assert(id || params.query.tags, 'data.tags not provided.');
     const tags = fp.splitOrArray(id || params.query.tags);

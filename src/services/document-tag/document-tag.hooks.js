@@ -9,10 +9,10 @@ export default function (options = {}) {
         cache(options.cache)
       ],
       create: [
-        hooks.addRouteObject('document', { service: 'documents' })
+        hooks.addRouteObject('primary', { service: 'documents' })
       ],
       remove: [
-        hooks.addRouteObject('document', { service: 'documents' })
+        hooks.addRouteObject('primary', { service: 'documents' })
       ]
     },
     after: {

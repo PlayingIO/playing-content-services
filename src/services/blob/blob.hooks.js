@@ -18,9 +18,9 @@ export default function (options = {}) {
       ],
       patch: [
         iff(hooks.isAction('attachOnDocument'),
-          hooks.addRouteObject('blob', { service: 'blobs', field: 'id' })),
+          hooks.addRouteObject('primary', { service: 'blobs', field: 'id' })),
         iff(hooks.isAction('removeFromDocument'),
-          hooks.addRouteObject('blob', { service: 'blobs', field: 'id' }))
+          hooks.addRouteObject('primary', { service: 'blobs', field: 'id' }))
       ]
     },
     after: {
