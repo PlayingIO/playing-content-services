@@ -28,7 +28,7 @@ export class DocumentPermissionService {
    */
   async create (data, params) {
     const target = params.primary;
-    assert(target, 'target document is not exists.');
+    assert(target && target.id, 'target document is not exists.');
     assert(data.actions, 'data.actions is not provided.');
     assert(data.user, 'data.user is not provided.');
 
@@ -57,7 +57,7 @@ export class DocumentPermissionService {
     }
 
     const target = params.primary;
-    assert(target, 'target document is not exists.');
+    assert(target && target.id, 'target document is not exists.');
     assert(data.ace, 'data.id is not provided.');
     assert(data.actions, 'data.action is not provided.');
     assert(data.user, 'data.user is not provided.');
@@ -77,7 +77,7 @@ export class DocumentPermissionService {
    */
   async remove (id, params) {
     const target = params.primary;
-    assert(target, 'target document is not exists.');
+    assert(target && target.id, 'target document is not exists.');
     assert(params.query.ace, 'ace is not provided');
 
     const svcPermissions = this.app.service('user-permissions');
@@ -89,7 +89,7 @@ export class DocumentPermissionService {
    */
   async blockInheritance (id, data, params) {
     const target = params.primary;
-    assert(target, 'target document is not exists.');
+    assert(target && target.id, 'target document is not exists.');
 
     // copy inherited permissions
     const svcDocuments = this.app.service(plural(target.type));
@@ -110,7 +110,7 @@ export class DocumentPermissionService {
    */
   async unblockInheritance (id, data, params) {
     const target = params.primary;
-    assert(target, 'target document is not exists.');
+    assert(target && target.id, 'target document is not exists.');
 
     // remove copied permissions
     const svcDocuments = this.app.service(plural(target.type));
