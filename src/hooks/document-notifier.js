@@ -1,7 +1,7 @@
 import assert from 'assert';
 import fp from 'mostly-func';
 import { helpers } from 'mostly-feathers-mongoose';
-import { hooks as feeds } from 'playing-feed-services';
+import feeds from 'playing-feed-common';
 
 import { createDocumentActivity } from '../helpers';
 
