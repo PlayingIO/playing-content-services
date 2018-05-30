@@ -1,8 +1,6 @@
 import Entity from 'mostly-entity';
 import fp from 'mostly-func';
-
-import { DocTypes } from '../constants';
-import BlobEntity from './blob.entity';
+import { BlobEntity, DocTypes } from 'playing-content-common';
 
 const NoteEntity = new Entity('Note', {
   file: { using: BlobEntity },
