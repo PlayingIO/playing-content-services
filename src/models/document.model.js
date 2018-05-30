@@ -1,5 +1,5 @@
 import { plugins } from 'mostly-feathers-mongoose';
-import { blob } from './blob.schema';
+import { schemas } from 'playing-content-common';
 
 const options = {
   timestamps: true,
@@ -17,8 +17,8 @@ const fields = {
   creator: { type: 'ObjectId' },               // creator of the document
   description: { type: String },               // description of the resource.
   expiredAt: { type: Date },                   // end date of validity of a resource
-  file: blob,                                  // main blob of the resource
-  files: [blob],                               // attachements of the resource
+  file: schemas.blob.schema,                   // main blob of the resource
+  files: [schemas.blob.schema],                // attachements of the resource
   format: { type: String },                    // file format, physical medium, or dimensions of the resource.
   issuedAt: { type: Date },                    // date issued
   language: { type: String },                  // language of the resource.

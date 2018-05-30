@@ -1,5 +1,5 @@
 import { plugins } from 'mostly-feathers-mongoose';
-import { blob } from './blob.schema';
+import { schemas } from 'playing-content-common';
 
 const options = {
   timestamps: true
@@ -9,7 +9,7 @@ const options = {
  * Blob
  */
 const fields = {
-  blobs: [blob],
+  blobs: [schemas.blob.schema],
 };
 
 export default function model (app, name) {
@@ -19,4 +19,4 @@ export default function model (app, name) {
   return mongoose.model(name, schema);
 }
 
-model.schema = blob;
+model.schema = fields;
