@@ -2,9 +2,9 @@ import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
 import { plural } from 'pluralize';
+import { getParentAces } from 'playing-content-common';
 
 import defaultHooks from './document-permission.hooks';
-import { getParentAces } from '../../helpers';
 
 const debug = makeDebug('playing:content-services:documents/permissions');
 

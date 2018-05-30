@@ -4,7 +4,6 @@ import { cache } from 'mostly-feathers-cache';
 
 import { presentBlob } from '../../hooks';
 
-
 export default function (options = {}) {
   return {
     before: {

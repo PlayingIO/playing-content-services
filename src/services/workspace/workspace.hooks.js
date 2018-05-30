@@ -2,6 +2,7 @@ import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authenticat
 import { iff, isProvider } from 'feathers-hooks-common';
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
+import contents from 'playing-content-common';
 
 import * as content from '../../hooks';
 
@@ -17,7 +18,7 @@ export default function (options = {}) {
     },
     after: {
       all: [
-        //content.addMetadata('facets', ['HiddenInNavigation']),
+        //contents.addMetadata('facets', ['HiddenInNavigation']),
         cache(options.cache, { headers: ['enrichers-document'] }),
         hooks.responder()
       ]
