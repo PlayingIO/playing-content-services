@@ -1,7 +1,5 @@
 import fp from 'mostly-func';
-
-import BatchEntity from '../entities/batch.entity';
-import BlobEntity from '../entities/blob.entity';
+import { BatchEntity, BlobEntity } from 'playing-content-common';
 
 export default function presentBlob (options = {}) {
   return async context => {
