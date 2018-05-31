@@ -1,7 +1,6 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
-
-import TagEntity from '../../entities/tag.entity';
+import { TagEntity } from 'playing-content-common';
 
 export default function (options = {}) {
   return {

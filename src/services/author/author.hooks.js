@@ -1,7 +1,6 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
-
-import AuthorEntity from '../../entities/author.entity';
+import { AuthorEntity } from 'playing-content-common';
 
 export default function (options = {}) {
   return {

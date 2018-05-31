@@ -4,7 +4,7 @@ import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 import contents from 'playing-content-common';
 
-import NoteEntity from '../../entities/note.entity';
+import { NoteEntity } from 'playing-content-common';
 
 export default function (options = {}) {
   return {

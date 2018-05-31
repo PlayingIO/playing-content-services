@@ -1,13 +1,13 @@
 import makeDebug from 'debug';
 import fp from 'mostly-func';
 
-import defaultEntities from '../entities';
+import { entities as contents } from 'playing-content-common';
 
 const debug = makeDebug('playing:content-services:hooks:presentDocument');
 
 // presentEntity by document type
 export default function presentDocument (options = {}) {
-  const entities = Object.assign(defaultEntities, options.entities);
+  const entities = Object.assign(contents, options.entities);
 
   return async context => {
     const presentEntity = function (doc) {
