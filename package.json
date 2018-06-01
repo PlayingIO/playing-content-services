@@ -1,6 +1,6 @@
 {
   "name": "playing-content-services",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Content management microservices for playful applications",
   "author": "Forafish",
   "license": "MIT",
