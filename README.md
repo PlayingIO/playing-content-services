@@ -1,7 +1,7 @@
 Playing Content Services
 ========================
 
-Content management microservices for playful applications.
+Content management microservices for building playful applications.
 
 # Usage
 
