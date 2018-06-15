@@ -43,6 +43,8 @@ export class PathService {
       type = fp.head(basename.split('-'));
     }
 
+    // get by path even if the document is destroyedAt
+    params.$soft = true;
     let service = this.app.service(plural(type || 'document'));
     return service.get(null, params);
   }
