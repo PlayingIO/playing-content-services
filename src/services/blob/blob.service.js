@@ -182,8 +182,8 @@ export class BlobService extends Service {
   attachOnDocument (id, data, params) {
     const original = params.primary;
     assert(original && original.id, 'blob is not exists');
-    assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
-    assert(data.context && data.context.documentType, 'context.documentType not provided.');
+    assert(data.document, 'data.document not provided.');
+    assert(data.documentType, 'data.documentType not provided.');
 
     const svcDocuments = this.app.service('documents');
 
@@ -192,8 +192,8 @@ export class BlobService extends Service {
       return fp.dissoc('id', blob);
     });
 
-    return svcDocuments.get(data.context.currentDocument).then((doc) => {
-      if (!doc) throw new Error('currentDocument not exists');
+    return svcDocuments.get(data.document).then((doc) => {
+      if (!doc) throw new Error('document not exists');
       let files = (doc.files || []).concat(blobs);
       debug('attachOnDocument', files);
       return svcDocuments.patch(doc.id, { files: files });
@@ -203,14 +203,14 @@ export class BlobService extends Service {
   removeFromDocument (id, data, params) {
     const original = params.primary;
     assert(original && original.id, 'blob is not exists');
-    assert(data.context && data.context.currentDocument, 'context.currentDocument not provided.');
-    assert(data.context && data.context.documentType, 'context.documentType not provided.');
+    assert(data.document, 'data.document not provided.');
+    assert(data.documentType, 'data.documentType not provided.');
     assert(data.xpath, 'data.xpath not provided.');
 
     const svcDocuments = this.app.service('documents');
 
-    return svcDocuments.get(data.context.currentDocument).then((doc) => {
-      if (!doc) throw new Error('currentDocument not exists');
+    return svcDocuments.get(data.document).then((doc) => {
+      if (!doc) throw new Error('document not exists');
       if (data.xpath.startsWith('files')) {
         let [xpath, index] = data.xpath.split('/');
         let files = fp.remove(parseInt(index), 1, doc.files || []);
