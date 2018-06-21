@@ -46,6 +46,7 @@ export default function model (app, name) {
   const mongoose = app.get('mongoose');
   const schema = new mongoose.Schema(fields, options);
   schema.plugin(plugins.softDelete);
+  schema.plugin(plugins.sortable, { classify: 'parent' });
   schema.index({ parent: 1 });
   schema.index({ path: 1 });
   schema.index({ ancestors: 1 });
