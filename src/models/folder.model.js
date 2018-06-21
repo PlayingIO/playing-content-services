@@ -2,7 +2,8 @@
  * Folder document
  */
 const fields = {
-  color: { type: String }
+  color: { type: String },
+  ordered: { type: Boolean, default: false }
 };
 
 export default function model (app, name) {
