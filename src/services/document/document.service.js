@@ -10,7 +10,11 @@ import DocumentModel from '../../models/document.model';
 const debug = makeDebug('playing:content-services:documents');
 
 const defaultOptions = {
-  name: 'documents'
+  name: 'documents',
+  sort: {
+    'position': 1,
+    'createdAt': -1
+  }
 };
 
 export class DocumentService extends Service {
