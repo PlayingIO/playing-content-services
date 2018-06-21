@@ -1,9 +1,12 @@
 import assert from 'assert';
-import { Service, createService } from 'mostly-feathers-mongoose';
+import makeDebug from 'debug';
+import { Service, helpers, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
 import FolderModel from '../../models/folder.model';
 import defaultHooks from './folder.hooks';
+
+const debug = makeDebug('playing:content-services:folders');
 
 const defaultOptions = {
   name: 'folders'
@@ -45,6 +48,28 @@ export class FolderService extends Service {
       }
     }).catch(console.error);
   }
+
+  /*
+   * move positions of documents in the folder
+   */
+  async move (id, data, params) {
+    assert(data.selects, 'data.selects is not provided.');
+    assert(data.target, 'data.target is not provided.');
+    data.selects = fp.asArray(data.selects);
+
+    debug('move folder documents', id, data.selects, data.target);
+    const svcDocuments = this.app.service('documents');
+    const [target, selects] = await Promise.all([
+      svcDocuments.get(data.target).
+      svcDocuments.find({ id: { $in: data.selects } })
+    ]);
+    assert(target, 'target item is not exists');
+    assert(selects && selects.length, 'selects item is not exists');
+
+    return helpers.reorderPosition(this.Model, selects, target.position, {
+      classify: 'parent'
+    });
+  }  
 }
 
 export default function init (app, options, hooks) {
