@@ -90,6 +90,36 @@ export class DocumentService extends Service {
       }
     }
   }
+
+  /*
+   * move positions of children documents
+   */
+  async move (id, data, params) {
+    const parent = params.primary;
+    assert(parent && parent.id, 'parent document is not exists.');
+    assert(data.selects, 'data.selects is not provided.');
+    assert(data.target, 'data.target is not provided.');
+    data.selects = fp.asArray(data.selects);
+
+    const isOrderable = parent.metadata && parent.metadata.facets && parent.metadata.facets.indexOf('Orderable');
+    if (isOrderable < 0) {
+      throw new Error('parent document is not manully sortable');
+    }
+    debug('move children documents', id, data.selects, data.target);
+    const [target, selects] = await Promise.all([
+      this.get(data.target),
+      this.find({
+        query: { id: { $in: data.selects } },
+        paginate: false
+      })
+    ]);
+    assert(target, 'target item is not exists');
+    assert(selects && selects.length, 'selects item is not exists');
+
+    return helpers.reorderPosition(this.Model, selects, target.position, {
+      classify: 'parent'
+    });
+  }
 }
 
 export default function init (app, options) {
