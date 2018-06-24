@@ -38,7 +38,7 @@ export default function (options = {}) {
         contents.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       patch: [
-        iff(hooks.isAction('move'),
+        iff(hooks.isAction('move', 'restore'),
           hooks.addRouteObject('primary', { service: 'documents', field: 'id' })),
         hooks.depopulate('parent'),
         hooks.discardFields('metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
