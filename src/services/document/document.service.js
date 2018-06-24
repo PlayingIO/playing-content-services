@@ -120,6 +120,20 @@ export class DocumentService extends Service {
       classify: 'parent'
     });
   }
+
+  /**
+   * Untrash a document
+   */
+  async restore (id, data, params = {}) {
+    const document = params.primary;
+    const update = { destroyedAt: null };
+
+    if (fp.isValid(document.position)) {
+      update['position'] = null; // remove old position
+      update['parent'] = document.parent; // must provided for recaculate position
+    }
+    return super.patch(id, update, params);
+  }
 }
 
 export default function init (app, options) {
