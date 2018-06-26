@@ -23,7 +23,7 @@ export class PathService {
     this.hooks(defaultHooks(this.options));
   }
 
-  find (params) {
+  async find (params) {
     params = { query: {}, ...params };
     params.query.path = '/';
 
@@ -31,7 +31,7 @@ export class PathService {
     return svcFolders.get(null, params);
   }
 
-  get (id, params) {
+  async get (id, params) {
     params = { query: {}, ...params };
     const name = '/' + path.join(id || '', params.action || '');
     params.query.path = name;
