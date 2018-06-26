@@ -35,7 +35,7 @@ export class BlobService extends Service {
     this.hooks(defaultHooks(this.options));
   }
 
-  get (id, params) {
+  async get (id, params) {
     let [batchId, index] = id.split('.');
     debug('get', batchId, index);
 
@@ -78,11 +78,11 @@ export class BlobService extends Service {
     }).then(helpers.transform);
   }
 
-  create (data, params) {
+  async create (data, params) {
     return super.create(data, params);
   }
 
-  update (id, data, params) {
+  async update (id, data, params) {
     debug('update', id, data, params);
     assert(params.file, 'params file not provided.');
 
@@ -155,11 +155,11 @@ export class BlobService extends Service {
     .then(updateBlobs);
   }
 
-  patch (id, data, params) {
+  async patch (id, data, params) {
     return super.update(id, data, params);
   }
 
-  remove (id) {
+  async remove (id) {
     let [batchId, index] = id.split('.');
     debug('remove', batchId, index);
 
@@ -179,7 +179,7 @@ export class BlobService extends Service {
     }
   }
 
-  attachOnDocument (id, data, params) {
+  async attachOnDocument (id, data, params) {
     const original = params.primary;
     assert(original && original.id, 'blob is not exists');
     assert(data.document, 'data.document not provided.');
@@ -192,15 +192,15 @@ export class BlobService extends Service {
       return fp.dissoc('id', blob);
     });
 
-    return svcDocuments.get(data.document).then((doc) => {
-      if (!doc) throw new Error('document not exists');
-      let files = (doc.files || []).concat(blobs);
-      debug('attachOnDocument', files);
-      return svcDocuments.patch(doc.id, { files: files });
-    });
+    const doc = await svcDocuments.get(data.document);
+    if (!doc) throw new Error('document not exists');
+
+    let files = (doc.files || []).concat(blobs);
+    debug('attachOnDocument', files);
+    return svcDocuments.patch(doc.id, { files: files });
   }
 
-  removeFromDocument (id, data, params) {
+  async removeFromDocument (id, data, params) {
     const original = params.primary;
     assert(original && original.id, 'blob is not exists');
     assert(data.document, 'data.document not provided.');
@@ -209,19 +209,19 @@ export class BlobService extends Service {
 
     const svcDocuments = this.app.service('documents');
 
-    return svcDocuments.get(data.document).then((doc) => {
-      if (!doc) throw new Error('document not exists');
-      if (data.xpath.startsWith('files')) {
-        let [xpath, index] = data.xpath.split('/');
-        let files = fp.remove(parseInt(index), 1, doc.files || []);
-        debug('removeFromDocument', xpath, index, files);
-        return svcDocuments.patch(doc.id, { files: files });
-      } else {
-        let xpath = data.xpath;
-        debug('removeFromDocument', xpath);
-        return svcDocuments.patch(doc.id, { [xpath]: null });
-      }
-    });
+    const doc = await svcDocuments.get(data.document);
+    if (!doc) throw new Error('document not exists');
+
+    if (data.xpath.startsWith('files')) {
+      let [xpath, index] = data.xpath.split('/');
+      let files = fp.remove(parseInt(index), 1, doc.files || []);
+      debug('removeFromDocument', xpath, index, files);
+      return svcDocuments.patch(doc.id, { files: files });
+    } else {
+      let xpath = data.xpath;
+      debug('removeFromDocument', xpath);
+      return svcDocuments.patch(doc.id, { [xpath]: null });
+    }
   }
 }
 
