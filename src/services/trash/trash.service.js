@@ -29,7 +29,7 @@ export class TrashService {
   /**
    * Find all trashed documents
    */
-  find (params) {
+  async find (params) {
     params = { query: {}, ...params };
     params.query.destroyedAt = { $ne: null };
 
@@ -40,7 +40,7 @@ export class TrashService {
   /**
    * Get all trashed documents under a Folderish parent
    */
-  get (id, params) {
+  async get (id, params) {
     assert(id, 'id is not provided');
     params = { query: {}, ...params };
     params.query.parent = id;
