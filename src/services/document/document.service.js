@@ -29,7 +29,7 @@ export class DocumentService extends Service {
     this.hooks(defaultHooks(this.options));
   }
 
-  find (params = {}) {
+  async find (params = {}) {
     const type = fp.dotPath('query.type', params);
     if (type && fp.is(String, type)) {
       return this.app.service(plural(type)).find(params);
@@ -40,18 +40,17 @@ export class DocumentService extends Service {
     }
   }
 
-  get (id, params = {}) {
+  async get (id, params = {}) {
     const type = fp.dotPath('query.type', params);
     if (type && fp.is(String, type)) {
       return this.app.service(plural(type)).get(id, params);
     } else {
-      return super.get(id, params).then(doc => {
-        return helpers.discriminatedGet(this.app, 'document', doc, params);
-      });
+      const doc = await super.get(id, params);
+      return helpers.discriminatedGet(this.app, 'document', doc, params);
     }
   }
 
-  create (data, params = {}) {
+  async create (data, params = {}) {
     if (data.type && fp.is(String, data.type)) {
       return this.app.service(plural(data.type)).create(data, params);
     } else {
@@ -59,7 +58,7 @@ export class DocumentService extends Service {
     }
   }
 
-  update (id, data, params = {}) {
+  async update (id, data, params = {}) {
     if (data.type && fp.is(String, data.type)) {
       return this.app.service(plural(data.type)).update(id, data, params);
     } else {
@@ -67,7 +66,7 @@ export class DocumentService extends Service {
     }
   }
 
-  patch (id, data, params = {}) {
+  async patch (id, data, params = {}) {
     if (data.type && fp.is(String, data.type)) {
       return this.app.service(plural(data.type)).patch(id, data, params);
     } else {
@@ -75,7 +74,7 @@ export class DocumentService extends Service {
     }
   }
 
-  remove (id, params = {}) {
+  async remove (id, params = {}) {
     const type = fp.dotPath('query.type', params);
     if (type && fp.is(String, type)) {
       return this.app.service(plural(type)).remove(id, params);
