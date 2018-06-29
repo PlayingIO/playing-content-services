@@ -25,7 +25,7 @@ export class WorkspaceService {
   }
 
   _getUserWorkspace (params) {
-    assert(params.query.creator, 'params.query.creator not provided');
+    assert(params.query.creator, 'query.creator not provided');
     const workspace = '/workspaces/folder-' + params.user.username;
     params.query.path = workspace;
 

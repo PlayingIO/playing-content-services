@@ -182,8 +182,8 @@ export class BlobService extends Service {
   async attachOnDocument (id, data, params) {
     const original = params.primary;
     assert(original && original.id, 'blob is not exists');
-    assert(data.document, 'data.document not provided.');
-    assert(data.documentType, 'data.documentType not provided.');
+    assert(data.document, 'document not provided.');
+    assert(data.documentType, 'documentType not provided.');
 
     const svcDocuments = this.app.service('documents');
 
@@ -203,9 +203,9 @@ export class BlobService extends Service {
   async removeFromDocument (id, data, params) {
     const original = params.primary;
     assert(original && original.id, 'blob is not exists');
-    assert(data.document, 'data.document not provided.');
-    assert(data.documentType, 'data.documentType not provided.');
-    assert(data.xpath, 'data.xpath not provided.');
+    assert(data.document, 'document not provided.');
+    assert(data.documentType, 'documentType not provided.');
+    assert(data.xpath, 'xpath not provided.');
 
     const svcDocuments = this.app.service('documents');
 

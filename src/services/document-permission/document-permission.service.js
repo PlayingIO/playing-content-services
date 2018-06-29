@@ -29,8 +29,8 @@ export class DocumentPermissionService {
   async create (data, params) {
     const target = params.primary;
     assert(target && target.id, 'target document is not exists.');
-    assert(data.actions, 'data.actions is not provided.');
-    assert(data.user, 'data.user is not provided.');
+    assert(data.actions, 'actions is not provided.');
+    assert(data.user, 'user is not provided.');
 
     const svcPermissions = this.app.service('user-permissions');
     return svcPermissions.create({
@@ -58,9 +58,9 @@ export class DocumentPermissionService {
 
     const target = params.primary;
     assert(target && target.id, 'target document is not exists.');
-    assert(data.ace, 'data.id is not provided.');
-    assert(data.actions, 'data.action is not provided.');
-    assert(data.user, 'data.user is not provided.');
+    assert(data.ace, 'id is not provided.');
+    assert(data.actions, 'action is not provided.');
+    assert(data.user, 'user is not provided.');
 
     const svcPermissions = this.app.service('user-permissions');
     return svcPermissions.patch(data.ace, {

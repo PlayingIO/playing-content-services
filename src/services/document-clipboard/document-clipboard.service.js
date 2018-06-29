@@ -40,8 +40,8 @@ export class DocumentClipboardService {
   async copyDocument (id, data, params) {
     const target = params.primary;
     assert(target && target.id, 'target is not exists');
-    assert(data.documents, 'data.documents is not provided.');
-    assert(data.target, 'data.target is not provided.');
+    assert(data.documents, 'documents is not provided.');
+    assert(data.target, 'target is not provided.');
     debug('copyDocument target', target.id, data.documents);
 
     const svcDocuments = this.app.service('documents');
@@ -65,8 +65,8 @@ export class DocumentClipboardService {
   async moveDocument (id, data, params) {
     const target = params.primary;
     assert(target && target.id, 'target is not exists');
-    assert(data.documents, 'data.documents is not provided.');
-    assert(data.target, 'data.target is not provided.');
+    assert(data.documents, 'documents is not provided.');
+    assert(data.target, 'target is not provided.');
     debug('moveDocument target', target.id, data.documents);
 
     const svcDocuments = this.app.service('documents');

@@ -96,8 +96,8 @@ export class DocumentService extends Service {
   async move (id, data, params) {
     const parent = params.primary;
     assert(parent && parent.id, 'parent document is not exists.');
-    assert(data.selects, 'data.selects is not provided.');
-    assert(data.target, 'data.target is not provided.');
+    assert(data.selects, 'selects is not provided.');
+    assert(data.target, 'target is not provided.');
     data.selects = fp.asArray(data.selects);
 
     const isOrderable = parent.metadata && parent.metadata.facets && parent.metadata.facets.indexOf('Orderable');
