@@ -1,4 +1,3 @@
-import { iff, isProvider } from 'feathers-hooks-common';
 import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
@@ -19,15 +18,13 @@ export default function (options = {}) {
         // queryWithCurrentUser({ idField: 'id', as: 'creator' })
       ],
       create: [
-        iff(isProvider('external'),
-          associateCurrentUser({ idField: 'id', as: 'creator' })),
+        associateCurrentUser({ idField: 'id', as: 'creator' }),
         contents.computePath({ type: 'file' }),
         contents.computeAncestors(),
         contents.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       update: [
-        iff(isProvider('external'),
-          associateCurrentUser({ idField: 'id', as: 'creator' })),
+        associateCurrentUser({ idField: 'id', as: 'creator' }),
         hooks.depopulate('parent'),
         hooks.discardFields('metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
         contents.computePath({ type: 'file' }),
@@ -35,8 +32,7 @@ export default function (options = {}) {
         contents.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       patch: [
-        iff(isProvider('external'),
-          associateCurrentUser({ idField: 'id', as: 'creator' })),
+        associateCurrentUser({ idField: 'id', as: 'creator' }),
         hooks.depopulate('parent'),
         hooks.discardFields('metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
         contents.computePath({ type: 'file' }),

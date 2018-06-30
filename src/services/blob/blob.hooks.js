@@ -1,4 +1,4 @@
-import { iff, isProvider } from 'feathers-hooks-common';
+import { iff } from 'feathers-hooks-common';
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
