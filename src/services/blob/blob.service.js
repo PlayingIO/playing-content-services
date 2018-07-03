@@ -168,7 +168,7 @@ export class BlobService extends Service {
       return new Promise((resolve, reject) => {
         this.storage.remove({
           key: blob.key
-        }, error => error ? reject(error) : resolve(blob));
+        }, error => error? reject(error) : resolve(blob));
       });
     };
 
