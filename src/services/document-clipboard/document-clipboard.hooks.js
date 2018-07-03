@@ -9,7 +9,7 @@ export default function (options = {}) {
         cache(options.cache)
       ],
       patch: [
-        hooks.addRouteObject('primary', { service: 'documents' })
+        hooks.addRouteObject('primary', { service: 'documents', headers: { 'enrichers-document': 'subtypes' } })
       ]
     },
     after: {
