@@ -44,16 +44,26 @@ export class DocumentClipboardService {
     assert(data.target, 'target is not provided.');
     debug('copyDocument target', target.id, data.documents);
 
+    // subtypes of target
+    const subtypes = fp.map(
+      type => type.type.toLowerCase(),
+      target.metadata && target.metadata.subtypes || []
+    );
+
     const svcDocuments = this.app.service('documents');
     const copyDoc = async (id) => {
       const doc = await svcDocuments.get(id);
       const svcService = this.app.service(plural(doc.type || 'document'));
-      let clone = fp.omit([
-        'id', 'metadata', 'parent', 'path', 'ancestors',
-        'createdAt', 'updatedAt', 'destroyedAt'
-      ], doc);
-      clone.parent = target.id;
-      return svcService.create(clone);
+      if (fp.contains(doc.type, subtypes)) {
+        let clone = fp.omit([
+          'id', 'metadata', 'parent', 'path', 'ancestors',
+          'createdAt', 'updatedAt', 'destroyedAt'
+        ], doc);
+        clone.parent = target.id;
+        return svcService.create(clone);
+      } else {
+        throw new Error('Target not allow doc type ' + doc.type);
+      }
     };
 
     return Promise.all(data.documents.map(copyDoc));
