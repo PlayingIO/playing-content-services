@@ -1,9 +1,8 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
-import path from 'path';
-import { plural } from 'pluralize';
 
+import { getMetaSubtypes, copyDocument, moveDocument } from '../../helpers';
 import defaultHooks from './document-clipboard.hooks';
 
 const debug = makeDebug('playing:content-services:documents/clipboards');
@@ -28,8 +27,8 @@ export class DocumentClipboardService {
    */
   async patch (id, data, params) {
     switch (id) {
-      case 'copyDocument': return this.copyDocument(id, data, params);
-      case 'moveDocument': return this.moveDocument(id, data, params);
+      case 'copyDocument': return this.copy(id, data, params);
+      case 'moveDocument': return this.move(id, data, params);
       default: throw new Error(`Unknown action method ${id}`);
     }
   }
@@ -37,7 +36,7 @@ export class DocumentClipboardService {
   /**
    * Copy document as target document's children
    */
-  async copyDocument (id, data, params) {
+  async copy (id, data, params) {
     const target = params.primary;
     assert(target && target.id, 'target is not exists');
     assert(data.documents, 'documents is not provided.');
@@ -45,22 +44,13 @@ export class DocumentClipboardService {
     debug('copyDocument target', target.id, data.documents);
 
     // subtypes of target
-    const subtypes = fp.map(
-      type => type.type.toLowerCase(),
-      target.metadata && target.metadata.subtypes || []
-    );
+    const subtypes = getMetaSubtypes(target);
 
     const svcDocuments = this.app.service('documents');
     const copyDoc = async (id) => {
       const doc = await svcDocuments.get(id);
-      const svcService = this.app.service(plural(doc.type || 'document'));
       if (fp.contains(doc.type, subtypes)) {
-        let clone = fp.omit([
-          'id', 'metadata', 'parent', 'path', 'ancestors',
-          'createdAt', 'updatedAt', 'destroyedAt'
-        ], doc);
-        clone.parent = target.id;
-        return svcService.create(clone);
+        return copyDocument(this.app, doc, target.id);
       } else {
         throw new Error('Target not allow doc type ' + doc.type);
       }
@@ -72,7 +62,7 @@ export class DocumentClipboardService {
   /**
    * Move document to target document's children
    */
-  async moveDocument (id, data, params) {
+  async move (id, data, params) {
     const target = params.primary;
     assert(target && target.id, 'target is not exists');
     assert(data.documents, 'documents is not provided.');
@@ -80,22 +70,13 @@ export class DocumentClipboardService {
     debug('moveDocument target', target.id, data.documents);
 
     // subtypes of target
-    const subtypes = fp.map(
-      type => type.type.toLowerCase(),
-      target.metadata && target.metadata.subtypes || []
-    );
+    const subtypes = getMetaSubtypes(target);
 
     const svcDocuments = this.app.service('documents');
     const moveDoc = async (id) => {
       const doc = await svcDocuments.get(id);
-      const svcService = this.app.service(plural(doc.type || 'document'));
       if (fp.contains(doc.type, subtypes)) {
-        const data = {
-          parent: target.id,
-          path: path.resolve(target.path, path.basename(doc.path)),
-          type: doc.type
-        };
-        return svcService.patch(doc.id, data);
+        return moveDocument(this.app, doc, target.id);
       } else {
         throw new Error('Target not allow doc type ' + doc.type);
       }
