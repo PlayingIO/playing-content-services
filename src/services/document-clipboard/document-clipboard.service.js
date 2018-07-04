@@ -72,27 +72,28 @@ export class DocumentClipboardService {
 
     // subtypes of target
     const subtypes = getMetaSubtypes(target);
-    
-    const svcDocuments = this.app.service('documents');
-    const getDoc = async (id) => {
-      const doc = await svcDocuments.get(id);
-      if (fp.contains(doc.type, subtypes)) {
-        return doc;
-      } else {
-        throw new Error('Target not allow doc type ' + doc.type);
-      }
-    };
-    const moveDoc = async (doc) => {
-      return moveDocument(this.app, doc, target.id);
-    };
 
-    const documents = await Promise.all(fp.map(getDoc, data.documents));
-    const results = await Promise.all(fp.map(moveDoc, documents));
+    const documents = await Promise.all(
+      fp.map(doc => this._checkDocument(doc, subtypes), data.documents)
+    );
+    const results = await Promise.all(
+      fp.map(doc => moveDocument(this.app, doc, target.id), documents)
+    );
 
     // fanout for all children documents
     fanoutOperations(this.app, documents, 'moveDocuments', this.options.fanoutLimit);
   
     return results;
+  }
+
+  async _checkDocument (id, subtypes) {
+    const svcDocuments = this.app.service('documents');
+    const document = await svcDocuments.get(id);
+    if (fp.contains(document.type, subtypes)) {
+      return document;
+    } else {
+      throw new Error('Target not allow doc type ' + document.type);
+    }
   }
 }
 
