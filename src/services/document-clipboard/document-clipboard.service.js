@@ -2,13 +2,14 @@ import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
 
-import { getMetaSubtypes, copyDocument, moveDocument } from '../../helpers';
+import { getMetaSubtypes, copyDocument, moveDocument, fanoutOperations } from '../../helpers';
 import defaultHooks from './document-clipboard.hooks';
 
 const debug = makeDebug('playing:content-services:documents/clipboards');
 
 const defaultOptions = {
-  name: 'documents/clipboards'
+  name: 'documents/clipboards',
+  fanoutLimit: 10,  // number of children documents are handled in one task when doing the fanout
 };
 
 export class DocumentClipboardService {
@@ -71,18 +72,27 @@ export class DocumentClipboardService {
 
     // subtypes of target
     const subtypes = getMetaSubtypes(target);
-
+    
     const svcDocuments = this.app.service('documents');
-    const moveDoc = async (id) => {
+    const getDoc = async (id) => {
       const doc = await svcDocuments.get(id);
       if (fp.contains(doc.type, subtypes)) {
-        return moveDocument(this.app, doc, target.id);
+        return doc;
       } else {
         throw new Error('Target not allow doc type ' + doc.type);
       }
     };
+    const moveDoc = async (doc) => {
+      return moveDocument(this.app, doc, target.id);
+    };
 
-    return Promise.all(data.documents.map(moveDoc));
+    const documents = await Promise.all(fp.map(getDoc, data.documents));
+    const results = await Promise.all(fp.map(moveDoc, documents));
+
+    // fanout for all children documents
+    fanoutOperations(this.app, documents, 'moveDocuments', this.options.fanoutLimit);
+  
+    return results;
   }
 }
 
