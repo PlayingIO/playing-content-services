@@ -47,17 +47,17 @@ export class DocumentClipboardService {
     // subtypes of target
     const subtypes = getMetaSubtypes(target);
 
-    const svcDocuments = this.app.service('documents');
-    const copyDoc = async (id) => {
-      const doc = await svcDocuments.get(id);
-      if (fp.contains(doc.type, subtypes)) {
-        return copyDocument(this.app, doc, target.id);
-      } else {
-        throw new Error('Target not allow doc type ' + doc.type);
-      }
-    };
+    const documents = await Promise.all(
+      fp.map(doc => this._checkDocument(doc, subtypes), data.documents)
+    );
+    const results = await Promise.all(
+      fp.map(doc => copyDocument(this.app, doc, target.id), documents)
+    );
 
-    return Promise.all(data.documents.map(copyDoc));
+    // fanout for all children documents
+    fanoutOperations(this.app, documents, 'copyDocuments', this.options.fanoutLimit);
+  
+    return results;
   }
 
   /**
