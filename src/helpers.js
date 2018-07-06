@@ -24,17 +24,17 @@ export const getChildrens = async (app, parents) => {
 /**
  * Fanout move/copy operation to children documents
  */
-export const fanoutOperations = async (app, documents, operation, target) => {
+export const fanoutDocuments = async (app, documents, operation, target) => {
   // get children documents with skip/limit
   const parents = fp.map(fp.prop('id'), documents);
   const childrens = await getChildrens(app, parents);
   if (!fp.isEmpty(childrens)) {
     for (const [parent, children] of Object.entries(childrens)) {
-      app.agenda.now('fanout_operation', {
+      app.agenda.now('fanout_documents', {
         operation, documents: children, target: parent
       });
       // process next batch of children
-      await fanoutOperations(app, children, operation, parent);
+      await fanoutDocuments(app, children, operation, parent);
     }
   }
 };
