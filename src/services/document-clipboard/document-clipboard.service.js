@@ -4,6 +4,7 @@ import fp from 'mostly-func';
 
 import { getMetaSubtypes, copyDocument, moveDocument, fanoutOperations } from '../../helpers';
 import defaultHooks from './document-clipboard.hooks';
+import defaultJobs from './document-clipboard.jobs';
 
 const debug = makeDebug('playing:content-services:documents/clipboards');
 
@@ -21,6 +22,7 @@ export class DocumentClipboardService {
   setup (app) {
     this.app = app;
     this.hooks(defaultHooks(this.options));
+    defaultJobs(app, this.options);
   }
 
   /**
@@ -28,8 +30,8 @@ export class DocumentClipboardService {
    */
   async patch (id, data, params) {
     switch (id) {
-      case 'copyDocument': return this.copy(id, data, params);
-      case 'moveDocument': return this.move(id, data, params);
+      case 'copy': return this.copy(id, data, params);
+      case 'move': return this.move(id, data, params);
       default: throw new Error(`Unknown action method ${id}`);
     }
   }
