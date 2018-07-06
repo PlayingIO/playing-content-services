@@ -9,8 +9,7 @@ import defaultJobs from './document-clipboard.jobs';
 const debug = makeDebug('playing:content-services:documents/clipboards');
 
 const defaultOptions = {
-  name: 'documents/clipboards',
-  fanoutLimit: 10,  // number of children documents are handled in one task when doing the fanout
+  name: 'documents/clipboards'
 };
 
 export class DocumentClipboardService {
@@ -57,7 +56,7 @@ export class DocumentClipboardService {
     );
 
     // fanout for all children documents
-    fanoutDocuments(this.app, documents, 'copyDocuments', this.options.fanoutLimit);
+    fanoutDocuments(this.app, documents, 'copyDocuments', results);
   
     return results;
   }
@@ -83,7 +82,7 @@ export class DocumentClipboardService {
     );
 
     // fanout for all children documents
-    fanoutDocuments(this.app, documents, 'moveDocuments', this.options.fanoutLimit);
+    fanoutDocuments(this.app, documents, 'moveDocuments', results);
   
     return results;
   }

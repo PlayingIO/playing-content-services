@@ -31,7 +31,7 @@ export const fanoutDocuments = async (app, documents, operation, target) => {
   if (!fp.isEmpty(childrens)) {
     for (const [parent, children] of Object.entries(childrens)) {
       app.agenda.now('fanout_documents', {
-        operation, documents: children, target: parent
+        operation, documents: children, target: target
       });
       // process next batch of children
       await fanoutDocuments(app, children, operation, parent);
