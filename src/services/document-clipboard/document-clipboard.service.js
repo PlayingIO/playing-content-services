@@ -2,7 +2,7 @@ import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
 
-import { getMetaSubtypes, copyDocument, moveDocument, fanoutOperations } from '../../helpers';
+import { getMetaSubtypes, copyDocument, moveDocument, fanoutDocuments } from '../../helpers';
 import defaultHooks from './document-clipboard.hooks';
 import defaultJobs from './document-clipboard.jobs';
 
@@ -57,7 +57,7 @@ export class DocumentClipboardService {
     );
 
     // fanout for all children documents
-    fanoutOperations(this.app, documents, 'copyDocuments', this.options.fanoutLimit);
+    fanoutDocuments(this.app, documents, 'copyDocuments', this.options.fanoutLimit);
   
     return results;
   }
@@ -83,7 +83,7 @@ export class DocumentClipboardService {
     );
 
     // fanout for all children documents
-    fanoutOperations(this.app, documents, 'moveDocuments', this.options.fanoutLimit);
+    fanoutDocuments(this.app, documents, 'moveDocuments', this.options.fanoutLimit);
   
     return results;
   }
