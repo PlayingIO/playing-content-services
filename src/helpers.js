@@ -12,7 +12,7 @@ export const getMetaSubtypes = (doc) => {
 /**
  * Get children documents
  */
-export const getChildren = async (app, parents) => {
+export const getChildrens = async (app, parents) => {
   const svcDocuments = app.service('documents');
   const children = await svcDocuments.find({
     query: { parent: { $in: parents } },
@@ -27,15 +27,15 @@ export const getChildren = async (app, parents) => {
 export const fanoutOperations = async (app, documents, operation, target) => {
   // get children documents with skip/limit
   const parents = fp.map(fp.prop('id'), documents);
-  const childrens = await getChildren(app, parents);
+  const childrens = await getChildrens(app, parents);
   if (!fp.isEmpty(childrens)) {
-    fp.forEachObjIndexed((children, parent) => {
+    for (const [parent, children] of Object.entries(childrens)) {
       app.agenda.now('fanout_operation', {
         operation, documents: children, target: parent
       });
-    }, childrens);
-    // process next batch of children
-    await fanoutOperations(app, path, operation, target);
+      // process next batch of children
+      await fanoutOperations(app, children, operation, parent);
+    }
   }
 };
 
@@ -43,7 +43,7 @@ export const fanoutOperations = async (app, documents, operation, target) => {
  * Copy documents to target
  */
 export const copyDocument = async (app, doc, target) => {
-  const svcService = this.app.service(plural(doc.type || 'document'));
+  const svcService = app.service(plural(doc.type || 'document'));
   let clone = fp.omit([
     'id', 'metadata', 'parent', 'path', 'ancestors',
     'createdAt', 'updatedAt', 'destroyedAt'
@@ -56,7 +56,7 @@ export const copyDocument = async (app, doc, target) => {
  * Move documents to target
  */
 export const moveDocument = async (app, doc, target) => {
-  const svcService = this.app.service(plural(doc.type || 'document'));
+  const svcService = app.service(plural(doc.type || 'document'));
   const data = {
     parent: target.id,
     path: path.resolve(target.path, path.basename(doc.path)),
