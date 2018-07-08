@@ -1,7 +1,7 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
-import { copyDocument, moveDocument } from '../../helpers';
+import { copyDocument, moveDocument } from 'playing-content-common';
 
 const debug = makeDebug('playing:content-services:documents/clipboards:jobs');
 
