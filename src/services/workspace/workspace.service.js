@@ -1,8 +1,7 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
-import path from 'path';
-import { plural } from 'pluralize';
+import slug from 'limax';
 
 import defaultHooks from './workspace.hooks';
 
@@ -26,7 +25,7 @@ export class WorkspaceService {
 
   _getUserWorkspace (params) {
     assert(params.query.creator, 'query.creator not provided');
-    const workspace = '/workspaces/folder-' + params.user.username;
+    const workspace = '/workspaces/folder-' + slug(params.user.username, { tone: false });
     params.query.path = workspace;
 
     const svcFolders = this.app.service('folders');
