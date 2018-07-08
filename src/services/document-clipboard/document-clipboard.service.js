@@ -1,8 +1,8 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
+import { copyDocument, moveDocument, fanoutDocuments } from 'playing-content-common';
 
-import { copyDocument, moveDocument, fanoutDocuments } from '../../helpers';
 import defaultHooks from './document-clipboard.hooks';
 import defaultJobs from './document-clipboard.jobs';
 
