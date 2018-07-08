@@ -1,19 +1,5 @@
-import fp from 'mostly-func';
 import path from 'path';
 import { plural } from 'pluralize';
-
-/**
- * Copy documents to target
- */
-export const copyDocument = async (app, doc, target) => {
-  const svcService = app.service(plural(doc.type || 'document'));
-  let clone = fp.omit([
-    'id', 'metadata', 'parent', 'path', 'ancestors',
-    'createdAt', 'updatedAt', 'destroyedAt'
-  ], doc);
-  clone.parent = target;
-  return svcService.create(clone);
-};
 
 /**
  * Move documents to target
