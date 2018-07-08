@@ -1,7 +1,8 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
-import { copyDocument, moveDocument, fanoutDocuments } from 'playing-content-common';
+import path from 'path';
+import { copyDocument, moveDocument, shortname, fanoutDocuments } from 'playing-content-common';
 
 import defaultHooks from './document-clipboard.hooks';
 import defaultJobs from './document-clipboard.jobs';
@@ -52,18 +53,19 @@ export class DocumentClipboardService {
     assert(data.target, 'target is not provided.');
     debug('copyDocument target', target.id, data.documents);
 
-    // subtypes of target
-    const subtypes = getMetaSubtypes(target);
-
     const documents = await Promise.all(
-      fp.map(doc => this._checkDocument(doc, subtypes), data.documents)
+      fp.map(doc => this._prepareDocument(doc, target), data.documents)
     );
     const results = await Promise.all(
-      fp.map(doc => copyDocument(this.app, doc, target.path), documents)
+      fp.map(doc => copyDocument(this.app, doc), documents)
     );
 
     // fanout for all children documents
-    //fanoutDocuments(this.app, documents, 'copyDocuments', results);
+    const targets = fp.reduce((acc, child) => {
+      acc[child.id] = child.path;
+      return acc;
+    }, {}, documents);
+    fanoutDocuments(this.app, documents, 'copyDocuments', targets);
   
     return results;
   }
@@ -78,26 +80,30 @@ export class DocumentClipboardService {
     assert(data.target, 'target is not provided.');
     debug('moveDocument target', target.id, data.documents);
 
-    // subtypes of target
-    const subtypes = getMetaSubtypes(target);
-
     const documents = await Promise.all(
-      fp.map(doc => this._checkDocument(doc, subtypes), data.documents)
+      fp.map(doc => this._prepareDocument(doc, target), data.documents)
     );
     const results = await Promise.all(
-      fp.map(doc => moveDocument(this.app, doc, target.path), documents)
+      fp.map(doc => moveDocument(this.app, doc), documents)
     );
 
     // fanout for all children documents
-    //fanoutDocuments(this.app, documents, 'moveDocuments', results);
+    const targets = fp.reduce((acc, child) => {
+      acc[child.id] = child.path;
+      return acc;
+    }, {}, documents);
+    fanoutDocuments(this.app, documents, 'moveDocuments', targets);
   
     return results;
   }
 
-  async _checkDocument (id, subtypes) {
+  async _prepareDocument (id, target) {
     const svcDocuments = this.app.service('documents');
+    const subtypes = getMetaSubtypes(target);
     const document = await svcDocuments.get(id);
+
     if (fp.contains(document.type, subtypes)) {
+      document.path = path.join(target.path, shortname(document.type));
       return document;
     } else {
       throw new Error('Target not allow doc type ' + document.type);
