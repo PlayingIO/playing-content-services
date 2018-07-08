@@ -76,6 +76,7 @@ export class DocumentService extends Service {
 
   async remove (id, params = {}) {
     const type = fp.dotPath('query.type', params);
+    // TODO: remove all children?
     if (type && fp.is(String, type)) {
       return this.app.service(plural(type)).remove(id, params);
     } else {
@@ -127,6 +128,7 @@ export class DocumentService extends Service {
     const document = params.primary;
     const update = { destroyedAt: null };
 
+    // TODO: restore all children?
     if (fp.isValid(document.position)) {
       update['position'] = null; // remove old position
       update['parent'] = document.parent; // must provided for recaculate position

@@ -46,6 +46,7 @@ export class TrashService {
     params.query.parent = id;
     params.query.destroyedAt = { $ne: null };
 
+    // TODO: hide trashed children?
     const svcDocuments = this.app.service('documents');
     return svcDocuments.find(null, params);
   }
