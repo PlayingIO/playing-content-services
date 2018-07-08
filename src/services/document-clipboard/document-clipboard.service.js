@@ -47,7 +47,7 @@ export class DocumentClipboardService {
    */
   async copy (id, data, params) {
     const target = params.primary;
-    assert(target && target.id, 'target is not exists');
+    assert(target && target.id && target.path, 'target is not exists');
     assert(data.documents, 'documents is not provided.');
     assert(data.target, 'target is not provided.');
     debug('copyDocument target', target.id, data.documents);
@@ -73,7 +73,7 @@ export class DocumentClipboardService {
    */
   async move (id, data, params) {
     const target = params.primary;
-    assert(target && target.id, 'target is not exists');
+    assert(target && target.id && target.path, 'target is not exists');
     assert(data.documents, 'documents is not provided.');
     assert(data.target, 'target is not provided.');
     debug('moveDocument target', target.id, data.documents);
@@ -85,7 +85,7 @@ export class DocumentClipboardService {
       fp.map(doc => this._checkDocument(doc, subtypes), data.documents)
     );
     const results = await Promise.all(
-      fp.map(doc => moveDocument(this.app, doc, target.id), documents)
+      fp.map(doc => moveDocument(this.app, doc, target.path), documents)
     );
 
     // fanout for all children documents
