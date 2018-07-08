@@ -19,7 +19,7 @@ export default function (options = {}) {
       ],
       create: [
         associateCurrentUser({ idField: 'id', as: 'creator' }),
-        contents.computePath({ type: 'folder', slug: true }),
+        contents.computePath({ type: 'folder' }),
         contents.computeAncestors(),
         contents.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
@@ -27,7 +27,7 @@ export default function (options = {}) {
         associateCurrentUser({ idField: 'id', as: 'creator' }),
         hooks.depopulate('parent'),
         hooks.discardFields('metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
-        contents.computePath({ type: 'folder', slug: true }),
+        contents.computePath({ type: 'folder' }),
         contents.computeAncestors(),
         contents.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
@@ -35,7 +35,7 @@ export default function (options = {}) {
         associateCurrentUser({ idField: 'id', as: 'creator' }),
         hooks.depopulate('parent'),
         hooks.discardFields('metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
-        contents.computePath({ type: 'folder', slug: true }),
+        contents.computePath({ type: 'folder' }),
         contents.computeAncestors(),
         contents.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ]
