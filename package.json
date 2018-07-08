@@ -30,6 +30,7 @@
     "feathers-memory": "^1.1.0",
     "from2": "^2.3.0",
     "glob": "^7.1.1",
+    "limax": "^1.6.0",
     "mime-types": "^2.1.17",
     "mongoose": "^4.11.1",
     "mongoose-random": "^0.1.1",

@@ -506,6 +506,10 @@ bufferstreams@^1.1.1:
   dependencies:
     readable-stream "^2.0.2"
 
+bulk-replace@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.npmjs.org/bulk-replace/-/bulk-replace-0.0.1.tgz#f095682a896abd4b3d9e08de409cc222e213f9dd"
+
 caller-path@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/caller-path/-/caller-path-0.1.0.tgz#94085ef63581ecd3daa92444a8fe94e82577751f"
@@ -631,6 +635,12 @@ commander@2.9.0:
   resolved "http://registry.npm.taobao.org/commander/download/commander-2.9.0.tgz#9c99094176e12240cb22d6c5146098400fe0f7d4"
   dependencies:
     graceful-readlink ">= 1.0.0"
+
+commander@~1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/commander/-/commander-1.1.1.tgz#50d1651868ae60eccff0a2d9f34595376bc6b041"
+  dependencies:
+    keypress "0.1.x"
 
 concat-map@0.0.1:
   version "0.0.1"
@@ -1743,6 +1753,12 @@ hawk@~6.0.2:
     hoek "4.x.x"
     sntp "2.x.x"
 
+hepburn@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/hepburn/-/hepburn-1.0.0.tgz#49ce862942a77570cd4f5c8fe100b85d942cb61b"
+  dependencies:
+    bulk-replace "0.0.1"
+
 hoek@2.x.x:
   version "2.16.3"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
@@ -2154,6 +2170,10 @@ kareem@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/kareem/-/kareem-1.4.1.tgz#ed76200044fa041ef32b4da8261e2553f1173531"
 
+keypress@0.1.x:
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/keypress/-/keypress-0.1.0.tgz#4a3188d4291b66b4f65edb99f806aa9ae293592a"
+
 kind-of@^3.0.2:
   version "3.2.0"
   resolved "http://registry.npm.taobao.org/kind-of/download/kind-of-3.2.0.tgz#b58abe4d5c044ad33726a8c1525b48cf891bff07"
@@ -2190,6 +2210,14 @@ liftoff@^2.1.0:
     lodash.mapvalues "^4.4.0"
     rechoir "^0.6.2"
     resolve "^1.1.7"
+
+limax@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.npmjs.org/limax/-/limax-1.6.0.tgz#996163291c7e8c6e7dd5b438c0190b69622f1b33"
+  dependencies:
+    hepburn "^1.0.0"
+    pinyin "^2.8.3"
+    speakingurl "^14.0.1"
 
 lodash._baseassign@^3.0.0:
   version "3.2.0"
@@ -2576,6 +2604,10 @@ nan@^2.3.0:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.6.2.tgz#e4ff34e6c95fdfb5aecc08de6596f43605a7db45"
 
+nan@~2.10.0:
+  version "2.10.0"
+  resolved "https://registry.npmjs.org/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
+
 natives@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/natives/-/natives-1.1.0.tgz#e9ff841418a6b2ec7a495e939984f78f163e6e31"
@@ -2609,6 +2641,12 @@ node-pre-gyp@^0.6.29:
     semver "^5.3.0"
     tar "^2.2.1"
     tar-pack "^3.4.0"
+
+nodejieba@^2.2.1:
+  version "2.2.6"
+  resolved "https://registry.npmjs.org/nodejieba/-/nodejieba-2.2.6.tgz#17cd416705b7b01c062e6cd9d7179b30453eb4a3"
+  dependencies:
+    nan "~2.10.0"
 
 nodemon@^1.10.2:
   version "1.11.0"
@@ -2852,6 +2890,15 @@ pinkie-promise@^2.0.0:
 pinkie@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
+
+pinyin@^2.8.3:
+  version "2.8.3"
+  resolved "https://registry.npmjs.org/pinyin/-/pinyin-2.8.3.tgz#301ccb4358ccfe802523c4bd640a612bee4d7c4b"
+  dependencies:
+    commander "~1.1.1"
+    object-assign "^4.0.1"
+  optionalDependencies:
+    nodejieba "^2.2.1"
 
 pluralize@^1.2.1:
   version "1.2.1"
@@ -3282,6 +3329,10 @@ source-map@~0.2.0:
 sparkles@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/sparkles/-/sparkles-1.0.0.tgz#1acbbfb592436d10bbe8f785b7cc6f82815012c3"
+
+speakingurl@^14.0.1:
+  version "14.0.1"
+  resolved "https://registry.npmjs.org/speakingurl/-/speakingurl-14.0.1.tgz#f37ec8ddc4ab98e9600c1c9ec324a8c48d772a53"
 
 split@0.3:
   version "0.3.3"
