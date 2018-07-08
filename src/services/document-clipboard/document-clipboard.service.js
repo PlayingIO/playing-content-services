@@ -2,7 +2,7 @@ import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
 
-import { getMetaSubtypes, copyDocument, moveDocument, fanoutDocuments } from '../../helpers';
+import { copyDocument, moveDocument, fanoutDocuments } from '../../helpers';
 import defaultHooks from './document-clipboard.hooks';
 import defaultJobs from './document-clipboard.jobs';
 
@@ -10,6 +10,13 @@ const debug = makeDebug('playing:content-services:documents/clipboards');
 
 const defaultOptions = {
   name: 'documents/clipboards'
+};
+
+const getMetaSubtypes = (doc) => {
+  return fp.map(
+    type => type.type.toLowerCase(),
+    doc.metadata && doc.metadata.subtypes || []
+  );
 };
 
 export class DocumentClipboardService {

@@ -2,13 +2,6 @@ import fp from 'mostly-func';
 import path from 'path';
 import { plural } from 'pluralize';
 
-export const getMetaSubtypes = (doc) => {
-  return fp.map(
-    type => type.type.toLowerCase(),
-    doc.metadata && doc.metadata.subtypes || []
-  );
-};
-
 /**
  * Get children documents
  */
