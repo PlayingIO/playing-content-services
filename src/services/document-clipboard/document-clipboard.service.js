@@ -59,11 +59,11 @@ export class DocumentClipboardService {
       fp.map(doc => this._checkDocument(doc, subtypes), data.documents)
     );
     const results = await Promise.all(
-      fp.map(doc => copyDocument(this.app, doc, target.id), documents)
+      fp.map(doc => copyDocument(this.app, doc, target.path), documents)
     );
 
     // fanout for all children documents
-    fanoutDocuments(this.app, documents, 'copyDocuments', results);
+    //fanoutDocuments(this.app, documents, 'copyDocuments', results);
   
     return results;
   }
@@ -89,7 +89,7 @@ export class DocumentClipboardService {
     );
 
     // fanout for all children documents
-    fanoutDocuments(this.app, documents, 'moveDocuments', results);
+    //fanoutDocuments(this.app, documents, 'moveDocuments', results);
   
     return results;
   }
