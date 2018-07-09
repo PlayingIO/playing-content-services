@@ -76,22 +76,52 @@ export class DocumentService extends Service {
 
   async remove (id, params = {}) {
     const type = fp.dotPath('query.type', params);
-    // TODO: remove all children?
     if (type && fp.is(String, type)) {
-      return this.app.service(plural(type)).remove(id, params);
+      // delete all children by path
+      const children = await this._queryWithChildren([id], params);
+      return this.app.service(plural(type)).remove(null, {
+        ...children,
+        $multi: true
+      });
     } else {
       const more = params && fp.dotPath('query.more', params);
       if (more) {
         const moreIds = [id].concat(more.split(','));
         delete params.query.more;
-        return Promise.all(moreIds.map(id => super.remove(id, params)));
+        const children = await this._queryWithChildren(moreIds, params);
+        return super.remove(null, {
+          ...children,
+          $multi: true
+        });
       } else {
-        return super.remove(id, params);
+        const children = await this._queryWithChildren([id], params);
+        return super.remove(null, {
+          ...children,
+          $multi: true
+        });
       }
     }
   }
 
-  /*
+  /**
+   * query all children by path
+   */
+  async _queryWithChildren (ids, params) {
+    const docs = await super.find({
+      query: { _id: { $in: ids } },
+      $soft: true,
+      paginate: false
+    });
+    return {
+      ...params,
+      query: {
+        ...params.query,
+        $or: fp.map(doc => ({ path: { $regex: '^' + doc.path } }), docs)
+      }
+    };
+  }
+
+  /**
    * move positions of children documents
    */
   async move (id, data, params) {
@@ -126,6 +156,7 @@ export class DocumentService extends Service {
    */
   async restore (id, data, params = {}) {
     const document = params.primary;
+    assert(document && document.id, 'document is not exists');
     const update = { destroyedAt: null };
 
     // TODO: restore all children?
