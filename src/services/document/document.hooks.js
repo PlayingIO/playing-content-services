@@ -30,6 +30,8 @@ export default function (options = {}) {
         contents.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       update: [
+        iff(hooks.isAction('move', 'restore'),
+          hooks.addRouteObject('primary', { service: 'documents', field: 'id' })),
         hooks.depopulate('parent'),
         hooks.discardFields('metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
         contents.computePath(),
@@ -37,7 +39,8 @@ export default function (options = {}) {
         contents.fetchBlobs({ xpath: 'file', xpaths: 'files' })
       ],
       patch: [
-        hooks.addRouteObject('primary', { service: 'documents', field: 'id' }),
+        iff(hooks.isAction('move', 'restore'),
+          hooks.addRouteObject('primary', { service: 'documents', field: 'id' })),
         hooks.depopulate('parent'),
         hooks.discardFields('metadata', 'ancestors', 'createdAt', 'updatedAt', 'destroyedAt'),
         contents.computePath(),
