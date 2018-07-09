@@ -159,12 +159,19 @@ export class DocumentService extends Service {
     assert(document && document.id, 'document is not exists');
     const update = { destroyedAt: null };
 
-    // TODO: restore all children?
     if (fp.isValid(document.position)) {
       update['position'] = null; // remove old position
       update['parent'] = document.parent; // must provided for recaculate position
     }
-    return super.patch(id, update, params);
+    const restoreChildren = (path) =>
+      super.patch(null, { destroyedAt: null }, {
+        query: { path: { $regex: '^' + path + '/' } },
+        $multi: true
+      });
+    return Promise.all([
+      super.patch(id, update, params),
+      restoreChildren(document.path)
+    ]).next(fp.head);
   }
 }
 
