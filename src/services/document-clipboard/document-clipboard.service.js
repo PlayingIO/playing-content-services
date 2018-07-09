@@ -61,10 +61,7 @@ export class DocumentClipboardService {
     );
 
     // fanout for all children documents
-    const targets = fp.reduce((acc, child) => {
-      acc[child.id] = child.path;
-      return acc;
-    }, {}, documents);
+    const targets = fp.pickFrom('id', 'path', documents);
     fanoutDocuments(this.app, documents, 'copyDocuments', targets);
   
     return results;
@@ -88,10 +85,7 @@ export class DocumentClipboardService {
     );
 
     // fanout for all children documents
-    const targets = fp.reduce((acc, child) => {
-      acc[child.id] = child.path;
-      return acc;
-    }, {}, documents);
+    const targets = fp.pickFrom('id', 'path', documents);
     fanoutDocuments(this.app, documents, 'moveDocuments', targets);
   
     return results;
