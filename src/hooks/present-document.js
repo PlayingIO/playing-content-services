@@ -1,12 +1,12 @@
-import makeDebug from 'debug';
-import fp from 'mostly-func';
+const makeDebug = require('debug');
+const fp = require('mostly-func');
 
-import { entities as contents } from 'playing-content-common';
+const { entities: contents } = require('playing-content-common');
 
 const debug = makeDebug('playing:content-services:hooks:presentDocument');
 
 // presentEntity by document type
-export default function presentDocument (options = {}) {
+module.exports = function presentDocument (options = {}) {
   const entities = Object.assign(contents, options.entities);
 
   return async context => {
@@ -41,4 +41,4 @@ export default function presentDocument (options = {}) {
     }
     return context;
   };
-}
+};

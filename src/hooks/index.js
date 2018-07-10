@@ -1,7 +1,7 @@
-import presentBlob from './present-blob';
-import presentDocument from './present-document';
+const presentBlob = require('./present-blob');
+const presentDocument = require('./present-document');
 
-export {
+module.exports = {
   presentBlob,
   presentDocument
 };

@@ -1,7 +1,7 @@
-import fp from 'mostly-func';
-import { BatchEntity, BlobEntity } from 'playing-content-common';
+const fp = require('mostly-func');
+const { BatchEntity, BlobEntity } = require('playing-content-common');
 
-export default function presentBlob (options = {}) {
+module.exports = function presentBlob (options = {}) {
   return async context => {
     options.provider = context.params.provider;
 
@@ -22,4 +22,4 @@ export default function presentBlob (options = {}) {
     
     return context;
   };
-}
+};
