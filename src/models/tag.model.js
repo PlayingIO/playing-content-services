@@ -10,10 +10,9 @@ const fields = {
   label: { type: String, required: true  }
 };
 
-export default function model (app, name) {
+module.exports = function model (app, name) {
   const mongoose = app.get('mongoose');
   const schema = new mongoose.Schema(fields, options);
   return mongoose.model(name, schema);
-}
-
-model.schema = fields;
+};
+module.exports.schema = fields;

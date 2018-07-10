@@ -1,5 +1,5 @@
-import { plugins } from 'mostly-feathers-mongoose';
-import { schemas } from 'playing-content-common';
+const { plugins } = require('mostly-feathers-mongoose');
+const { schemas } = require('playing-content-common');
 
 const options = {
   timestamps: true,
@@ -42,7 +42,7 @@ const fields = {
   version: { type: Number },                   // version of the resource
 };
 
-export default function model (app, name) {
+module.exports = function model (app, name) {
   const mongoose = app.get('mongoose');
   const schema = new mongoose.Schema(fields, options);
   schema.plugin(plugins.trashable);
@@ -51,6 +51,5 @@ export default function model (app, name) {
   schema.index({ path: 1 });
   schema.index({ ancestors: 1 });
   return mongoose.model(name, schema);
-}
-
-model.schema = fields;
+};
+module.exports.schema = fields;
