@@ -1,11 +1,11 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import { Service, helpers, createService } from 'mostly-feathers-mongoose';
-import fp from 'mostly-func';
-import { plural } from 'pluralize';
+const assert = require('assert');
+const makeDebug = require('debug');
+const { Service, helpers, createService } = require('mostly-feathers-mongoose');
+const fp = require('mostly-func');
+const { plural } = require('pluralize');
 
-import defaultHooks from './document.hooks';
-import DocumentModel from '../../models/document.model';
+const defaultHooks = require('./document.hooks');
+const DocumentModel = require('../../models/document.model');
 
 const debug = makeDebug('playing:content-services:documents');
 
@@ -17,7 +17,7 @@ const defaultOptions = {
   }
 };
 
-export class DocumentService extends Service {
+class DocumentService extends Service {
   constructor (options) {
     options = fp.assignAll(defaultOptions, options);
     super(options);
@@ -175,9 +175,8 @@ export class DocumentService extends Service {
   }
 }
 
-export default function init (app, options) {
+module.exports = function init (app, options) {
   options = { ModelName: 'document', ...options };
   return createService(app, DocumentService, DocumentModel, options);
-}
-
-init.Service = DocumentService;
+};
+module.exports.Service = DocumentService;

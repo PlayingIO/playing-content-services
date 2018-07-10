@@ -1,10 +1,16 @@
-import assert from 'assert';
-import crypto from 'crypto';
-import from from 'from2';
+const assert = require('assert');
+const crypto = require('crypto');
+const from = require('from2');
+
+function bufferToHash (buffer) {
+  const hash = crypto.createHash('sha256');
+  hash.update(buffer);
+  return hash.digest('hex');
+}
 
 // create a stream from a buffer
 // buffer -> stream
-export function fromBuffer (buffer) {
+function fromBuffer (buffer) {
   assert.ok(Buffer.isBuffer(buffer));
 
   return from(function (size, next) {
@@ -19,8 +25,7 @@ export function fromBuffer (buffer) {
   });
 }
 
-export function bufferToHash (buffer) {
-  const hash = crypto.createHash('sha256');
-  hash.update(buffer);
-  return hash.digest('hex');
-}
+module.exports = {
+  bufferToHash,
+  fromBuffer
+};

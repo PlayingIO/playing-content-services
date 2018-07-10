@@ -1,10 +1,10 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import fp from 'mostly-func';
-import { plural } from 'pluralize';
-import { getParentAces } from 'playing-content-common';
+const assert = require('assert');
+const makeDebug = require('debug');
+const fp = require('mostly-func');
+const { plural } = require('pluralize');
+const { getParentAces } = require('playing-content-common');
 
-import defaultHooks from './document-permission.hooks';
+const defaultHooks = require('./document-permission.hooks');
 
 const debug = makeDebug('playing:content-services:documents/permissions');
 
@@ -12,7 +12,7 @@ const defaultOptions = {
   name: 'documents/permissions'
 };
 
-export class DocumentPermissionService {
+class DocumentPermissionService {
   constructor (options) {
     this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
@@ -134,8 +134,7 @@ export class DocumentPermissionService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new DocumentPermissionService(options);
-}
-
-init.Service = DocumentPermissionService;
+};
+module.exports.Service = DocumentPermissionService;

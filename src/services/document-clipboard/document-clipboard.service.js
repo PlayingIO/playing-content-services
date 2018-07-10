@@ -1,11 +1,11 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import fp from 'mostly-func';
-import path from 'path';
-import { copyDocument, moveDocument, shortname, fanoutDocuments } from 'playing-content-common';
+const assert = require('assert');
+const makeDebug = require('debug');
+const fp = require('mostly-func');
+const path = require('path');
+const { copyDocument, moveDocument, shortname, fanoutDocuments } = require('playing-content-common');
 
-import defaultHooks from './document-clipboard.hooks';
-import defaultJobs from './document-clipboard.jobs';
+const defaultHooks = require('./document-clipboard.hooks');
+const defaultJobs = require('./document-clipboard.jobs');
 
 const debug = makeDebug('playing:content-services:documents/clipboards');
 
@@ -20,7 +20,7 @@ const getMetaSubtypes = (doc) => {
   );
 };
 
-export class DocumentClipboardService {
+class DocumentClipboardService {
   constructor (options) {
     this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
@@ -105,8 +105,7 @@ export class DocumentClipboardService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new DocumentClipboardService(options);
-}
-
-init.Service = DocumentClipboardService;
+};
+module.exports.Service = DocumentClipboardService;

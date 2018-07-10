@@ -1,9 +1,9 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import fp from 'mostly-func';
-import slug from 'limax';
+const assert = require('assert');
+const makeDebug = require('debug');
+const fp = require('mostly-func');
+const slug = require('limax');
 
-import defaultHooks from './workspace.hooks';
+const defaultHooks = require('./workspace.hooks');
 
 const debug = makeDebug('playing:content-services:workspaces');
 
@@ -12,7 +12,7 @@ const defaultOptions = {
 };
 
 // user personal workspace folder
-export class WorkspaceService {
+class WorkspaceService {
   constructor (options) {
     this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
@@ -57,8 +57,7 @@ export class WorkspaceService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new WorkspaceService(options);
-}
-
-init.Service = WorkspaceService;
+};
+module.exports.Service = WorkspaceService;

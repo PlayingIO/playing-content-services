@@ -1,9 +1,9 @@
-import makeDebug from 'debug';
-import fp from 'mostly-func';
-import path from 'path';
-import { plural } from 'pluralize';
+const makeDebug = require('debug');
+const fp = require('mostly-func');
+const path = require('path');
+const { plural } = require('pluralize');
 
-import defaultHooks from './path.hooks';
+const defaultHooks = require('./path.hooks');
 
 const debug = makeDebug('playing:content-services:paths');
 
@@ -12,7 +12,7 @@ const defaultOptions = {
 };
 
 // Path proxy service to documents
-export class PathService {
+class PathService {
   constructor (options) {
     this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
@@ -50,8 +50,7 @@ export class PathService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new PathService(options);
-}
-
-init.Service = PathService;
+};
+module.exports.Service = PathService;

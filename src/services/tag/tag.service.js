@@ -1,15 +1,15 @@
-import { Service, createService } from 'mostly-feathers-mongoose';
-import fp from 'mostly-func';
+const { Service, createService } = require('mostly-feathers-mongoose');
+const fp = require('mostly-func');
 
-import TagModel from '../../models/tag.model';
-import defaultHooks from './tag.hooks';
+const TagModel = require('../../models/tag.model');
+const defaultHooks = require('./tag.hooks');
 
 const defaultOptions = {
   id: 'id',
   name: 'tags'
 };
 
-export class TagService extends Service {
+class TagService extends Service {
   constructor (options) {
     options = fp.assignAll(defaultOptions, options);
     super(options);
@@ -21,9 +21,8 @@ export class TagService extends Service {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   options = { ModelName: 'tag', ...options };
   return createService(app, TagService, TagModel, options);
-}
-
-init.Service = TagService;
+};
+module.exports.Service = TagService;

@@ -1,10 +1,9 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import { Service, helpers, createService } from 'mostly-feathers-mongoose';
-import fp from 'mostly-func';
+const makeDebug = require('debug');
+const { Service, createService } = require('mostly-feathers-mongoose');
+const fp = require('mostly-func');
 
-import FolderModel from '../../models/folder.model';
-import defaultHooks from './folder.hooks';
+const FolderModel = require('../../models/folder.model');
+const defaultHooks = require('./folder.hooks');
 
 const debug = makeDebug('playing:content-services:folders');
 
@@ -12,7 +11,7 @@ const defaultOptions = {
   name: 'folders'
 };
 
-export class FolderService extends Service {
+class FolderService extends Service {
   constructor (options) {
     options = fp.assignAll(defaultOptions, options);
     super(options);
@@ -50,9 +49,8 @@ export class FolderService extends Service {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   options = { ModelName: 'folder', ...options };
   return createService(app, FolderService, FolderModel, options);
-}
-
-init.Service = FolderService;
+};
+module.exports.Service = FolderService;

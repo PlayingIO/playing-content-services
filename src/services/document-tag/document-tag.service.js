@@ -1,9 +1,9 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import fp from 'mostly-func';
-import { plural } from 'pluralize';
+const assert = require('assert');
+const makeDebug = require('debug');
+const fp = require('mostly-func');
+const { plural } = require('pluralize');
 
-import defaultHooks from './document-tag.hooks';
+const defaultHooks = require('./document-tag.hooks');
 
 const debug = makeDebug('playing:content-services:documents/tags');
 
@@ -11,7 +11,7 @@ const defaultOptions = {
   name: 'documents/tags'
 };
 
-export class DocumentTagService {
+class DocumentTagService {
   constructor (options) {
     this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
@@ -54,8 +54,7 @@ export class DocumentTagService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new DocumentTagService(options);
-}
-
-init.Service = DocumentTagService;
+};
+module.exports.Service = DocumentTagService;

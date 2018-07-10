@@ -1,10 +1,8 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import fp from 'mostly-func';
-import path from 'path';
-import { plural } from 'pluralize';
+const assert = require('assert');
+const makeDebug = require('debug');
+const fp = require('mostly-func');
 
-import defaultHooks from './trash.hooks';
+const defaultHooks = require('./trash.hooks');
 
 const debug = makeDebug('playing:content-services:trashes');
 
@@ -15,7 +13,7 @@ const defaultOptions = {
 /**
  * Trashed documents service
  */
-export class TrashService {
+class TrashService {
   constructor (options) {
     this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
@@ -52,8 +50,7 @@ export class TrashService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new TrashService(options);
-}
-
-init.Service = TrashService;
+};
+module.exports.Service = TrashService;

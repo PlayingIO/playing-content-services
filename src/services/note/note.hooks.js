@@ -1,11 +1,11 @@
-import { associateCurrentUser, queryWithCurrentUser } from 'feathers-authentication-hooks';
-import { hooks } from 'mostly-feathers-mongoose';
-import { cache } from 'mostly-feathers-cache';
-import contents from 'playing-content-common';
+const { associateCurrentUser, queryWithCurrentUser } = require('feathers-authentication-hooks');
+const { hooks } = require('mostly-feathers-mongoose');
+const { cache } = require('mostly-feathers-cache');
+const contents = require('playing-content-common');
 
-import { NoteEntity } from 'playing-content-common';
+const { NoteEntity } = require('playing-content-common');
 
-export default function (options = {}) {
+module.exports = function (options = {}) {
   return {
     before: {
       all: [
@@ -56,4 +56,4 @@ export default function (options = {}) {
       ]
     }
   };
-}
+};

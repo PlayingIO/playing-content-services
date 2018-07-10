@@ -1,16 +1,15 @@
-import assert from 'assert';
-import concat from 'concat-stream';
-import dauria from 'dauria';
-import makeDebug from 'debug';
-import mimeTypes from 'mime-types';
-import { Service, createService, helpers } from 'mostly-feathers-mongoose';
-import fp from 'mostly-func';
-import request from 'request';
-import stream from 'stream';
+const assert = require('assert');
+const concat = require('concat-stream');
+const dauria = require('dauria');
+const makeDebug = require('debug');
+const mimeTypes = require('mime-types');
+const { Service, createService, helpers } = require('mostly-feathers-mongoose');
+const fp = require('mostly-func');
+const request = require('request');
 
-import BlobModel from '../../models/blob.model';
-import defaultHooks from './blob.hooks';
-import { fromBuffer, bufferToHash } from './util';
+const BlobModel = require('../../models/blob.model');
+const defaultHooks = require('./blob.hooks');
+const { fromBuffer } = require('./util');
 
 const debug = makeDebug('playing:content-services:blobs');
 
@@ -18,7 +17,7 @@ const defaultOptions = {
   name: 'blobs',
 };
 
-export class BlobService extends Service {
+class BlobService extends Service {
   constructor (options) {
     options = fp.assignAll(defaultOptions, options);
     assert(options.blobs, 'BlobService blobs option required');
@@ -225,10 +224,9 @@ export class BlobService extends Service {
   }
 }
 
-export default function init (app, options) {
+module.exports = function init (app, options) {
   options = { ModelName: 'blob', ...options };
   return createService(app, BlobService, BlobModel, options);
-}
-
-init.Service = BlobService;
+};
+module.exports.Service = BlobService;
 
