@@ -19,7 +19,7 @@ module.exports = function presentBlob (options = {}) {
           : BlobEntity.parse(doc, options);
       }
     }
-    
+
     return context;
   };
 };

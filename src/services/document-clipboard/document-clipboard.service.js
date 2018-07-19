@@ -63,7 +63,7 @@ class DocumentClipboardService {
     // fanout for all children documents
     const targets = fp.pickFrom('id', 'path', documents);
     fanoutDocuments(this.app, documents, 'copyDocuments', targets);
-  
+
     return results;
   }
 
@@ -87,7 +87,7 @@ class DocumentClipboardService {
     // fanout for all children documents
     const targets = fp.pickFrom('id', 'path', documents);
     fanoutDocuments(this.app, documents, 'moveDocuments', targets);
-  
+
     return results;
   }
 
