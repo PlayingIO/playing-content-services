@@ -16,28 +16,16 @@
     "test": "npm run lint && npm run coverage"
   },
   "dependencies": {
-    "bluebird": "^3.5.0",
     "concat-stream": "^1.6.0",
-    "date-fns": "v2.0.0-alpha.7",
     "dauria": "^2.0.0",
-    "feathers-authentication": "^1.2.3",
+    "debug": "^3.1.0",
     "feathers-authentication-hooks": "^0.1.4",
-    "feathers-authentication-jwt": "^0.3.1",
-    "feathers-authentication-local": "^0.3.4",
-    "feathers-hooks": "^2.0.0",
-    "feathers-hooks-common": "^3.5.5",
-    "feathers-memory": "^1.1.0",
     "from2": "^2.3.0",
     "glob": "^7.1.1",
     "limax": "^1.6.0",
     "mime-types": "^2.1.17",
-    "mongoose": "^4.11.1",
-    "mongoose-random": "^0.1.1",
-    "nats": "^1.0.0",
     "pluralize": "^5.0.0",
-    "request": "^2.83.0",
-    "shortid": "^2.2.8",
-    "uberproto": "^1.2.0"
+    "request": "^2.83.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",
