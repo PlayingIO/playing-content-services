@@ -12,7 +12,7 @@ Please see the [documentation site](https://playingio.github.io) for more detail
 ## Installation
 
 ```bash
-npm install playing-content-services
+npm install playing-content-services --save
 ```
 
 # License
